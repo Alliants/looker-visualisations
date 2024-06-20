@@ -21,7 +21,6 @@ looker.plugins.visualizations.add({
   create: function(element, config) {
     console.log('Creating visualization...');
 
-    // Check if container already exists
     let container = document.getElementById('metricsGrid');
     if (!container) {
       container = document.createElement('div');
@@ -67,7 +66,6 @@ looker.plugins.visualizations.add({
   updateAsync: function(data, element, config, queryResponse, details, done) {
     console.log('Updating visualization with data:', data);
 
-    // Log the entire query response structure
     console.log('Query response:', queryResponse);
 
     const container = document.getElementById('metricsGrid');
@@ -76,7 +74,6 @@ looker.plugins.visualizations.add({
       return;
     }
 
-    // Ensure it is empty before rendering new content
     container.innerHTML = '';
 
     const calculateGridLayout = function(metricsCount) {
@@ -101,21 +98,53 @@ looker.plugins.visualizations.add({
       });
     };
 
-    // Log available fields
     const fields = queryResponse.fields;
     console.log('Available fields:', fields);
 
-    if (fields.measure_like.length > 0) {
-      const metrics = fields.measure_like.map(field => ({
-        label: field.label_short,
-        value: data[0][field.name].value
-      }));
+    const metrics = [];
+    
+    // Process dimensions
+    if (fields.dimensions.length > 0) {
+      fields.dimensions.forEach(field => {
+        if (data[0][field.name] != null) {
+          metrics.push({
+            label: field.label_short,
+            value: data[0][field.name].value
+          });
+        }
+      });
+    }
 
+    // Process measures (if available)
+    if (fields.measures.length > 0) {
+      fields.measures.forEach(field => {
+        if (data[0][field.name] != null) {
+          metrics.push({
+            label: field.label_short,
+            value: data[0][field.name].value
+          });
+        }
+      });
+    }
+
+    // Process table calculations (if any)
+    if (fields.table_calculations.length > 0) {
+      fields.table_calculations.forEach(field => {
+        if (data[0][field.name] != null) {
+          metrics.push({
+            label: field.label_short,
+            value: data[0][field.name].value
+          });
+        }
+      });
+    }
+
+    if (metrics.length > 0) {
       const gridLayout = calculateGridLayout(metrics.length);
       console.log('Calculated grid layout:', gridLayout);
       renderMetrics(metrics, gridLayout);
     } else {
-      console.error('No "measure_like" fields found in query response.');
+      console.error('No fields found to display.');
     }
 
     done();
