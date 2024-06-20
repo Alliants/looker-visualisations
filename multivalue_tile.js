@@ -5,17 +5,17 @@ const layoutOptions = {
   '1x2': '1x2',
   '3x1': '3x1',
   '1x3': '1x3',
-  '2x2': '2x2',
   '4x1': '4x1',
   '1x4': '1x4',
-  '2x2-1x1': '2x2 + 1x1',
-  '5x1': '5x1',
-  '1x5': '1x5',
+  '2x2': '2x2',
   '3x2': '3x2',
   '2x3': '2x3',
-  '3x2-2x1': '3x2 + 2x1',
   '4x2': '4x2',
-  '2x4': '2x4'
+  '2x4': '2x4',
+  '5x1': '5x1',
+  '1x5': '1x5',
+  '2x2-1x1': '2x2 + 1x1',
+  '3x2-2x1': '3x2 + 2x1'
 };
 
 looker.plugins.visualizations.add({
@@ -37,7 +37,7 @@ looker.plugins.visualizations.add({
           display: grid;
           gap: 10px;
           padding: 10px;
-          font-family: 'Lato Light', sans-serif;
+          font-family: 'Lato, sans-serif'; /* Ensure proper font */
           height: 100%;
           box-sizing: border-box;
         }
@@ -91,12 +91,21 @@ looker.plugins.visualizations.add({
           grid-template-rows: repeat(4, 1fr);
           grid-template-columns: repeat(1, 1fr);
         }
-        .grid-2x2-1x1 {
-          display: grid;
-          grid-template-areas:
-            "a a b b"
-            "a a c c"
-            "d d e e";
+        .grid-3x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-2x3 {
+          grid-template-rows: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-4x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .grid-2x4 {
+          grid-template-rows: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
         }
         .grid-5x1 {
           grid-template-rows: repeat(1, 1fr);
@@ -106,27 +115,18 @@ looker.plugins.visualizations.add({
           grid-template-rows: repeat(5, 1fr);
           grid-template-columns: repeat(1, 1fr);
         }
-        .grid-3x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(3, 1fr);
-        }
-        .grid-2x3 {
-          grid-template-rows: repeat(3, 1fr);
-          grid-template-columns: repeat(2, 1fr);
+        .grid-2x2-1x1 {
+          display: grid;
+          grid-template-areas:
+            "a a b b"
+            "a a c c"
+            "d d e e";
         }
         .grid-3x2-2x1 {
           display: grid;
           grid-template-areas:
             "a a b b c c"
             "d d e e f f";
-        }
-        .grid-4x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(4, 1fr);
-        }
-        .grid-2x4 {
-          grid-template-rows: repeat(4, 1fr);
-          grid-template-columns: repeat(2, 1fr);
         }
       </style>
       <div class="viz-container"></div>
