@@ -1,32 +1,22 @@
 const layoutOptions = {
-  1: { '1x1': '1x1' },
-  2: { '2x1': '2x1', '1x2': '1x2' },
-  3: { '3x1': '3x1', '1x3': '1x3' },
-  4: { '2x2': '2x2', '4x1': '4x1', '1x4': '1x4' },
-  5: { '2x2 + 1x1': '2x2-1x1', '5x1': '5x1', '1x5': '1x5' },
-  6: { '3x2': '3x2', '2x3': '2x3' },
-  7: { '3x2 + 2x1': '3x2-2x1' },
-  8: { '4x2': '4x2', '2x4': '2x4' }
+  'auto': 'Auto',
+  '1x1': '1x1',
+  '2x1': '2x1',
+  '1x2': '1x2',
+  '3x1': '3x1',
+  '1x3': '1x3',
+  '2x2': '2x2',
+  '4x1': '4x1',
+  '1x4': '1x4',
+  '2x2-1x1': '2x2 + 1x1',
+  '5x1': '5x1',
+  '1x5': '1x5',
+  '3x2': '3x2',
+  '2x3': '2x3',
+  '3x2-2x1': '3x2 + 2x1',
+  '4x2': '4x2',
+  '2x4': '2x4'
 };
-
-function getRelevantLayouts(numberOfItems) {
-  return layoutOptions[numberOfItems] || {};
-}
-
-function updateLayoutOptions(viz, numberOfItems) {
-  const allowedLayouts = getRelevantLayouts(numberOfItems);
-
-  // Update the layout options dynamically
-  viz.options.layout.values = allowedLayouts;
-
-  // Delete any invalid layout option set previously
-  if (!allowedLayouts[viz.config.layout]) {
-    viz.config.layout = Object.keys(allowedLayouts)[0] || 'auto';
-  }
-
-  // Re-register the options to update the UI
-  viz.trigger('registerOptions', viz.options);
-}
 
 looker.plugins.visualizations.add({
   id: 'structured_layout_viz',
@@ -36,7 +26,7 @@ looker.plugins.visualizations.add({
       type: 'string',
       label: 'Layout',
       display: 'select',
-      values: { 'Auto': 'auto' },
+      values: layoutOptions,
       default: 'auto'
     }
   },
@@ -152,14 +142,11 @@ looker.plugins.visualizations.add({
     const measures = queryResponse.fields.measure_like;
     const items = [...dimensions, ...measures].slice(0, 8); // Limit to 8 metrics
 
-    const numberOfItems = items.length;
-    updateLayoutOptions(this, numberOfItems); // Update the layout options based on the number of items
-
-    let layout = config.layout === 'auto' ? Object.keys(this.options.layout.values)[0] : config.layout;
+    let layout = config.layout === 'auto' ? Object.keys(layoutOptions).find(opt => opt !== 'auto') : config.layout;
 
     const vizContainer = element.querySelector('.viz-container');
     vizContainer.classList.remove(...vizContainer.classList);
-    vizContainer.classList.add('viz-container', `grid-${layout}`);
+    if (layout) vizContainer.classList.add('viz-container', `grid-${layout}`);
 
     vizContainer.innerHTML = '';
 
