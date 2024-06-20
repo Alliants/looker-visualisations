@@ -16,13 +16,14 @@ looker.plugins.visualizations.add({
           display: flex;
           flex-wrap: wrap;
           justify-content: space-around;
-          align-items: start;
+          align-items: center;
           text-align: center;
-          padding: 20px;
+          padding: 10px;
           gap: 30px;
           border-radius: 8px;
           font-family: 'Lato Light', sans-serif;
           height: 100%;
+          box-sizing: border-box;
           overflow: hidden;
         }
         .viz-element {
@@ -38,7 +39,7 @@ looker.plugins.visualizations.add({
           color: #6c757d;
         }
         .viz-value {
-          font-size: 24px; /* base size, will be adjusted */
+          font-size: 1.5em; /* base size, will be adjusted */
         }
         @media (max-width: 768px) {
           .viz-element {
@@ -69,8 +70,9 @@ looker.plugins.visualizations.add({
 
     const tileHeight = element.clientHeight;
     const tileWidth = element.clientWidth;
-    const columns = Math.min(items.length, 3);
-    const rows = Math.ceil(items.length / columns);
+    const columns = Math.min(items.length, 3); // Up to 3 columns
+    const rows = Math.ceil(items.length / columns); // Calculate rows needed
+    const elementHeightAdjust = tileHeight / rows - 40; // adjust for padding and margins
 
     items.forEach(field => {
       const fieldName = field.name;
@@ -80,7 +82,7 @@ looker.plugins.visualizations.add({
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
       vizElement.style.flex = `1 0 calc(${100 / columns}% - 20px)`;
-      vizElement.style.height = `${tileHeight / rows - 30}px`;
+      vizElement.style.height = `${elementHeightAdjust}px`; // Adjust height
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
@@ -105,9 +107,9 @@ looker.plugins.visualizations.add({
 // Function to adjust font size of the value to fit within its container
 function fitTextToElement(element, container) {
   let fontSize = parseInt(window.getComputedStyle(element).fontSize);
-  const parentHeight = container.clientHeight;
-  const maxHeight = parentHeight * 0.5; // Use 50% of parent height for value
+  let maxHeight = container.clientHeight * 0.5; // 50% of container height
 
+  element.style.fontSize = `${fontSize}px`; // Set initial font size
   while (element.scrollHeight > maxHeight && fontSize > 10) {
     fontSize -= 1; // Reduce font size
     element.style.fontSize = fontSize + 'px';
