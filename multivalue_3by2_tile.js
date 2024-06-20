@@ -13,18 +13,15 @@ looker.plugins.visualizations.add({
     element.innerHTML = `
       <style>
         .viz-container {
-          display: flex;
-          flex-wrap: wrap;
-          justify-content: space-around;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          gap: 10px;
+          justify-content: center;
           align-items: center;
           text-align: center;
           padding: 10px;
-          gap: 10px;
-          border-radius: 8px;
-          font-family: 'Lato Light', sans-serif;
-          height: 100%;
           box-sizing: border-box;
-          overflow: hidden;
+          font-family: 'Lato Light', sans-serif;
         }
         .viz-element {
           display: flex;
@@ -33,13 +30,13 @@ looker.plugins.visualizations.add({
           justify-content: center;
           padding: 10px;
           box-sizing: border-box;
-          flex: 1 1 30%;
-          min-width: 150px;
         }
         .viz-title {
+          font-size: 1rem;
           color: #6c757d;
         }
         .viz-value {
+          font-size: 2rem;
           font-weight: bold;
         }
       </style>
@@ -78,21 +75,8 @@ looker.plugins.visualizations.add({
       vizElement.appendChild(valueElement);
       vizElement.appendChild(titleElement);
       vizContainer.appendChild(vizElement);
-
-      adjustFontSize(vizElement, valueElement, titleElement);
     });
 
     done();
   }
 });
-
-function adjustFontSize(vizElement, valueElement, titleElement) {
-  const vizHeight = vizElement.clientHeight;
-  const vizWidth = vizElement.clientWidth;
-  
-  // Determine the font size based on the smaller dimension of the element
-  const baseSize = Math.min(vizHeight, vizWidth) / 6;
-
-  valueElement.style.fontSize = `${baseSize}px`; // Setting value font size
-  titleElement.style.fontSize = `${baseSize / 2.5}px`; // Setting title font size proportionally
-}
