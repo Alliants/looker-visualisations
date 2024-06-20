@@ -13,28 +13,25 @@ looker.plugins.visualizations.add({
         { '1x3': '1x3' },
         { '1x4': '1x4' },
         { '1x5': '1x5' },
-        { '1x6': '1x6' }, // Added
-        { '1x7': '1x7' }, // Added
-        { '1x8': '1x8' }, // Added
+        { '1x6': '1x6' },
+        { '1x7': '1x7' },
+        { '1x8': '1x8' },
         { '2x1': '2x1' },
+        { '2x2': '2x2' },
         { '2x2 + 1x1': '2x2-1x1' },
         { '2x2 + 2x1': '2x2-2x1' },
-        { '2x2 + 4x1': '2x2-4x1' }, // Added
-        { '2x2': '2x2' },
         { '2x3': '2x3' },
         { '2x4': '2x4' },
         { '3x1': '3x1' },
-        { '3x2 + 2x1': '3x2-2x1' },
         { '3x2': '3x2' },
-        { '3x3': '3x3' }, // Added
+        { '3x2 + 2x1': '3x2-2x1' },
         { '4x1': '4x1' },
-        { '4x2 + 1x1': '4x2-1x1' },
         { '4x2': '4x2' },
-        { '4x4': '4x4' }, // Added
+        { '4x4': '4x4' },
         { '5x1': '5x1' },
-        { '6x1': '6x1' }, // Added
-        { '7x1': '7x1' }, // Added
-        { '8x1': '8x1' } // Added
+        { '6x1': '6x1' },
+        { '7x1': '7x1' },
+        { '8x1': '8x1' }
       ],
       default: 'auto'
     }
@@ -69,125 +66,93 @@ looker.plugins.visualizations.add({
           line-height: 1em;
         }
         .grid-1x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(1, 1fr);
+          grid-template: repeat(1, 1fr) / repeat(1, 1fr);
         }
         .grid-2x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(2, 1fr);
+          grid-template: repeat(1, 1fr) / repeat(2, 1fr);
         }
         .grid-1x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(1, 1fr);
+          grid-template: repeat(2, 1fr) / repeat(1, 1fr);
         }
         .grid-3x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(3, 1fr);
+          grid-template: repeat(1, 1fr) / repeat(3, 1fr);
         }
         .grid-1x3 {
-          grid-template-rows: repeat(3, 1fr);
-          grid-template-columns: repeat(1, 1fr);
+          grid-template: repeat(3, 1fr) / repeat(1, 1fr);
         }
         .grid-2x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(2, 1fr);
+          grid-template: repeat(2, 1fr) / repeat(2, 1fr);
         }
         .grid-4x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(4, 1fr);
+          grid-template: repeat(1, 1fr) / repeat(4, 1fr);
         }
         .grid-1x4 {
-          grid-template-rows: repeat(4, 1fr);
-          grid-template-columns: repeat(1, 1fr);
+          grid-template: repeat(4, 1fr) / repeat(1, 1fr);
+        }
+        .grid-5x1 {
+          grid-template: repeat(1, 1fr) / repeat(5, 1fr);
+        }
+        .grid-1x5 {
+          grid-template: repeat(5, 1fr) / repeat(1, 1fr);
+        }
+        .grid-1x6 {
+          grid-template: repeat(6, 1fr) / repeat(1, 1fr);
+        }
+        .grid-6x1 {
+          grid-template: repeat(1, 1fr) / repeat(6, 1fr);
+        }
+        .grid-1x7 {
+          grid-template: repeat(7, 1fr) / repeat(1, 1fr);
+        }
+        .grid-7x1 {
+          grid-template: repeat(1, 1fr) / repeat(7, 1fr);
+        }
+        .grid-1x8 {
+          grid-template: repeat(8, 1fr) / repeat(1, 1fr);
+        }
+        .grid-8x1 {
+          grid-template: repeat(1, 1fr) / repeat(8, 1fr);
+        }
+        .grid-2x3 {
+          grid-template: repeat(3, 1fr) / repeat(2, 1fr);
+        }
+        .grid-3x2 {
+          grid-template: repeat(2, 1fr) / repeat(3, 1fr);
+        }
+        .grid-3x3 {
+          grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+        }
+        .grid-2x4 {
+          grid-template: repeat(4, 1fr) / repeat(2, 1fr);
+        }
+        .grid-4x2 {
+          grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+        }
+        .grid-4x4 {
+          grid-template: repeat(4, 1fr) / repeat(4, 1fr);
         }
         .grid-2x2-1x1 {
-          display: grid;
           grid-template-areas:
             "a a b b"
             "a a c c"
             "d d e e";
         }
-        .grid-5x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(5, 1fr);
-        }
-        .grid-1x5 {
-          grid-template-rows: repeat(5, 1fr);
-          grid-template-columns: repeat(1, 1fr);
-        }
-        .grid-1x6 {
-          grid-template-rows: repeat(6, 1fr);
-          grid-template-columns: repeat(1, 1fr);
-        }
-        .grid-6x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(6, 1fr);
-        }
-        .grid-1x7 {
-          grid-template-rows: repeat(7, 1fr);
-          grid-template-columns: repeat(1, 1fr);
-        }
-        .grid-7x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(7, 1fr);
-        }
-        .grid-1x8 {
-          grid-template-rows: repeat(8, 1fr);
-          grid-template-columns: repeat(1, 1fr);
-        }
-        .grid-8x1 {
-          grid-template-rows: repeat(1, 1fr);
-          grid-template-columns: repeat(8, 1fr);
-        }
-        .grid-2x3 {
-          grid-template-rows: repeat(3, 1fr);
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .grid-3x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(3, 1fr);
-        }
-        .grid-3x3 {
-          grid-template-rows: repeat(3, 1fr);
-          grid-template-columns: repeat(3, 1fr);
-        }
-        .grid-2x4 {
-          grid-template-rows: repeat(4, 1fr);
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .grid-4x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(4, 1fr);
-        }
-        .grid-2x2-4x1 {
-          display: grid;
-          grid-template-areas:
-            "a a b b"
-            "c c d d";
-        }
         .grid-2x2-2x1 {
-          display: grid;
           grid-template-areas:
             "a a b b"
             "c c d d"
             "e e . .";
         }
         .grid-3x2-2x1 {
-          display: grid;
           grid-template-areas:
             "a a b b c c"
             "d d e e f f";
         }
         .grid-4x2-1x1 {
-          display: grid;
           grid-template-areas:
             "a a b b"
             "c c d d"
             "e e f f";
-        }
-        .grid-4x4 {
-          grid-template-rows: repeat(4, 1fr);
-          grid-template-columns: repeat(4, 1fr);
         }
       </style>
       <div class="viz-container"></div>
@@ -304,7 +269,7 @@ function adjustFontSize(valueElement, titleElement, containerHeight) {
 
   // Adjust font size until the elements fit within the container
   const totalHeight = () => valueElement.scrollHeight + titleElement.scrollHeight;
-  
+
   while ((totalHeight() > containerHeight) && fontSizeValue > 10) {
     fontSizeValue -= 1; // Decrease font size for value element
     valueElement.style.fontSize = `${fontSizeValue}px`;
