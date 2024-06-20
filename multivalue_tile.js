@@ -82,7 +82,7 @@ looker.plugins.visualizations.add({
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
       vizElement.style.flex = `1 0 calc(${100 / columns}% - 20px)`;
-      vizElement.style.height = `${elementHeightAdjust}px`; // Adjust height
+      vizElement.style.height = `${elementHeightAdjust}px`;
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
@@ -97,21 +97,24 @@ looker.plugins.visualizations.add({
       vizContainer.appendChild(vizElement);
 
       // Adjust font size to fit the value within the tile
-      fitTextToElement(valueElement, vizElement);
+      adjustFontSize(valueElement, vizElement);
     });
 
     done();
-  },
+  }
 });
 
-// Function to adjust font size of the value to fit within its container
-function fitTextToElement(element, container) {
-  let fontSize = parseInt(window.getComputedStyle(element).fontSize);
-  let maxHeight = container.clientHeight * 0.5; // 50% of container height
+function adjustFontSize(valueElement, containerElement) {
+  const containerHeight = containerElement.clientHeight;
+  const maxFontSize = containerHeight * 0.4; // Max font size is 40% of container height
+  const minFontSize = 10;  // Minimum font size
+  let fontSize = maxFontSize;
 
-  element.style.fontSize = `${fontSize}px`; // Set initial font size
-  while (element.scrollHeight > maxHeight && fontSize > 10) {
-    fontSize -= 1; // Reduce font size
-    element.style.fontSize = fontSize + 'px';
+  valueElement.style.fontSize = `${fontSize}px`; // Set initial font size
+
+  // Adjust font size until the element fits within its container
+  while (valueElement.scrollHeight > containerHeight && fontSize > minFontSize) {
+    fontSize -= 1; // Decrease font size
+    valueElement.style.fontSize = `${fontSize}px`;
   }
 }
