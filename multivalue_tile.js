@@ -1,21 +1,28 @@
 looker.plugins.visualizations.add({
-  id: 'dynamic_layout_viz',
-  label: 'Dynamic Layout Viz',
+  id: 'structured_layout_viz',
+  label: 'Structured Layout Viz',
   options: {
-    /* Options will be generated dynamically */
+    layout: {
+      type: 'string',
+      label: 'Layout',
+      display: 'select',
+      values: [
+        { '2x3': '2x3' },
+        { '3x2': '3x2' }
+      ],
+      default: '2x3'
+    }
   },
   create: function (element, config) {
     element.innerHTML = `
       <style>
         .viz-container {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 15px;
+          gap: 10px;
           padding: 10px;
           font-family: 'Lato Light', sans-serif;
           height: 100%;
           box-sizing: border-box;
-          overflow: hidden;
         }
         .viz-element {
           display: flex;
@@ -24,6 +31,7 @@ looker.plugins.visualizations.add({
           justify-content: center;
           box-sizing: border-box;
           padding: 10px;
+          overflow: hidden;
         }
         .viz-title {
           font-size: 14px;
@@ -33,6 +41,14 @@ looker.plugins.visualizations.add({
         .viz-value {
           font-size: 2em;
           line-height: 1em;
+        }
+        .grid-2x3 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-3x2 {
+          grid-template-rows: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
         }
       </style>
       <div class="viz-container"></div>
@@ -47,10 +63,20 @@ looker.plugins.visualizations.add({
     // Clear previous options
     deleteDynamicOptions(this);
 
-    // Create new options dynamically
-    const dimensions = queryResponse.fields.dimension_like;
-    const measures = queryResponse.fields.measure_like;
-    const items = [...dimensions, ...measures];
+    const vizContainer = element.querySelector('.viz-container');
+    const layout = config.layout || '2x3';
+
+    // Apply grid layout class
+    vizContainer.classList.remove(...vizContainer.classList);
+    vizContainer.classList.add('viz-container', `grid-${layout}`);
+
+    vizContainer.innerHTML = '';
+
+    // Limit the number of metrics based on layout
+    const maxItems = layout === '2x3' ? 6 : 6;
+    const dimensions = queryResponse.fields.dimension_like.slice(0, maxItems);
+    const measures = queryResponse.fields.measure_like.slice(0, maxItems);
+    const items = [...dimensions, ...measures].slice(0, maxItems);
 
     items.forEach((field, index) => {
       const fieldName = field.name;
@@ -71,9 +97,6 @@ looker.plugins.visualizations.add({
 
     // Update options
     this.trigger('registerOptions', this.options);
-    
-    const vizContainer = element.querySelector('.viz-container');
-    vizContainer.innerHTML = '';
 
     items.forEach(field => {
       const fieldName = field.name;
@@ -88,9 +111,6 @@ looker.plugins.visualizations.add({
       valueElement.className = 'viz-value';
       valueElement.innerHTML = fieldValue;
       valueElement.style.color = fieldColor;
-      valueElement.style.maxWidth = '100%';
-      valueElement.style.overflow = 'hidden';
-      valueElement.style.textOverflow = 'ellipsis';
 
       const titleElement = document.createElement('div');
       titleElement.className = 'viz-title';
