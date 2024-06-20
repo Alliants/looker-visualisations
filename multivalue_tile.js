@@ -1,132 +1,84 @@
 looker.plugins.visualizations.add({
-  id: "custom-responsive-grid",
-  label: "Responsive Grid",
-  options: {},
-
-  create: function(element, config) {
+  id: 'dynamic_layout_viz',
+  label: 'Dynamic Layout Viz',
+  options: {
+    title: {
+      type: 'string',
+      label: 'Default Title',
+      display: 'text',
+      default: '',
+    }
+  },
+  create: function (element, config) {
     element.innerHTML = `
       <style>
-        .custom-visualization {
+        .viz-container, .viz-element {
           display: flex;
-          flex-direction: column;
-          align-items: center;
-          padding: 20px;
-          box-sizing: border-box;
-          width: 100%;
-          height: 110%;
-        }
-
-        .responsive-table {
-          display: grid;
-          width: 100%;
-          height: 110%;
-          gap: 10px;
-          grid-template-columns: repeat(3, 1fr);
-        }
-
-        .responsive-table div {
+          flex-wrap: wrap;
+          max-width: 100%;
+          margin: 5px;
           text-align: center;
-          font-family: 'Lato Light', sans-serif;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          overflow: hidden;
         }
-
-        .metric-value {
-          font-size: 1.2rem;
-          margin: 0;
+        .viz-element {
+          border: 1px solid #ccc;
+          padding: 10px;
+          box-sizing: border-box;
+          flex-grow: 1;
         }
-
-        .metric-label {
-          font-size: 0.8rem;
-          color: #555555;
-          margin: 0;
+        .viz-title {
+          font-size: 14px;
+          margin: 5px 0;
         }
-
-        @media (max-width: 1024px) {
-          .metric-value {
-            font-size: 1rem;
-          }
-
-          .metric-label {
-            font-size: 0.7rem;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .metric-value {
-            font-size: 0.9rem;
-          }
-
-          .metric-label {
-            font-size: 0.6rem;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .metric-value {
-            font-size: 0.8rem;
-          }
-
-          .metric-label {
-            font-size: 0.5rem;
-          }
-
-          .responsive-table {
-            grid-template-columns: 1fr;
-          }
+        .viz-value {
+          font-size: 20px;
         }
       </style>
-      <div class="custom-visualization">
-        <div class="responsive-table" id="metrics-grid"></div>
-      </div>
+      <div class="viz-container"></div>
     `;
   },
+  updateAsync: function (data, element, config, queryResponse, details, done) {
+    // Check for valid data and structure
+    if (!data || data.length === 0) {
+      return;
+    }
 
-  updateAsync: function(data, element, config, queryResponse, details, done) {
-    this.clearErrors();
+    const vizContainer = element.querySelector('.viz-container');
+    vizContainer.innerHTML = '';
 
-    const metricsGrid = document.getElementById("metrics-grid");
-    metricsGrid.innerHTML = '';
+    const dimensions = queryResponse.fields.dimension_like;
+    const measures = queryResponse.fields.measure_like;
+    const items = [...dimensions, ...measures];
 
-    const createMetricElement = (label, value) => {
-      const metricElement = document.createElement("div");
-      metricElement.innerHTML = `
-        <div class="metric-value">${value}</div>
-        <p class="metric-label">${label}</p>
-      `;
-      metricsGrid.appendChild(metricElement);
-    };
+    const containerWidth = vizContainer.clientWidth;
+    const containerHeight = vizContainer.clientHeight;
 
-    queryResponse.fields.dimension_like.forEach((field, index) => {
-      const value = data[0][field.name].rendered || data[0][field.name].value;
-      createMetricElement(config[`label_${index}`] || field.label_short, value);
+    const itemCount = items.length;
+    const itemWidth = Math.floor(containerWidth / Math.sqrt(itemCount));
+    const itemHeight = Math.floor(containerHeight / Math.sqrt(itemCount));
+    
+    items.forEach(field => {
+      const fieldName = field.name;
+      const fieldLabel = config[fieldName + '_title'] || field.label_short || field.label;
+      const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value;
+
+      const vizElement = document.createElement('div');
+      vizElement.className = 'viz-element';
+      vizElement.style.width = `${itemWidth}px`;
+      vizElement.style.height = `${itemHeight}px`;
+
+      const titleElement = document.createElement('div');
+      titleElement.className = 'viz-title';
+      titleElement.innerText = fieldLabel;
+
+      const valueElement = document.createElement('div');
+      valueElement.className = 'viz-value';
+      valueElement.innerHTML = fieldValue;
+
+      vizElement.appendChild(valueElement);
+      vizElement.appendChild(titleElement);
+      vizContainer.appendChild(vizElement);
     });
-
-    queryResponse.fields.measure_like.forEach((field, index) => {
-      const value = data[0][field.name].rendered || data[0][field.name].value;
-      createMetricElement(config[`label_${index}`] || field.label_short, value);
-    });
-
-    const numMetrics = metricsGrid.children.length;
-    const numRows = Math.ceil(numMetrics / 3);
-    metricsGrid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
-
-    // Calculate font sizes based on container dimensions 
-    const containerHeight = element.offsetHeight;
-    const maxRowHeight = containerHeight / numRows;
-    const containerWidth = element.offsetWidth / 3;
-    const baseFontSize = Math.min(maxRowHeight, containerWidth) * 0.25;
-    const metricValueSize = baseFontSize;
-    const metricLabelSize = baseFontSize * 0.6;
-
-    const metricValues = document.querySelectorAll('.metric-value');
-    const metricLabels = document.querySelectorAll('.metric-label');
-    metricValues.forEach(mv => mv.style.fontSize = `${metricValueSize}px`);
-    metricLabels.forEach(ml => ml.style.fontSize = `${metricLabelSize}px`);
 
     done();
-  }
+  },
 });
