@@ -1,28 +1,30 @@
 looker.plugins.visualizations.add({
-  id: 'structured_layout_viz',
-  label: 'Structured Layout Viz',
+  id: 'dynamic_layout_viz',
+  label: 'Dynamic Layout Viz',
   options: {
-    layout: {
+    title: {
       type: 'string',
-      label: 'Layout',
-      display: 'select',
-      values: [
-        { '2x3': '2x3' },
-        { '3x2': '3x2' }
-      ],
-      default: '2x3'
+      label: 'Default Title',
+      display: 'text',
+      default: '',
     }
   },
   create: function (element, config) {
     element.innerHTML = `
       <style>
         .viz-container {
-          display: grid;
-          gap: 10px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-around;
+          align-items: center;
+          text-align: center;
           padding: 10px;
+          gap: 30px;
+          border-radius: 8px;
           font-family: 'Lato Light', sans-serif;
           height: 100%;
           box-sizing: border-box;
+          overflow: hidden;
         }
         .viz-element {
           display: flex;
@@ -31,29 +33,28 @@ looker.plugins.visualizations.add({
           justify-content: center;
           box-sizing: border-box;
           padding: 10px;
-          overflow: hidden;
         }
         .viz-title {
-          font-size: 14px;
+          font-size: 14px; /* base size, will be adjusted */
           color: #6c757d;
-          margin-top: 5px;
         }
         .viz-value {
-          font-size: 2em;
-          line-height: 1em;
+          font-size: 1.5em; /* base size, will be adjusted */
         }
-        .grid-2x3 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(3, 1fr);
+        @media (max-width: 768px) {
+          .viz-element {
+            flex-basis: calc(50% - 20px);
+          }
         }
-        .grid-3x2 {
-          grid-template-rows: repeat(3, 1fr);
-          grid-template-columns: repeat(2, 1fr);
+        @media (max-width: 480px) {
+          .viz-element {
+            flex-basis: 100%;
+          }
         }
       </style>
       <div class="viz-container"></div>
     `;
-    element.style.height = "100%";
+    element.style.height = "100%"; // Ensure the main element takes the full height
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     if (!data || data.length === 0) {
@@ -61,49 +62,31 @@ looker.plugins.visualizations.add({
     }
 
     const vizContainer = element.querySelector('.viz-container');
-    const layout = config.layout || '2x3';
-
-    vizContainer.className = 'viz-container'; // Reset classes
-    vizContainer.classList.add(`grid-${layout}`);
-
     vizContainer.innerHTML = '';
 
-    const maxItems = layout === '2x3' ? 6 : 6;
-    const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
-    const items = fields.slice(0, maxItems);
+    const dimensions = queryResponse.fields.dimension_like;
+    const measures = queryResponse.fields.measure_like;
+    const items = [...dimensions, ...measures];
 
-    items.forEach((field, index) => {
-      const fieldName = field.name;
-      const labelIndex = index + 1;
-      this.options[`${fieldName}_title`] = {
-        type: 'string',
-        label: `Value ${labelIndex} Title`,
-        display: 'text',
-        default: field.label_short || field.label
-      };
-      this.options[`${fieldName}_color`] = {
-        type: 'string',
-        label: `Value ${labelIndex} Color`,
-        display: 'color',
-        default: '#000000'
-      };
-    });
-
-    this.trigger('registerOptions', this.options);
+    const tileHeight = element.clientHeight;
+    const tileWidth = element.clientWidth;
+    const columns = Math.min(items.length, 3); // Up to 3 columns
+    const rows = Math.ceil(items.length / columns); // Calculate rows needed
+    const elementHeightAdjust = tileHeight / rows - 40; // adjust for padding and margins
 
     items.forEach(field => {
       const fieldName = field.name;
       const fieldLabel = config[fieldName + '_title'] || field.label_short || field.label;
-      const fieldColor = config[fieldName + '_color'] || '#000000';
-      let fieldValue = data[0][fieldName].rendered || data[0][fieldName].value;
+      const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value;
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
+      vizElement.style.flex = `1 0 calc(${100 / columns}% - 20px)`;
+      vizElement.style.height = `${elementHeightAdjust}px`;
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
       valueElement.innerHTML = fieldValue;
-      valueElement.style.color = fieldColor;
 
       const titleElement = document.createElement('div');
       titleElement.className = 'viz-title';
@@ -113,6 +96,7 @@ looker.plugins.visualizations.add({
       vizElement.appendChild(titleElement);
       vizContainer.appendChild(vizElement);
 
+      // Adjust font size to fit both the value and title within the tile
       adjustFontSize(valueElement, titleElement, vizElement.clientHeight);
     });
 
@@ -121,29 +105,19 @@ looker.plugins.visualizations.add({
 });
 
 function adjustFontSize(valueElement, titleElement, containerHeight) {
-  const maxFontSizeValue = containerHeight * 0.4;
-  const maxFontSizeTitle = containerHeight * 0.15;
-  let fontSizeValue = Math.min(2 * parseInt(window.getComputedStyle(document.body).fontSize), maxFontSizeValue);
-  let fontSizeTitle = Math.min(0.4 * parseInt(window.getComputedStyle(document.body).fontSize), maxFontSizeTitle);
+  const maxFontSize = containerHeight * 0.4; // Max font size is 40% of container height
+  let fontSize = maxFontSize;
 
-  valueElement.style.fontSize = `${fontSizeValue}px`;
-  titleElement.style.fontSize = `${fontSizeTitle}px`;
+  valueElement.style.fontSize = `${fontSize}px`; // Set initial font size
+  let titleFontSize = Math.max(fontSize * 0.25, 12); // Initial title font size with a minimum of 12px
 
-  const totalHeight = () => valueElement.scrollHeight + titleElement.scrollHeight;
+  titleElement.style.fontSize = `${titleFontSize}px`; // Set initial title font size
 
-  while ((totalHeight() > containerHeight) && fontSizeValue > 10 && fontSizeTitle > 10) {
-    fontSizeValue -= 1;
-    fontSizeTitle -= 1;
-    valueElement.style.fontSize = `${fontSizeValue}px`;
-    titleElement.style.fontSize = `${fontSizeTitle}px`;
-  }
-}
-
-function deleteDynamicOptions(viz) {
-  const options = viz.options;
-  for (const key in options) {
-    if (key.endsWith('_title') || key.endsWith('_color')) {
-      delete options[key];
-    }
+  // Adjust font size until the elements fit within the container
+  while ((valueElement.scrollHeight + titleElement.scrollHeight > containerHeight) && fontSize > 10) {
+    fontSize -= 1; // Decrease font size
+    valueElement.style.fontSize = `${fontSize}px`;
+    titleFontSize = Math.max(fontSize * 0.25, 12); // Adjust title font size proportionally with a minimum of 12px
+    titleElement.style.fontSize = `${titleFontSize}px`;
   }
 }
