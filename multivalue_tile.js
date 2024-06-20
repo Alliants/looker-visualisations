@@ -15,8 +15,8 @@ looker.plugins.visualizations.add({
         .viz-container {
           display: flex;
           flex-wrap: wrap;
-          align-items: center;
-          justify-content: center;
+          justify-content: space-around;
+          align-items: start;
           text-align: center;
           padding: 20px;
           gap: 30px;
@@ -24,23 +24,21 @@ looker.plugins.visualizations.add({
           font-family: 'Lato Light', sans-serif;
         }
         .viz-element {
-          flex-basis: calc(33.333% - 30px);
+          flex-basis: calc(33.333% - 20px);
           box-sizing: border-box;
           max-width: 200px;
         }
         .viz-title {
           font-size: 14px;
           color: #6c757d;
-          margin-top: 5px;
         }
         .viz-value {
-          font-size: 24px;
-          font-weight: bold;
+          font-size: 18px; /* Slightly larger than title */
           margin-bottom: 5px;
         }
         @media (max-width: 768px) {
           .viz-element {
-            flex-basis: calc(50% - 30px);
+            flex-basis: calc(50% - 20px);
           }
         }
         @media (max-width: 480px) {
@@ -96,7 +94,7 @@ looker.plugins.visualizations.add({
 function fitTextToElement(element) {
   let fontSize = parseInt(window.getComputedStyle(element).fontSize);
   const parentElement = element.parentElement;
-  const maxHeight = parentElement.clientHeight - 25; // Consider title height and margin
+  const maxHeight = parentElement.clientHeight - 35; // Consider title height and margin
 
   while (element.scrollHeight > maxHeight && fontSize > 10) {
     fontSize -= 1;
