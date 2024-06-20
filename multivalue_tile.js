@@ -5,9 +5,13 @@ const layoutOptions = {
   4: { '2x2': '2x2', '4x1': '4x1', '1x4': '1x4' },
   5: { '2x2 + 1x1': '2x2-1x1', '5x1': '5x1', '1x5': '1x5' },
   6: { '3x2': '3x2', '2x3': '2x3' },
-  7: { '3x2 + 1x1': '3x2-1x1' },
+  7: { '3x2 + 2x1': '3x2-2x1' },
   8: { '4x2': '4x2', '2x4': '2x4' }
 };
+
+function getRelevantLayouts(numberOfItems) {
+  return layoutOptions[numberOfItems] || { 'Auto': 'auto' };
+}
 
 looker.plugins.visualizations.add({
   id: 'structured_layout_viz',
@@ -16,7 +20,9 @@ looker.plugins.visualizations.add({
     layout: {
       type: 'string',
       label: 'Layout',
-      display: 'select'
+      display: 'select',
+      values: { 'Auto': 'auto' },
+      default: 'auto' // Ensure a default is provided to prevent unexpected undefined values.
     }
   },
   create: function (element, config) {
@@ -132,16 +138,16 @@ looker.plugins.visualizations.add({
     const items = [...dimensions, ...measures].slice(0, 8); // Limit to 8 metrics
 
     const numberOfItems = items.length;
+    const allowedLayouts = getRelevantLayouts(numberOfItems);
 
-    // Update layout options dynamically based on the number of items
-    const allowedLayouts = layoutOptions[numberOfItems] || { 'Auto': 'auto' };
-
-    // Clear and set new layout options
+    // Update the options dynamically based on the number of items
     this.options.layout.values = allowedLayouts;
+
+    // Re-register the options to update the UI with the appropriate layouts
     this.trigger('registerOptions', this.options);
 
-    // Determine layout based on the number of items
-    let layout = Object.keys(allowedLayouts)[0]; // Default to the first option if 'auto' is not selected
+    // Determine layout based on the selected option or default to the first allowed option
+    let layout = Object.values(allowedLayouts)[0]; // Default to the first option
     layout = config.layout === 'auto' ? layout : config.layout;
 
     // Clear previous options
@@ -164,7 +170,7 @@ looker.plugins.visualizations.add({
       };
     });
 
-    // Update options and apply layout
+    // Update options
     this.trigger('registerOptions', this.options);
 
     const vizContainer = element.querySelector('.viz-container');
