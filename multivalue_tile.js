@@ -4,7 +4,6 @@ looker.plugins.visualizations.add({
   options: {},
 
   create: function(element, config) {
-    // Create an empty container element for the visualization
     element.innerHTML = `
       <style>
         .custom-visualization {
@@ -31,18 +30,12 @@ looker.plugins.visualizations.add({
           display: flex;
           flex-direction: column;
           justify-content: center;
-          margin: 5px;
+          overflow: hidden;
         }
 
-        .metric-value {
-          font-size: 2vw;
+        .metric-value, .metric-label {
           margin: 0;
-        }
-
-        .metric-label {
-          font-size: 1vw;
-          color: #555555;
-          margin: 0;
+          padding: 0;
         }
 
         @media (max-width: 1024px) {
@@ -86,14 +79,11 @@ looker.plugins.visualizations.add({
   },
 
   updateAsync: function(data, element, config, queryResponse, details, done) {
-    // Clear any errors from previous updates
     this.clearErrors();
 
-    // Reset the metrics grid
     const metricsGrid = document.getElementById("metrics-grid");
     metricsGrid.innerHTML = '';
 
-    // Function to create and append metric elements
     const createMetricElement = (label, value) => {
       const metricElement = document.createElement("div");
       metricElement.innerHTML = `
@@ -103,29 +93,24 @@ looker.plugins.visualizations.add({
       metricsGrid.appendChild(metricElement);
     };
 
-    // Process dimensions and create metric elements
     queryResponse.fields.dimension_like.forEach((field, index) => {
       const value = data[0][field.name].rendered || data[0][field.name].value;
       createMetricElement(config[`label_${index}`] || field.label_short, value);
     });
 
-    // Process measures and create metric elements
     queryResponse.fields.measure_like.forEach((field, index) => {
       const value = data[0][field.name].rendered || data[0][field.name].value;
       createMetricElement(config[`label_${index}`] || field.label_short, value);
     });
 
-    // The number of rows will be the number of metrics divided by 3, rounded up
     const numMetrics = metricsGrid.children.length;
     const numRows = Math.ceil(numMetrics / 3);
-
-    // Adjust the grid style for responsiveness
     metricsGrid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
 
-    // Adjust font size based on tile size
-    const containerWidth = element.offsetWidth;
-    const containerHeight = element.offsetHeight / numRows;
-    const baseFontSize = Math.min(containerWidth / 3, containerHeight) * 0.3;
+    const containerHeight = element.offsetHeight;
+    const maxRowHeight = containerHeight / numRows;
+
+    const baseFontSize = maxRowHeight * 0.3;
     const metricValueSize = baseFontSize * 1.25;
     const metricLabelSize = baseFontSize * 0.7;
 
@@ -134,7 +119,6 @@ looker.plugins.visualizations.add({
     metricValues.forEach(mv => mv.style.fontSize = `${metricValueSize}px`);
     metricLabels.forEach(ml => ml.style.fontSize = `${metricLabelSize}px`);
 
-    // Call done to indicate rendering is complete
     done();
   }
 });
