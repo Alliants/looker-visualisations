@@ -20,54 +20,60 @@ looker.plugins.visualizations.add({
         .responsive-table {
           display: grid;
           width: 100%;
+          height: 100%;
           gap: 10px;
         }
 
         .responsive-table div {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
           text-align: center;
           font-family: 'Lato Light', sans-serif;
+          background: #F4F4F4;
+          border-radius: 8px;
+          padding: 10px;
         }
 
         .metric-value {
-          font-size: 1.5rem;
+          font-size: 2em;
+          margin: 0;
         }
 
         .metric-label {
-          font-size: 1rem;
+          font-size: 1em;
           color: #555555;
+          margin: 0;
         }
 
         @media (max-width: 1024px) {
           .metric-value {
-            font-size: 1.2rem;
+            font-size: 1.8em;
           }
 
           .metric-label {
-            font-size: 0.9rem;
+            font-size: 0.9em;
           }
         }
 
         @media (max-width: 768px) {
           .metric-value {
-            font-size: 1rem;
+            font-size: 1.5em;
           }
 
           .metric-label {
-            font-size: 0.8rem;
+            font-size: 0.8em;
           }
         }
 
         @media (max-width: 480px) {
           .metric-value {
-            font-size: 0.8rem;
+            font-size: 1.2em;
           }
 
           .metric-label {
-            font-size: 0.7rem;
-          }
-
-          .responsive-table {
-            grid-template-columns: 1fr;
+            font-size: 0.7em;
           }
         }
       </style>
@@ -107,14 +113,17 @@ looker.plugins.visualizations.add({
       createMetricElement(config[`label_${index}`] || field.label_short, value);
     });
 
+    // Determine the ideal number of columns based on container width
+    const containerWidth = metricsGrid.offsetWidth;
+    const metricsCount = metricsGrid.children.length;
+    const estimatedColumnWidth = 200; // estimate each metric's ideal width
+
+    let numColumns = Math.floor(containerWidth / estimatedColumnWidth);
+    if (numColumns > metricsCount) numColumns = metricsCount;
+
     // Adjust the grid style for responsiveness
-    const numMetrics = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
-    if (numMetrics > 3) {
-      metricsGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
-    } else {
-      metricsGrid.style.gridTemplateColumns = `repeat(${numMetrics}, 1fr)`;
-    }
-    
+    metricsGrid.style.gridTemplateColumns = `repeat(${numColumns}, 1fr)`;
+
     // Call done to indicate rendering is complete
     done();
   }
