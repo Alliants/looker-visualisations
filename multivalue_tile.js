@@ -16,21 +16,21 @@ looker.plugins.visualizations.add({
           display: flex;
           flex-wrap: wrap;
           justify-content: space-around;
-          align-items: flex-start;
+          align-items: start;
           text-align: center;
           padding: 20px;
           gap: 30px;
           border-radius: 8px;
           font-family: 'Lato Light', sans-serif;
+          height: 100%;
+          overflow: hidden;
         }
         .viz-element {
-          flex-basis: calc(33.333% - 20px);
-          box-sizing: border-box;
-          max-width: 200px;
           display: flex;
           flex-direction: column;
+          align-items: center;
           justify-content: center;
-          height: 100%; /* Ensure the element fills vertical space */
+          box-sizing: border-box;
           padding: 10px;
         }
         .viz-title {
@@ -38,12 +38,7 @@ looker.plugins.visualizations.add({
           color: #6c757d;
         }
         .viz-value {
-          font-size: 24px; /* Larger than title */
-          margin-bottom: 5px;
-          flex-grow: 1;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          font-size: 24px; /* base size, will be adjusted */
         }
         @media (max-width: 768px) {
           .viz-element {
@@ -58,6 +53,7 @@ looker.plugins.visualizations.add({
       </style>
       <div class="viz-container"></div>
     `;
+    element.style.height = "100%"; // Ensure the main element takes the full height
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     if (!data || data.length === 0) {
@@ -71,6 +67,11 @@ looker.plugins.visualizations.add({
     const measures = queryResponse.fields.measure_like;
     const items = [...dimensions, ...measures];
 
+    const tileHeight = element.clientHeight;
+    const tileWidth = element.clientWidth;
+    const columns = Math.min(items.length, 3);
+    const rows = Math.ceil(items.length / columns);
+
     items.forEach(field => {
       const fieldName = field.name;
       const fieldLabel = config[fieldName + '_title'] || field.label_short || field.label;
@@ -78,6 +79,8 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
+      vizElement.style.flex = `1 0 calc(${100 / columns}% - 20px)`;
+      vizElement.style.height = `${tileHeight / rows - 30}px`;
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
@@ -102,7 +105,10 @@ looker.plugins.visualizations.add({
 // Function to adjust font size of the value to fit within its container
 function fitTextToElement(element, container) {
   let fontSize = parseInt(window.getComputedStyle(element).fontSize);
-  while (container.scrollHeight > container.clientHeight && fontSize > 10) {
+  const parentHeight = container.clientHeight;
+  const maxHeight = parentHeight * 0.5; // Use 50% of parent height for value
+
+  while (element.scrollHeight > maxHeight && fontSize > 10) {
     fontSize -= 1; // Reduce font size
     element.style.fontSize = fontSize + 'px';
   }
