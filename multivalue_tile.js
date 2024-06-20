@@ -10,16 +10,16 @@ looker.plugins.visualizations.add({
           display: flex;
           flex-direction: column;
           align-items: center;
-          padding: 20px;
+          padding: 0; /* Remove extra padding */
           box-sizing: border-box;
           width: 100%;
-          height: calc(100% - 20px);
+          height: 100%;
         }
 
         .responsive-table {
           display: grid;
           width: calc(100% - 20px);
-          height: calc(100% - 20px);
+          height: calc(100% - 20px); /* Apply calc to reduce white space */
           gap: 10px;
           grid-template-columns: repeat(3, 1fr);
           grid-auto-rows: 1fr;
@@ -37,13 +37,15 @@ looker.plugins.visualizations.add({
 
         .metric-value {
           font-size: 1.2rem;
-          margin: 0;
+          margin: 5px 0;
+          height: calc(50% - 10px); /* Adjust height to fill the grid cell */
         }
 
         .metric-label {
           font-size: 0.8rem;
           color: #555555;
-          margin: 0;
+          margin: 5px 0;
+          height: calc(50% - 10px); /* Adjust height to fill the grid cell */
         }
 
         @media (max-width: 1024px) {
@@ -114,11 +116,13 @@ looker.plugins.visualizations.add({
     const numMetrics = metricsGrid.children.length;
     const numRows = Math.ceil(numMetrics / 3);
     metricsGrid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
-
+    
+    // Calculate font size based on available space
     const containerHeight = element.offsetHeight;
-    const maxRowHeight = (containerHeight - 20) / numRows; // 20px padding adjustment
+    const maxRowHeight = containerHeight / numRows;
     const containerWidth = element.offsetWidth / 3;
-    const baseFontSize = Math.min(maxRowHeight, containerWidth) * 0.25;
+    const baseFontSize = Math.min(maxRowHeight, containerWidth) * 0.3;
+
     const metricValueSize = baseFontSize;
     const metricLabelSize = baseFontSize * 0.6;
 
