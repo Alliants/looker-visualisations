@@ -2,13 +2,7 @@ looker.plugins.visualizations.add({
   id: 'dynamic_layout_viz',
   label: 'Dynamic Layout Viz',
   options: {
-    title: {
-      type: 'string',
-      label: 'Default Title',
-      display: 'text',
-      default: '',
-    },
-    /* Define options for metrics dynamically */
+    /* No default options needed */
   },
   create: function (element, config) {
     element.innerHTML = `
@@ -57,7 +51,7 @@ looker.plugins.visualizations.add({
     const measures = queryResponse.fields.measure_like;
     const items = [...dimensions, ...measures];
 
-    items.forEach((field, index) => {
+    items.forEach(field => {
       const fieldName = field.name;
       this.options[`${fieldName}_group`] = {
         type: "group",
@@ -80,14 +74,8 @@ looker.plugins.visualizations.add({
       this.options[`${fieldName}_format`] = {
         type: 'string',
         label: 'Value Format',
-        display: 'select',
-        values: [
-          { "None": "" },
-          { "Currency": "currency" },
-          { "Decimal": "decimal" }
-        ],
-        group: `${fieldName}_group`,
-        default: ''
+        display: 'text',
+        group: `${fieldName}_group`
       };
     });
 
@@ -109,10 +97,8 @@ looker.plugins.visualizations.add({
       const fieldFormat = config[fieldName + '_format'] || '';
       let fieldValue = data[0][fieldName].rendered || data[0][fieldName].value;
 
-      if (fieldFormat === 'currency') {
-        fieldValue = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(fieldValue);
-      } else if (fieldFormat === 'decimal') {
-        fieldValue = parseFloat(fieldValue).toFixed(2);
+      if (fieldFormat) {
+        fieldValue = looker.utils.format_value(fieldValue, { value_format: fieldFormat });
       }
 
       const vizElement = document.createElement('div');
