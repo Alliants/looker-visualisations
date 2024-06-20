@@ -6,7 +6,7 @@ looker.plugins.visualizations.add({
       type: 'string',
       label: 'Default Title',
       display: 'text',
-      default: '',
+      default: 'Metrics Dashboard',
     }
   },
   create: function (element, config) {
@@ -35,11 +35,11 @@ looker.plugins.visualizations.add({
           padding: 10px;
         }
         .viz-title {
-          font-size: 14px; /* base size, will be adjusted */
+          font-size: 14px;
           color: #6c757d;
         }
         .viz-value {
-          font-size: 1.5em; /* base size, will be adjusted */
+          font-size: 1.5em;
         }
         @media (max-width: 768px) {
           .viz-element {
@@ -54,7 +54,7 @@ looker.plugins.visualizations.add({
       </style>
       <div class="viz-container"></div>
     `;
-    element.style.height = "100%"; // Ensure the main element takes the full height
+    element.style.height = "100%";
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     if (!data || data.length === 0) {
@@ -64,20 +64,20 @@ looker.plugins.visualizations.add({
     const vizContainer = element.querySelector('.viz-container');
     vizContainer.innerHTML = '';
 
-    const dimensions = queryResponse.fields.dimension_like;
-    const measures = queryResponse.fields.measure_like;
-    const items = [...dimensions, ...measures];
+    const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
+    const maxFields = 6; // Limit to show max 6 items for compact display
+    const items = fields.slice(0, maxFields);
 
-    const tileHeight = element.clientHeight;
-    const tileWidth = element.clientWidth;
+    const containerHeight = element.clientHeight;
+    const containerWidth = element.clientWidth;
     const columns = Math.min(items.length, 3); // Up to 3 columns
     const rows = Math.ceil(items.length / columns); // Calculate rows needed
-    const elementHeightAdjust = tileHeight / rows - 40; // adjust for padding and margins
+    const elementHeightAdjust = containerHeight / rows - 20; // Adjust for padding and margins
 
-    items.forEach(field => {
+    items.forEach((field, index) => {
       const fieldName = field.name;
-      const fieldLabel = config[fieldName + '_title'] || field.label_short || field.label;
-      const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value;
+      const fieldLabel = field.label_short || field.label;
+      const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
@@ -96,7 +96,6 @@ looker.plugins.visualizations.add({
       vizElement.appendChild(titleElement);
       vizContainer.appendChild(vizElement);
 
-      // Adjust font size to fit both the value and title within the tile
       adjustFontSize(valueElement, titleElement, vizElement.clientHeight);
     });
 
