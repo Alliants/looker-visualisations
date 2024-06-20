@@ -27,7 +27,15 @@ looker.plugins.visualizations.add({
         { '4x2 + 1x1': '4x2-1x1' },
         { '4x2': '4x2' },
         { '5x1': '5x1' },
-        { '5x2': '5x2' }
+        { '5x2': '5x2' },
+        { '2x1 + 1x2': '2x1-1x2' },  // Added
+        { '3x1 + 2x1': '3x1-2x1' },  // Added
+        { '4x1 + 3x1': '4x1-3x1' },  // Added
+        { '5x1 + 4x1': '5x1-4x1' },  // Added
+        { '5x2 + 3x1': '5x2-3x1' },  // Added
+        { '4x3 + 3x1': '4x3-3x1' },  // Added
+        { '3x4 + 4x3': '3x4-4x3' },  // Added
+        { '4x4': '4x4' }  // Added
       ],
       default: 'auto'
     }
@@ -151,6 +159,57 @@ looker.plugins.visualizations.add({
         .grid-2x5 {
           grid-template-rows: repeat(5, 1fr);
           grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-2x1-1x2 {
+          display: grid;
+          grid-template-areas:
+            "a a"
+            ". b"
+            "b .";
+        }
+        .grid-3x1-2x1 {
+          display: grid;
+          grid-template-areas:
+            "a a a"
+            ". b b";
+        }
+        .grid-4x1-3x1 {
+          display: grid;
+          grid-template-areas:
+            "a a a a"
+            ". b b b";
+        }
+        .grid-5x1-4x1 {
+          display: grid;
+          grid-template-areas:
+            "a a a a a"
+            ". b b b b";
+        }
+        .grid-5x2-3x1 {
+          display: grid;
+          grid-template-areas:
+            "a a a a a"
+            "b b b b b"
+            ". c c c .";
+        }
+        .grid-4x3-3x1 {
+          display: grid;
+          grid-template-areas:
+            "a a a a"
+            "b b b b"
+            "c c c .";
+        }
+        .grid-3x4-4x3 {
+          display: grid;
+          grid-template-areas:
+            "a a a"
+            "b b b"
+            "c c c"
+            ". d d";
+        }
+        .grid-4x4 {
+          grid-template-rows: repeat(4, 1fr);
+          grid-template-columns: repeat(4, 1fr);
         }
       </style>
       <div class="viz-container"></div>
