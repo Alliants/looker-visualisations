@@ -13,15 +13,17 @@ looker.plugins.visualizations.add({
     element.innerHTML = `
       <style>
         .viz-container {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 10px;
+          display: flex;
+          flex-wrap: wrap;
           justify-content: center;
           align-items: center;
           text-align: center;
           padding: 10px;
-          box-sizing: border-box;
+          gap: 10px;
+          border-radius: 8px;
           font-family: 'Lato Light', sans-serif;
+          height: 100%;
+          box-sizing: border-box;
         }
         .viz-element {
           display: flex;
@@ -30,14 +32,11 @@ looker.plugins.visualizations.add({
           justify-content: center;
           padding: 10px;
           box-sizing: border-box;
+          flex: 1 1 30%;
+          min-width: 120px;
         }
-        .viz-title {
-          font-size: 1rem;
-          color: #6c757d;
-        }
-        .viz-value {
-          font-size: 2rem;
-          font-weight: bold;
+        .viz-title, .viz-value {
+          margin: 0;
         }
       </style>
       <div class="viz-container"></div>
@@ -56,6 +55,11 @@ looker.plugins.visualizations.add({
     const maxFields = 6; // Limit to show max 6 items for compact display
     const items = fields.slice(0, maxFields);
 
+    const containerHeight = element.clientHeight;
+    const containerWidth = element.clientWidth;
+    const minContainerSize = Math.min(containerHeight, containerWidth);
+    const baseFontSize = minContainerSize / 10; // Base font size relative to container size
+
     items.forEach((field, index) => {
       const fieldName = field.name;
       const fieldLabel = field.label_short || field.label;
@@ -67,10 +71,12 @@ looker.plugins.visualizations.add({
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
       valueElement.innerHTML = fieldValue;
+      valueElement.style.fontSize = `${baseFontSize}px`;
 
       const titleElement = document.createElement('div');
       titleElement.className = 'viz-title';
       titleElement.innerText = fieldLabel;
+      titleElement.style.fontSize = `${baseFontSize / 2.5}px`;
 
       vizElement.appendChild(valueElement);
       vizElement.appendChild(titleElement);
