@@ -67,6 +67,9 @@ looker.plugins.visualizations.add({
   updateAsync: function(data, element, config, queryResponse, details, done) {
     console.log('Updating visualization with data:', data);
 
+    // Log the entire query response structure
+    console.log('Query response:', queryResponse);
+
     const container = document.getElementById('metricsGrid');
     if (!container) {
       console.error('Container element not found!');
@@ -98,8 +101,12 @@ looker.plugins.visualizations.add({
       });
     };
 
-    if (queryResponse.fields.measure_like.length > 0) {
-      const metrics = queryResponse.fields.measure_like.map(field => ({
+    // Log available fields
+    const fields = queryResponse.fields;
+    console.log('Available fields:', fields);
+
+    if (fields.measure_like.length > 0) {
+      const metrics = fields.measure_like.map(field => ({
         label: field.label_short,
         value: data[0][field.name].value
       }));
@@ -107,11 +114,8 @@ looker.plugins.visualizations.add({
       const gridLayout = calculateGridLayout(metrics.length);
       console.log('Calculated grid layout:', gridLayout);
       renderMetrics(metrics, gridLayout);
-
-      // Handle resizing
-      window.addEventListener('resize', () => renderMetrics(metrics, gridLayout));
     } else {
-      console.error('No measure_like fields found in query response.');
+      console.error('No "measure_like" fields found in query response.');
     }
 
     done();
