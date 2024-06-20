@@ -12,32 +12,47 @@ looker.plugins.visualizations.add({
   create: function (element, config) {
     element.innerHTML = `
       <style>
-        .viz-container, .viz-element {
+        .viz-container {
           display: flex;
           flex-wrap: wrap;
-          max-width: 100%;
-          margin: 5px;
+          align-items: center;
+          justify-content: center;
           text-align: center;
+          padding: 20px;
+          gap: 30px;
+          background: #f8f9fa;
+          border-radius: 8px;
         }
         .viz-element {
-          border: 1px solid #ccc;
-          padding: 10px;
+          flex-basis: calc(33.333% - 30px);
           box-sizing: border-box;
-          flex-grow: 1;
+          max-width: 200px;
         }
         .viz-title {
           font-size: 14px;
-          margin: 5px 0;
+          color: #6c757d;
+          margin-top: 5px;
         }
         .viz-value {
-          font-size: 20px;
+          font-size: 24px;
+          font-weight: bold;
+          margin-bottom: 5px;
+        }
+        @media (max-width: 768px) {
+          .viz-element {
+            flex-basis: calc(50% - 30px);
+          }
+        }
+        @media (max-width: 480px) {
+          .viz-element {
+            flex-basis: 100%;
+          }
         }
       </style>
       <div class="viz-container"></div>
     `;
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
-    // Check for valid data and structure
     if (!data || data.length === 0) {
       return;
     }
@@ -49,13 +64,6 @@ looker.plugins.visualizations.add({
     const measures = queryResponse.fields.measure_like;
     const items = [...dimensions, ...measures];
 
-    const containerWidth = vizContainer.clientWidth;
-    const containerHeight = vizContainer.clientHeight;
-
-    const itemCount = items.length;
-    const itemWidth = Math.floor(containerWidth / Math.sqrt(itemCount));
-    const itemHeight = Math.floor(containerHeight / Math.sqrt(itemCount));
-    
     items.forEach(field => {
       const fieldName = field.name;
       const fieldLabel = config[fieldName + '_title'] || field.label_short || field.label;
@@ -63,16 +71,14 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
-      vizElement.style.width = `${itemWidth}px`;
-      vizElement.style.height = `${itemHeight}px`;
-
-      const titleElement = document.createElement('div');
-      titleElement.className = 'viz-title';
-      titleElement.innerText = fieldLabel;
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
       valueElement.innerHTML = fieldValue;
+
+      const titleElement = document.createElement('div');
+      titleElement.className = 'viz-title';
+      titleElement.innerText = fieldLabel;
 
       vizElement.appendChild(valueElement);
       vizElement.appendChild(titleElement);
