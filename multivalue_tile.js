@@ -1,6 +1,6 @@
 looker.plugins.visualizations.add({
-  id: "custom-responsiveness",
-  label: "Responsive Table",
+  id: "custom-responsive-grid",
+  label: "Responsive Grid",
   options: {},
 
   create: function(element, config) {
@@ -16,64 +16,64 @@ looker.plugins.visualizations.add({
           width: 100%;
           height: 100%;
         }
-
+        
         .responsive-table {
           display: grid;
           width: 100%;
           height: 100%;
           gap: 10px;
         }
-
+        
         .responsive-table div {
+          text-align: center;
+          font-family: 'Lato Light', sans-serif;
           display: flex;
           flex-direction: column;
           justify-content: center;
-          align-items: center;
-          text-align: center;
-          font-family: 'Lato Light', sans-serif;
-          background: #F4F4F4;
-          border-radius: 8px;
-          padding: 10px;
         }
 
         .metric-value {
-          font-size: 2em;
+          font-size: 2vw;
           margin: 0;
         }
 
         .metric-label {
-          font-size: 1em;
+          font-size: 1vw;
           color: #555555;
           margin: 0;
         }
 
         @media (max-width: 1024px) {
           .metric-value {
-            font-size: 1.8em;
+            font-size: 1.8vw;
           }
 
           .metric-label {
-            font-size: 0.9em;
+            font-size: 0.9vw;
           }
         }
 
         @media (max-width: 768px) {
           .metric-value {
-            font-size: 1.5em;
+            font-size: 1.6vw;
           }
 
           .metric-label {
-            font-size: 0.8em;
+            font-size: 0.8vw;
           }
         }
 
         @media (max-width: 480px) {
           .metric-value {
-            font-size: 1.2em;
+            font-size: 1.4vw;
           }
 
           .metric-label {
-            font-size: 0.7em;
+            font-size: 0.7vw;
+          }
+
+          .responsive-table {
+            grid-template-columns: 1fr;
           }
         }
       </style>
