@@ -13,29 +13,28 @@ looker.plugins.visualizations.add({
         { '1x3': '1x3' },
         { '1x4': '1x4' },
         { '1x5': '1x5' },
+        { '1x6': '1x6' }, // Added
+        { '1x7': '1x7' }, // Added
+        { '1x8': '1x8' }, // Added
         { '2x1': '2x1' },
         { '2x2 + 1x1': '2x2-1x1' },
         { '2x2 + 2x1': '2x2-2x1' },
+        { '2x2 + 4x1': '2x2-4x1' }, // Added
         { '2x2': '2x2' },
         { '2x3': '2x3' },
         { '2x4': '2x4' },
-        { '2x5': '2x5' },
         { '3x1': '3x1' },
         { '3x2 + 2x1': '3x2-2x1' },
         { '3x2': '3x2' },
+        { '3x3': '3x3' }, // Added
         { '4x1': '4x1' },
         { '4x2 + 1x1': '4x2-1x1' },
         { '4x2': '4x2' },
+        { '4x4': '4x4' }, // Added
         { '5x1': '5x1' },
-        { '5x2': '5x2' },
-        { '2x1 + 1x2': '2x1-1x2' },  // Added
-        { '3x1 + 2x1': '3x1-2x1' },  // Added
-        { '4x1 + 3x1': '4x1-3x1' },  // Added
-        { '5x1 + 4x1': '5x1-4x1' },  // Added
-        { '5x2 + 3x1': '5x2-3x1' },  // Added
-        { '4x3 + 3x1': '4x3-3x1' },  // Added
-        { '3x4 + 4x3': '3x4-4x3' },  // Added
-        { '4x4': '4x4' }  // Added
+        { '6x1': '6x1' }, // Added
+        { '7x1': '7x1' }, // Added
+        { '8x1': '8x1' } // Added
       ],
       default: 'auto'
     }
@@ -116,13 +115,55 @@ looker.plugins.visualizations.add({
           grid-template-rows: repeat(5, 1fr);
           grid-template-columns: repeat(1, 1fr);
         }
-        .grid-3x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(3, 1fr);
+        .grid-1x6 {
+          grid-template-rows: repeat(6, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-6x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(6, 1fr);
+        }
+        .grid-1x7 {
+          grid-template-rows: repeat(7, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-7x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(7, 1fr);
+        }
+        .grid-1x8 {
+          grid-template-rows: repeat(8, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-8x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(8, 1fr);
         }
         .grid-2x3 {
           grid-template-rows: repeat(3, 1fr);
           grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-3x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-3x3 {
+          grid-template-rows: repeat(3, 1fr);
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-2x4 {
+          grid-template-rows: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-4x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .grid-2x2-4x1 {
+          display: grid;
+          grid-template-areas:
+            "a a b b"
+            "c c d d";
         }
         .grid-2x2-2x1 {
           display: grid;
@@ -130,14 +171,6 @@ looker.plugins.visualizations.add({
             "a a b b"
             "c c d d"
             "e e . .";
-        }
-        .grid-4x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(4, 1fr);
-        }
-        .grid-2x4 {
-          grid-template-rows: repeat(4, 1fr);
-          grid-template-columns: repeat(2, 1fr);
         }
         .grid-3x2-2x1 {
           display: grid;
@@ -151,61 +184,6 @@ looker.plugins.visualizations.add({
             "a a b b"
             "c c d d"
             "e e f f";
-        }
-        .grid-5x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(5, 1fr);
-        }
-        .grid-2x5 {
-          grid-template-rows: repeat(5, 1fr);
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .grid-2x1-1x2 {
-          display: grid;
-          grid-template-areas:
-            "a a"
-            ". b"
-            "b .";
-        }
-        .grid-3x1-2x1 {
-          display: grid;
-          grid-template-areas:
-            "a a a"
-            ". b b";
-        }
-        .grid-4x1-3x1 {
-          display: grid;
-          grid-template-areas:
-            "a a a a"
-            ". b b b";
-        }
-        .grid-5x1-4x1 {
-          display: grid;
-          grid-template-areas:
-            "a a a a a"
-            ". b b b b";
-        }
-        .grid-5x2-3x1 {
-          display: grid;
-          grid-template-areas:
-            "a a a a a"
-            "b b b b b"
-            ". c c c .";
-        }
-        .grid-4x3-3x1 {
-          display: grid;
-          grid-template-areas:
-            "a a a a"
-            "b b b b"
-            "c c c .";
-        }
-        .grid-3x4-4x3 {
-          display: grid;
-          grid-template-areas:
-            "a a a"
-            "b b b"
-            "c c c"
-            ". d d";
         }
         .grid-4x4 {
           grid-template-rows: repeat(4, 1fr);
