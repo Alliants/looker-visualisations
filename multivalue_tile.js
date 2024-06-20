@@ -15,7 +15,6 @@ looker.plugins.visualizations.add({
         .viz-container {
           display: flex;
           flex-wrap: wrap;
-          justify-content: space-around;
           align-items: center;
           text-align: center;
           padding: 10px;
@@ -33,6 +32,8 @@ looker.plugins.visualizations.add({
           justify-content: center;
           box-sizing: border-box;
           padding: 10px;
+          flex: 1 0 calc(33.333% - 20px); /* Default to 3 per row */
+          min-width: 150px; /* Ensuring a minimum size */
         }
         .viz-title {
           font-size: 14px; /* base size, will be adjusted */
@@ -43,12 +44,12 @@ looker.plugins.visualizations.add({
         }
         @media (max-width: 768px) {
           .viz-element {
-            flex-basis: calc(50% - 20px);
+            flex-basis: calc(50% - 20px); /* 2 per row on smaller screens */
           }
         }
         @media (max-width: 480px) {
           .viz-element {
-            flex-basis: 100%;
+            flex-basis: 100%; /* 1 per row on the smallest screens */
           }
         }
       </style>
@@ -81,7 +82,6 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
-      vizElement.style.flex = `1 0 calc(${100 / columns}% - 20px)`;
       vizElement.style.height = `${elementHeightAdjust}px`;
 
       const valueElement = document.createElement('div');
