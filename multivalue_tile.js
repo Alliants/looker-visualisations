@@ -22,7 +22,6 @@ looker.plugins.visualizations.add({
           height: 100%;
           gap: 10px;
           grid-template-columns: repeat(3, 1fr);
-          grid-auto-rows: 1fr;
         }
 
         .responsive-table div {
@@ -36,43 +35,43 @@ looker.plugins.visualizations.add({
         }
 
         .metric-value {
-          font-size: 1.5em;
+          font-size: 1.2rem;
           margin: 0;
         }
 
         .metric-label {
-          font-size: 0.8em;
+          font-size: 0.8rem;
           color: #555555;
           margin: 0;
         }
 
         @media (max-width: 1024px) {
           .metric-value {
-            font-size: 1.2em;
+            font-size: 1rem;
           }
 
           .metric-label {
-            font-size: 0.7em;
+            font-size: 0.7rem;
           }
         }
 
         @media (max-width: 768px) {
           .metric-value {
-            font-size: 1em;
+            font-size: 0.9rem;
           }
 
           .metric-label {
-            font-size: 0.6em;
+            font-size: 0.6rem;
           }
         }
 
         @media (max-width: 480px) {
           .metric-value {
-            font-size: 0.8em;
+            font-size: 0.8rem;
           }
 
           .metric-label {
-            font-size: 0.5em;
+            font-size: 0.5rem;
           }
 
           .responsive-table {
@@ -115,17 +114,16 @@ looker.plugins.visualizations.add({
     const numRows = Math.ceil(numMetrics / 3);
     metricsGrid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
 
-    // Calculate font size based on the container height available per row
+    // Calculate font sizes based on container dimensions 
     const containerHeight = element.offsetHeight;
     const maxRowHeight = containerHeight / numRows;
-    const maxColumnWidth = element.offsetWidth / 3;
-    const baseFontSize = Math.min(maxRowHeight, maxColumnWidth) * 0.3;
-    const metricValueSize = baseFontSize * 1.5;
-    const metricLabelSize = baseFontSize * 0.8;
+    const containerWidth = element.offsetWidth / 3;
+    const baseFontSize = Math.min(maxRowHeight, containerWidth) * 0.25;
+    const metricValueSize = baseFontSize;
+    const metricLabelSize = baseFontSize * 0.6;
 
     const metricValues = document.querySelectorAll('.metric-value');
     const metricLabels = document.querySelectorAll('.metric-label');
-
     metricValues.forEach(mv => mv.style.fontSize = `${metricValueSize}px`);
     metricLabels.forEach(ml => ml.style.fontSize = `${metricLabelSize}px`);
 
