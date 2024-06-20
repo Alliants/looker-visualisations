@@ -13,13 +13,13 @@ looker.plugins.visualizations.add({
           padding: 20px;
           box-sizing: border-box;
           width: 100%;
-          height: 100%;
+          height: 110%;
         }
 
         .responsive-table {
           display: grid;
           width: 100%;
-          height: 100%;
+          height: 110%;
           gap: 10px;
           grid-template-columns: repeat(3, 1fr);
         }
