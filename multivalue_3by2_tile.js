@@ -15,6 +15,7 @@ looker.plugins.visualizations.add({
         .viz-container {
           display: flex;
           flex-wrap: wrap;
+          justify-content: space-around;
           align-items: center;
           text-align: center;
           padding: 10px;
@@ -23,30 +24,29 @@ looker.plugins.visualizations.add({
           font-family: 'Lato Light', sans-serif;
           height: 100%;
           box-sizing: border-box;
-          overflow: auto;
+          overflow: hidden;
         }
         .viz-element {
-          flex: 0 1 30%;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
           padding: 10px;
-          background-color: white;
-          border: 1px solid #e0e0e0;
-          border-radius: 4px;
           box-sizing: border-box;
+          flex: 1 1 30%;
+          min-width: 150px;
         }
         .viz-title {
-          font-size: 1vw;
+          font-size: 14px;
           color: #6c757d;
         }
         .viz-value {
-          font-size: 1.5vw;
+          font-size: 2em;
         }
       </style>
       <div class="viz-container"></div>
     `;
+    element.style.height = "100%";
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     if (!data || data.length === 0) {
@@ -92,15 +92,15 @@ function adjustFontSize(valueElement, titleElement, containerHeight) {
   let fontSize = maxFontSize;
 
   valueElement.style.fontSize = `${fontSize}px`; // Set initial font size
-  let titleFontSize = Math.max(fontSize * 0.25, 12); // Initial title font size with a minimum of 12px
+  let titleFontSize = Math.max(fontSize * 0.25, 14); // Initial title font size with a minimum of 14px
 
   titleElement.style.fontSize = `${titleFontSize}px`; // Set initial title font size
 
   // Adjust font size until the elements fit within the container
-  while ((valueElement.scrollHeight + titleElement.scrollHeight > containerHeight) && fontSize > 10) {
+  while ((valueElement.scrollHeight + titleElement.scrollHeight > containerHeight) && fontSize > 14) {
     fontSize -= 1; // Decrease font size
     valueElement.style.fontSize = `${fontSize}px`;
-    titleFontSize = Math.max(fontSize * 0.25, 12); // Adjust title font size proportionally with a minimum of 12px
+    titleFontSize = Math.max(fontSize * 0.25, 14); // Adjust title font size proportionally with a minimum of 14px
     titleElement.style.fontSize = `${titleFontSize}px`;
   }
 }
