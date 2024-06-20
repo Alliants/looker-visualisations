@@ -13,12 +13,10 @@ looker.plugins.visualizations.add({
     element.innerHTML = `
       <style>
         .viz-container {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          text-align: center;
-          padding: 10px;
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
           gap: 30px;
+          padding: 10px;
           border-radius: 8px;
           font-family: 'Lato Light', sans-serif;
           height: 100%;
@@ -32,25 +30,13 @@ looker.plugins.visualizations.add({
           justify-content: center;
           box-sizing: border-box;
           padding: 10px;
-          flex: 1 0 calc(33.333% - 20px); /* Default to 3 per row */
-          min-width: 150px; /* Ensuring a minimum size */
         }
         .viz-title {
-          font-size: 14px; /* base size, will be adjusted */
+          font-size: 14px;
           color: #6c757d;
         }
         .viz-value {
           font-size: 1.5em; /* base size, will be adjusted */
-        }
-        @media (max-width: 768px) {
-          .viz-element {
-            flex-basis: calc(50% - 20px); /* 2 per row on smaller screens */
-          }
-        }
-        @media (max-width: 480px) {
-          .viz-element {
-            flex-basis: 100%; /* 1 per row on the smallest screens */
-          }
         }
       </style>
       <div class="viz-container"></div>
@@ -70,7 +56,6 @@ looker.plugins.visualizations.add({
     const items = [...dimensions, ...measures];
 
     const tileHeight = element.clientHeight;
-    const tileWidth = element.clientWidth;
     const columns = Math.min(items.length, 3); // Up to 3 columns
     const rows = Math.ceil(items.length / columns); // Calculate rows needed
     const elementHeightAdjust = tileHeight / rows - 40; // adjust for padding and margins
