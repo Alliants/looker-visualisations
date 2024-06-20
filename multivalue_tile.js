@@ -13,15 +13,16 @@ looker.plugins.visualizations.add({
           padding: 20px;
           box-sizing: border-box;
           width: 100%;
-          height: 100%;
+          height: calc(100% - 20px);
         }
 
         .responsive-table {
           display: grid;
-          width: 100%;
-          height: 100%;
+          width: calc(100% - 20px);
+          height: calc(100% - 20px);
           gap: 10px;
           grid-template-columns: repeat(3, 1fr);
+          grid-auto-rows: 1fr;
         }
 
         .responsive-table div {
@@ -114,9 +115,8 @@ looker.plugins.visualizations.add({
     const numRows = Math.ceil(numMetrics / 3);
     metricsGrid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
 
-    // Calculate font sizes based on container dimensions 
     const containerHeight = element.offsetHeight;
-    const maxRowHeight = containerHeight / numRows;
+    const maxRowHeight = (containerHeight - 20) / numRows; // 20px padding adjustment
     const containerWidth = element.offsetWidth / 3;
     const baseFontSize = Math.min(maxRowHeight, containerWidth) * 0.25;
     const metricValueSize = baseFontSize;
