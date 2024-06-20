@@ -16,7 +16,7 @@ looker.plugins.visualizations.add({
           display: flex;
           flex-wrap: wrap;
           justify-content: space-around;
-          align-items: start;
+          align-items: stretch;
           text-align: center;
           padding: 20px;
           gap: 30px;
@@ -27,14 +27,18 @@ looker.plugins.visualizations.add({
           flex-basis: calc(33.333% - 20px);
           box-sizing: border-box;
           max-width: 200px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
         }
         .viz-title {
           font-size: 14px;
           color: #6c757d;
         }
         .viz-value {
-          font-size: 18px; /* Slightly larger than title */
+          font-size: 24px; /* Larger than title */
           margin-bottom: 5px;
+          flex-grow: 1;
         }
         @media (max-width: 768px) {
           .viz-element {
