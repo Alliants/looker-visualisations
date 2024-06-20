@@ -15,7 +15,6 @@ looker.plugins.visualizations.add({
         .viz-container {
           display: flex;
           flex-wrap: wrap;
-          justify-content: space-around;
           align-items: center;
           text-align: center;
           padding: 10px;
@@ -24,40 +23,30 @@ looker.plugins.visualizations.add({
           font-family: 'Lato Light', sans-serif;
           height: 100%;
           box-sizing: border-box;
-          overflow: hidden;
+          overflow: auto;
         }
         .viz-element {
+          flex: 0 1 30%;
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          box-sizing: border-box;
           padding: 10px;
           background-color: white;
           border: 1px solid #e0e0e0;
           border-radius: 4px;
+          box-sizing: border-box;
         }
         .viz-title {
-          font-size: 14px;
+          font-size: 1vw;
           color: #6c757d;
         }
         .viz-value {
-          font-size: 1.5em;
-        }
-        @media (max-width: 768px) {
-          .viz-element {
-            flex-basis: calc(50% - 20px);
-          }
-        }
-        @media (max-width: 480px) {
-          .viz-element {
-            flex-basis: 100%;
-          }
+          font-size: 1.5vw;
         }
       </style>
       <div class="viz-container"></div>
     `;
-    element.style.height = "100%";
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     if (!data || data.length === 0) {
@@ -71,12 +60,6 @@ looker.plugins.visualizations.add({
     const maxFields = 6; // Limit to show max 6 items for compact display
     const items = fields.slice(0, maxFields);
 
-    const containerHeight = element.clientHeight;
-    const containerWidth = element.clientWidth;
-    const columns = Math.min(items.length, 3); // Up to 3 columns
-    const rows = Math.ceil(items.length / columns); // Calculate rows needed
-    const elementHeightAdjust = containerHeight / rows - 20; // Adjust for padding and margins
-
     items.forEach((field, index) => {
       const fieldName = field.name;
       const fieldLabel = field.label_short || field.label;
@@ -84,8 +67,6 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
-      vizElement.style.flex = `1 0 calc(${100 / columns}% - 20px)`;
-      vizElement.style.height = `${elementHeightAdjust}px`;
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
@@ -99,7 +80,7 @@ looker.plugins.visualizations.add({
       vizElement.appendChild(titleElement);
       vizContainer.appendChild(vizElement);
 
-      adjustFontSize(valueElement, titleElement, elementHeightAdjust);
+      adjustFontSize(valueElement, titleElement, vizElement.clientHeight);
     });
 
     done();
