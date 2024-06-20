@@ -13,10 +13,13 @@ looker.plugins.visualizations.add({
     element.innerHTML = `
       <style>
         .viz-container {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-          gap: 30px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: space-around;
+          align-items: center;
+          text-align: center;
           padding: 10px;
+          gap: 30px;
           border-radius: 8px;
           font-family: 'Lato Light', sans-serif;
           height: 100%;
@@ -32,11 +35,21 @@ looker.plugins.visualizations.add({
           padding: 10px;
         }
         .viz-title {
-          font-size: 14px;
+          font-size: 14px; /* base size, will be adjusted */
           color: #6c757d;
         }
         .viz-value {
           font-size: 1.5em; /* base size, will be adjusted */
+        }
+        @media (max-width: 768px) {
+          .viz-element {
+            flex-basis: calc(50% - 20px);
+          }
+        }
+        @media (max-width: 480px) {
+          .viz-element {
+            flex-basis: 100%;
+          }
         }
       </style>
       <div class="viz-container"></div>
@@ -56,6 +69,7 @@ looker.plugins.visualizations.add({
     const items = [...dimensions, ...measures];
 
     const tileHeight = element.clientHeight;
+    const tileWidth = element.clientWidth;
     const columns = Math.min(items.length, 3); // Up to 3 columns
     const rows = Math.ceil(items.length / columns); // Calculate rows needed
     const elementHeightAdjust = tileHeight / rows - 40; // adjust for padding and margins
@@ -67,6 +81,7 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
+      vizElement.style.flex = `1 0 calc(${100 / columns}% - 20px)`;
       vizElement.style.height = `${elementHeightAdjust}px`;
 
       const valueElement = document.createElement('div');
