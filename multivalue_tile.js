@@ -22,6 +22,7 @@ looker.plugins.visualizations.add({
           height: 100%;
           gap: 10px;
           grid-template-columns: repeat(3, 1fr);
+          grid-auto-rows: 1fr;
         }
 
         .responsive-table div {
@@ -31,6 +32,7 @@ looker.plugins.visualizations.add({
           flex-direction: column;
           justify-content: center;
           align-items: center;
+          overflow: hidden;
         }
 
         .metric-value {
@@ -111,12 +113,13 @@ looker.plugins.visualizations.add({
 
     const numMetrics = metricsGrid.children.length;
     const numRows = Math.ceil(numMetrics / 3);
-    metricsGrid.style.gridTemplateRows = `repeat(${numRows}, auto)`;
+    metricsGrid.style.gridTemplateRows = `repeat(${numRows}, 1fr)`;
 
     // Calculate font size based on the container height available per row
     const containerHeight = element.offsetHeight;
     const maxRowHeight = containerHeight / numRows;
-    const baseFontSize = Math.min(element.offsetWidth / 3, maxRowHeight) * 0.2;
+    const maxColumnWidth = element.offsetWidth / 3;
+    const baseFontSize = Math.min(maxRowHeight, maxColumnWidth) * 0.3;
     const metricValueSize = baseFontSize * 1.5;
     const metricLabelSize = baseFontSize * 0.8;
 
