@@ -10,7 +10,22 @@ const layoutOptions = {
 };
 
 function getRelevantLayouts(numberOfItems) {
-  return layoutOptions[numberOfItems] || { 'Auto': 'auto' };
+  return layoutOptions[numberOfItems] || {};
+}
+
+function updateLayoutOptions(viz, numberOfItems) {
+  const allowedLayouts = getRelevantLayouts(numberOfItems);
+
+  // Update the layout options dynamically
+  viz.options.layout.values = allowedLayouts;
+
+  // Delete any invalid layout option set previously
+  if (!allowedLayouts[viz.config.layout]) {
+    viz.config.layout = Object.keys(allowedLayouts)[0] || 'auto';
+  }
+
+  // Re-register the options to update the UI
+  viz.trigger('registerOptions', viz.options);
 }
 
 looker.plugins.visualizations.add({
@@ -22,7 +37,7 @@ looker.plugins.visualizations.add({
       label: 'Layout',
       display: 'select',
       values: { 'Auto': 'auto' },
-      default: 'auto' // Ensure a default is provided to prevent unexpected undefined values.
+      default: 'auto'
     }
   },
   create: function (element, config) {
@@ -138,17 +153,15 @@ looker.plugins.visualizations.add({
     const items = [...dimensions, ...measures].slice(0, 8); // Limit to 8 metrics
 
     const numberOfItems = items.length;
-    const allowedLayouts = getRelevantLayouts(numberOfItems);
+    updateLayoutOptions(this, numberOfItems); // Update the layout options based on the number of items
 
-    // Update the options dynamically based on the number of items
-    this.options.layout.values = allowedLayouts;
+    let layout = config.layout === 'auto' ? Object.keys(this.options.layout.values)[0] : config.layout;
 
-    // Re-register the options to update the UI with the appropriate layouts
-    this.trigger('registerOptions', this.options);
+    const vizContainer = element.querySelector('.viz-container');
+    vizContainer.classList.remove(...vizContainer.classList);
+    vizContainer.classList.add('viz-container', `grid-${layout}`);
 
-    // Determine layout based on the selected option or default to the first allowed option
-    let layout = Object.values(allowedLayouts)[0]; // Default to the first option
-    layout = config.layout === 'auto' ? layout : config.layout;
+    vizContainer.innerHTML = '';
 
     // Clear previous options
     deleteDynamicOptions(this);
@@ -172,12 +185,6 @@ looker.plugins.visualizations.add({
 
     // Update options
     this.trigger('registerOptions', this.options);
-
-    const vizContainer = element.querySelector('.viz-container');
-    vizContainer.classList.remove(...vizContainer.classList);
-    vizContainer.classList.add('viz-container', `grid-${layout}`);
-
-    vizContainer.innerHTML = '';
 
     items.forEach(field => {
       const fieldName = field.name;
