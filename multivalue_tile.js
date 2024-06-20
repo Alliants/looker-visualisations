@@ -109,12 +109,15 @@ function adjustFontSize(valueElement, titleElement, containerHeight) {
   let fontSize = maxFontSize;
 
   valueElement.style.fontSize = `${fontSize}px`; // Set initial font size
-  titleElement.style.fontSize = `${fontSize * 0.25}px`; // Set initial title font size as a fraction of the main font size
+  let titleFontSize = Math.max(fontSize * 0.25, 12); // Initial title font size with a minimum of 12px
+
+  titleElement.style.fontSize = `${titleFontSize}px`; // Set initial title font size
 
   // Adjust font size until the elements fit within the container
   while ((valueElement.scrollHeight + titleElement.scrollHeight > containerHeight) && fontSize > 10) {
     fontSize -= 1; // Decrease font size
     valueElement.style.fontSize = `${fontSize}px`;
-    titleElement.style.fontSize = `${fontSize * 0.25}px`; // Adjust title font size proportionally
+    titleFontSize = Math.max(fontSize * 0.25, 12); // Adjust title font size proportionally with a minimum of 12px
+    titleElement.style.fontSize = `${titleFontSize}px`;
   }
 }
