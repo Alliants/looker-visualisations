@@ -19,11 +19,17 @@ looker.plugins.visualizations.add({
     }
   },
   create: function(element, config) {
-    const container = document.createElement('div');
-    container.id = "metricsGrid";
-    container.className = "grid-container";
-    container.style.backgroundColor = config.background_color || "#FFFFFF";
-    element.appendChild(container);
+    console.log('Creating visualization...');
+
+    // Check if container already exists
+    let container = document.getElementById('metricsGrid');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = "metricsGrid";
+      container.className = "grid-container";
+      container.style.backgroundColor = config.background_color || "#FFFFFF";
+      element.appendChild(container);
+    }
 
     const style = document.createElement('style');
     style.innerHTML = `
@@ -55,9 +61,17 @@ looker.plugins.visualizations.add({
       }
     `;
     document.head.appendChild(style);
+
+    console.log('Visualization created successfully.');
   },
   updateAsync: function(data, element, config, queryResponse, details, done) {
+    console.log('Updating visualization with data:', data);
+
     const container = document.getElementById('metricsGrid');
+    if (!container) {
+      console.error('Container element not found!');
+      return;
+    }
 
     // Ensure it is empty before rendering new content
     container.innerHTML = '';
@@ -91,12 +105,16 @@ looker.plugins.visualizations.add({
       }));
 
       const gridLayout = calculateGridLayout(metrics.length);
+      console.log('Calculated grid layout:', gridLayout);
       renderMetrics(metrics, gridLayout);
 
       // Handle resizing
       window.addEventListener('resize', () => renderMetrics(metrics, gridLayout));
+    } else {
+      console.error('No measure_like fields found in query response.');
     }
 
     done();
+    console.log('Visualization update complete.');
   }
 });
