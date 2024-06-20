@@ -19,39 +19,49 @@ looker.plugins.visualizations.add({
     }
   },
   create: function(element, config) {
-    element.innerHTML = `
-      <style>
-        .grid-container {
-          display: grid;
-          gap: 10px;
-          padding: 10px;
-          background-color: ${config.background_color || '#FFFFFF'};
-          box-sizing: border-box;
-        }
-        .grid-item {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          padding: 20px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-          background-color: #f9f9f9;
-        }
-        .title {
-          font-weight: bold;
-          margin-bottom: 10px;
-          color: ${config.font_color || '#666666'};
-        }
-        .value {
-          font-size: 24px;
-          color: ${config.font_color || '#666666'};
-        }
-      </style>
-      <div id="metricsGrid" class="grid-container"></div>
+    const container = document.createElement('div');
+    container.id = "metricsGrid";
+    container.className = "grid-container";
+    container.style.backgroundColor = config.background_color || "#FFFFFF";
+    element.appendChild(container);
+
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .grid-container {
+        display: grid;
+        gap: 10px;
+        padding: 10px;
+        background-color: ${config.background_color || '#FFFFFF'};
+        box-sizing: border-box;
+      }
+      .grid-item {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+        border-radius: 4px;
+      }
+      .title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: ${config.font_color || '#666666'};
+        text-align: center;
+      }
+      .value {
+        font-size: 24px;
+        color: ${config.font_color || '#666666'};
+        text-align: center;
+      }
     `;
+    document.head.appendChild(style);
   },
   updateAsync: function(data, element, config, queryResponse, details, done) {
+    const container = document.getElementById('metricsGrid');
+
+    // Ensure it is empty before rendering new content
+    container.innerHTML = '';
+
     const calculateGridLayout = function(metricsCount) {
       const rows = Math.ceil(Math.sqrt(metricsCount));
       const cols = Math.ceil(metricsCount / rows);
@@ -59,10 +69,9 @@ looker.plugins.visualizations.add({
     };
 
     const renderMetrics = function(metrics, { rows, cols }) {
-      const container = document.getElementById('metricsGrid');
       container.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
       container.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
+      
       container.innerHTML = '';
       metrics.forEach(metric => {
         const item = document.createElement('div');
@@ -75,7 +84,7 @@ looker.plugins.visualizations.add({
       });
     };
 
-    if (queryResponse.fields.measure_like.length) {
+    if (queryResponse.fields.measure_like.length > 0) {
       const metrics = queryResponse.fields.measure_like.map(field => ({
         label: field.label_short,
         value: data[0][field.name].value
