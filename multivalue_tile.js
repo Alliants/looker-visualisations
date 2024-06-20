@@ -9,7 +9,7 @@ looker.plugins.visualizations.add({
       <style>
         .viz-container {
           display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
           gap: 30px;
           padding: 10px;
           border-radius: 8px;
@@ -25,10 +25,15 @@ looker.plugins.visualizations.add({
           justify-content: center;
           box-sizing: border-box;
           padding: 10px;
+          text-align: center;
+          background-color: #f8f9fa;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
         }
         .viz-title {
           font-size: 14px;
           color: #6c757d;
+          margin-top: 10px;
         }
         .viz-value {
           font-size: 1.5em;
@@ -87,7 +92,6 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
-      vizElement.style.height = `${elementHeightAdjust}px`;
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
@@ -120,7 +124,9 @@ function adjustFontSize(valueElement, titleElement, containerHeight) {
   titleElement.style.fontSize = `${titleFontSize}px`; // Set initial title font size
 
   // Adjust font size until the elements fit within the container
-  while ((valueElement.scrollHeight + titleElement.scrollHeight > containerHeight) && fontSize > 10) {
+  const totalHeight = () => valueElement.scrollHeight + titleElement.scrollHeight;
+  
+  while ((totalHeight() > containerHeight) && fontSize > 10) {
     fontSize -= 1; // Decrease font size
     valueElement.style.fontSize = `${fontSize}px`;
     titleFontSize = Math.max(fontSize * 0.25, 12); // Adjust title font size proportionally with a minimum of 12px
