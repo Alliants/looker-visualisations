@@ -7,10 +7,29 @@ looker.plugins.visualizations.add({
       label: 'Layout',
       display: 'select',
       values: [
+        { 'Auto': 'auto' },
+        { '1x1': '1x1' },
+        { '2x1': '2x1' },
+        { '1x2': '1x2' },
+        { '3x1': '3x1' },
+        { '1x3': '1x3' },
+        { '2x2': '2x2' },
+        { '4x1': '4x1' },
+        { '1x4': '1x4' },
+        { '2x2 + 1x1': '2x2-1x1' },
+        { '5x1': '5x1' },
+        { '1x5': '1x5' },
+        { '3x2': '3x2' },
         { '2x3': '2x3' },
-        { '3x2': '3x2' }
+        { '2x2 + 2x1': '2x2-2x1' },
+        { '4x2': '4x2' },
+        { '2x4': '2x4' },
+        { '3x2 + 2x1': '3x2-2x1' },
+        { '4x2 + 1x1': '4x2-1x1' },
+        { '5x2': '5x2' },
+        { '2x5': '2x5' }
       ],
-      default: '2x3'
+      default: 'auto'
     }
   },
   create: function (element, config) {
@@ -34,7 +53,7 @@ looker.plugins.visualizations.add({
           overflow: hidden;
         }
         .viz-title {
-          font-size: 14px;
+          font-size: 16px;
           color: #6c757d;
           margin-top: 5px;
         }
@@ -42,12 +61,95 @@ looker.plugins.visualizations.add({
           font-size: 2em;
           line-height: 1em;
         }
-        .grid-2x3 {
+        .grid-1x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-2x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-1x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-3x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .grid-1x3 {
+          grid-template-rows: repeat(3, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-2x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-4x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .grid-1x4 {
+          grid-template-rows: repeat(4, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-2x2-1x1 {
+          display: grid;
+          grid-template-areas:
+            "a a b b"
+            "a a c c"
+            "d d e e";
+        }
+        .grid-5x1 {
+          grid-template-rows: repeat(1, 1fr);
+          grid-template-columns: repeat(5, 1fr);
+        }
+        .grid-1x5 {
+          grid-template-rows: repeat(5, 1fr);
+          grid-template-columns: repeat(1, 1fr);
+        }
+        .grid-3x2 {
           grid-template-rows: repeat(2, 1fr);
           grid-template-columns: repeat(3, 1fr);
         }
-        .grid-3x2 {
+        .grid-2x3 {
           grid-template-rows: repeat(3, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-2x2-2x1 {
+          display: grid;
+          grid-template-areas:
+            "a a b b"
+            "c c d d"
+            "e e . .";
+        }
+        .grid-4x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(4, 1fr);
+        }
+        .grid-2x4 {
+          grid-template-rows: repeat(4, 1fr);
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .grid-3x2-2x1 {
+          display: grid;
+          grid-template-areas:
+            "a a b b c c"
+            "d d e e f f";
+        }
+        .grid-4x2-1x1 {
+          display: grid;
+          grid-template-areas:
+            "a a b b"
+            "c c d d"
+            "e e f f";
+        }
+        .grid-5x2 {
+          grid-template-rows: repeat(2, 1fr);
+          grid-template-columns: repeat(5, 1fr);
+        }
+        .grid-2x5 {
+          grid-template-rows: repeat(5, 1fr);
           grid-template-columns: repeat(2, 1fr);
         }
       </style>
@@ -60,23 +162,44 @@ looker.plugins.visualizations.add({
       return;
     }
 
+    const dimensions = queryResponse.fields.dimension_like;
+    const measures = queryResponse.fields.measure_like;
+    const items = [...dimensions, ...measures].slice(0, 8); // Limit to 8 metrics
+
+    // Determine layout based on the number of items
+    let layout;
+    switch (items.length) {
+      case 1:
+        layout = '1x1';
+        break;
+      case 2:
+        layout = '2x1';
+        break;
+      case 3:
+        layout = '3x1';
+        break;
+      case 4:
+        layout = '2x2';
+        break;
+      case 5:
+        layout = '2x2-1x1';
+        break;
+      case 6:
+        layout = '3x2';
+        break;
+      case 7:
+        layout = '3x2-2x1';
+        break;
+      case 8:
+        layout = '4x2';
+        break;
+      default:
+        layout = 'auto';
+    }
+    layout = config.layout === 'auto' ? layout : config.layout;
+
     // Clear previous options
     deleteDynamicOptions(this);
-
-    const vizContainer = element.querySelector('.viz-container');
-    const layout = config.layout || '2x3';
-
-    // Apply grid layout class
-    vizContainer.classList.remove(...vizContainer.classList);
-    vizContainer.classList.add('viz-container', `grid-${layout}`);
-
-    vizContainer.innerHTML = '';
-
-    // Limit the number of metrics based on layout
-    const maxItems = layout === '2x3' ? 6 : 6;
-    const dimensions = queryResponse.fields.dimension_like.slice(0, maxItems);
-    const measures = queryResponse.fields.measure_like.slice(0, maxItems);
-    const items = [...dimensions, ...measures].slice(0, maxItems);
 
     items.forEach((field, index) => {
       const fieldName = field.name;
@@ -95,8 +218,14 @@ looker.plugins.visualizations.add({
       };
     });
 
-    // Update options
+    // Update options and apply layout
     this.trigger('registerOptions', this.options);
+
+    const vizContainer = element.querySelector('.viz-container');
+    vizContainer.classList.remove(...vizContainer.classList);
+    vizContainer.classList.add('viz-container', `grid-${layout}`);
+
+    vizContainer.innerHTML = '';
 
     items.forEach(field => {
       const fieldName = field.name;
@@ -131,7 +260,7 @@ function adjustFontSize(valueElement, titleElement, containerHeight) {
   const maxFontSizeValue = containerHeight * 0.4; // Max font size for value element
   const maxFontSizeTitle = containerHeight * 0.15; // Max font size for title element
   let fontSizeValue = Math.min(2 * parseInt(window.getComputedStyle(document.body).fontSize), maxFontSizeValue);
-  let fontSizeTitle = Math.min(0.4 * parseInt(window.getComputedStyle(document.body).fontSize), maxFontSizeTitle);
+  let fontSizeTitle = 16; // Consistent max font size for title element
 
   valueElement.style.fontSize = `${fontSizeValue}px`; // Set initial font size for value element
   titleElement.style.fontSize = `${fontSizeTitle}px`; // Set initial font size for title element
@@ -139,11 +268,9 @@ function adjustFontSize(valueElement, titleElement, containerHeight) {
   // Adjust font size until the elements fit within the container
   const totalHeight = () => valueElement.scrollHeight + titleElement.scrollHeight;
   
-  while ((totalHeight() > containerHeight) && fontSizeValue > 10 && fontSizeTitle > 10) {
+  while ((totalHeight() > containerHeight) && fontSizeValue > 10) {
     fontSizeValue -= 1; // Decrease font size for value element
-    fontSizeTitle -= 1; // Decrease font size for title element
     valueElement.style.fontSize = `${fontSizeValue}px`;
-    titleElement.style.fontSize = `${fontSizeTitle}px`;
   }
 }
 
