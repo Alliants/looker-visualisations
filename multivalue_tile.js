@@ -20,8 +20,8 @@ looker.plugins.visualizations.add({
           text-align: center;
           padding: 20px;
           gap: 30px;
-          background: #f8f9fa;
           border-radius: 8px;
+          font-family: 'Lato Light', sans-serif;
         }
         .viz-element {
           flex-basis: calc(33.333% - 30px);
@@ -83,8 +83,23 @@ looker.plugins.visualizations.add({
       vizElement.appendChild(valueElement);
       vizElement.appendChild(titleElement);
       vizContainer.appendChild(vizElement);
+
+      // Adjust font size to fit the value within the tile
+      fitTextToElement(valueElement);
     });
 
     done();
   },
 });
+
+// Function to adjust font size of the value to fit within its container
+function fitTextToElement(element) {
+  let fontSize = parseInt(window.getComputedStyle(element).fontSize);
+  const parentElement = element.parentElement;
+  const maxHeight = parentElement.clientHeight - 25; // Consider title height and margin
+
+  while (element.scrollHeight > maxHeight && fontSize > 10) {
+    fontSize -= 1;
+    element.style.fontSize = fontSize + 'px';
+  }
+}
