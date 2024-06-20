@@ -16,7 +16,7 @@ looker.plugins.visualizations.add({
           display: flex;
           flex-wrap: wrap;
           justify-content: space-around;
-          align-items: stretch;
+          align-items: flex-start;
           text-align: center;
           padding: 20px;
           gap: 30px;
@@ -30,6 +30,8 @@ looker.plugins.visualizations.add({
           display: flex;
           flex-direction: column;
           justify-content: center;
+          height: 100%; /* Ensure the element fills vertical space */
+          padding: 10px;
         }
         .viz-title {
           font-size: 14px;
@@ -39,6 +41,9 @@ looker.plugins.visualizations.add({
           font-size: 24px; /* Larger than title */
           margin-bottom: 5px;
           flex-grow: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
         @media (max-width: 768px) {
           .viz-element {
@@ -87,7 +92,7 @@ looker.plugins.visualizations.add({
       vizContainer.appendChild(vizElement);
 
       // Adjust font size to fit the value within the tile
-      fitTextToElement(valueElement);
+      fitTextToElement(valueElement, vizElement);
     });
 
     done();
@@ -95,13 +100,10 @@ looker.plugins.visualizations.add({
 });
 
 // Function to adjust font size of the value to fit within its container
-function fitTextToElement(element) {
+function fitTextToElement(element, container) {
   let fontSize = parseInt(window.getComputedStyle(element).fontSize);
-  const parentElement = element.parentElement;
-  const maxHeight = parentElement.clientHeight - 35; // Consider title height and margin
-
-  while (element.scrollHeight > maxHeight && fontSize > 10) {
-    fontSize -= 1;
+  while (container.scrollHeight > container.clientHeight && fontSize > 10) {
+    fontSize -= 1; // Reduce font size
     element.style.fontSize = fontSize + 'px';
   }
 }
