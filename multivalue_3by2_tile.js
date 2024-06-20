@@ -19,7 +19,7 @@ looker.plugins.visualizations.add({
           align-items: center;
           text-align: center;
           padding: 10px;
-          gap: 30px;
+          gap: 10px;
           border-radius: 8px;
           font-family: 'Lato Light', sans-serif;
           height: 100%;
@@ -33,6 +33,9 @@ looker.plugins.visualizations.add({
           justify-content: center;
           box-sizing: border-box;
           padding: 10px;
+          background-color: white;
+          border: 1px solid #e0e0e0;
+          border-radius: 4px;
         }
         .viz-title {
           font-size: 14px;
@@ -96,7 +99,7 @@ looker.plugins.visualizations.add({
       vizElement.appendChild(titleElement);
       vizContainer.appendChild(vizElement);
 
-      adjustFontSize(valueElement, titleElement, vizElement.clientHeight);
+      adjustFontSize(valueElement, titleElement, elementHeightAdjust);
     });
 
     done();
