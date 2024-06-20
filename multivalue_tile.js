@@ -1,44 +1,7 @@
 looker.plugins.visualizations.add({
   id: "custom-responsiveness",
   label: "Responsive Table",
-  options: {
-    properties_name: {
-      type: "string",
-      label: "Properties Visited Label",
-      display: "text",
-      default: "Properties Visited"
-    },
-    nights_name: {
-      type: "string",
-      label: "Total Nights Label",
-      display: "text",
-      default: "Total Nights"
-    },
-    adr_name: {
-      type: "string",
-      label: "Avg. ADR Label",
-      display: "text",
-      default: "Avg. ADR"
-    },
-    stays_name: {
-      type: "string",
-      label: "Total Stays Label",
-      display: "text",
-      default: "Total Stays"
-    },
-    stay_length_name: {
-      type: "string",
-      label: "Avg. Stay Length Label",
-      display: "text",
-      default: "Avg. Stay Length"
-    },
-    revenue_name: {
-      type: "string",
-      label: "Total Room Revenue Label",
-      display: "text",
-      default: "Total Room Revenue"
-    },
-  },
+  options: {},
 
   create: function(element, config) {
     // Create an empty container element for the visualization
@@ -56,7 +19,6 @@ looker.plugins.visualizations.add({
 
         .responsive-table {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
           width: 100%;
           gap: 10px;
         }
@@ -110,32 +72,7 @@ looker.plugins.visualizations.add({
         }
       </style>
       <div class="custom-visualization">
-        <div class="responsive-table">
-          <div>
-            <div class="metric-value" id="count-of-properties">N/A</div>
-            <p class="metric-label" id="label-properties">Properties Visited</p>
-          </div>
-          <div>
-            <div class="metric-value" id="count-of-nights">N/A</div>
-            <p class="metric-label" id="label-nights">Total Nights</p>
-          </div>
-          <div>
-            <div class="metric-value" id="avg-adr">N/A</div>
-            <p class="metric-label" id="label-adr">Avg. ADR</p>
-          </div>
-          <div>
-            <div class="metric-value" id="count-of-stays">N/A</div>
-            <p class="metric-label" id="label-stays">Total Stays</p>
-          </div>
-          <div>
-            <div class="metric-value" id="avg-stay-length">N/A</div>
-            <p class="metric-label" id="label-stay-length">Avg. Stay Length</p>
-          </div>
-          <div>
-            <div class="metric-value" id="total-room-revenue">N/A</div>
-            <p class="metric-label" id="label-revenue">Total Room Revenue</p>
-          </div>
-        </div>
+        <div class="responsive-table" id="metrics-grid"></div>
       </div>
     `;
   },
@@ -144,40 +81,40 @@ looker.plugins.visualizations.add({
     // Clear any errors from previous updates
     this.clearErrors();
 
-    // Validate that the visualization's data matches the query response
-    if (queryResponse.fields.dimensions.length < 6) {
-      this.addError({
-        title: "Not Enough Dimensions",
-        message: "This visualization requires 6 dimensions."
-      });
-      return;
-    }
+    // Reset the metrics grid
+    const metricsGrid = document.getElementById("metrics-grid");
+    metricsGrid.innerHTML = '';
 
-    // Parse data and format values
-    const formatValue = (value) => {
-      var options = { style: 'decimal', useGrouping: true };
-      if (typeof value === 'number' && value % 1 !== 0) {
-        options.minimumFractionDigits = 1;
-        options.maximumFractionDigits = 2;
-      }
-      return new Intl.NumberFormat('en-US', options).format(value);
+    // Function to create and append metric elements
+    const createMetricElement = (label, value) => {
+      const metricElement = document.createElement("div");
+      metricElement.innerHTML = `
+        <div class="metric-value">${value}</div>
+        <p class="metric-label">${label}</p>
+      `;
+      metricsGrid.appendChild(metricElement);
     };
 
-    document.getElementById("count-of-properties").innerText = formatValue(data[0][queryResponse.fields.dimensions[0].name].value);
-    document.getElementById("count-of-nights").innerText = formatValue(data[0][queryResponse.fields.dimensions[1].name].value);
-    document.getElementById("avg-adr").innerText = formatValue(data[0][queryResponse.fields.dimensions[2].name].value);
-    document.getElementById("count-of-stays").innerText = formatValue(data[0][queryResponse.fields.dimensions[3].name].value);
-    document.getElementById("avg-stay-length").innerText = formatValue(data[0][queryResponse.fields.dimensions[4].name].value);
-    document.getElementById("total-room-revenue").innerText = formatValue(data[0][queryResponse.fields.dimensions[5].name].value);
+    // Process dimensions and create metric elements
+    queryResponse.fields.dimension_like.forEach((field, index) => {
+      const value = data[0][field.name].rendered || data[0][field.name].value;
+      createMetricElement(config[`label_${index}`] || field.label_short, value);
+    });
 
-    // Update labels with config values
-    document.getElementById("label-properties").innerText = config.properties_name || queryResponse.fields.dimensions[0].label_short;
-    document.getElementById("label-nights").innerText = config.nights_name || queryResponse.fields.dimensions[1].label_short;
-    document.getElementById("label-adr").innerText = config.adr_name || queryResponse.fields.dimensions[2].label_short;
-    document.getElementById("label-stays").innerText = config.stays_name || queryResponse.fields.dimensions[3].label_short;
-    document.getElementById("label-stay-length").innerText = config.stay_length_name || queryResponse.fields.dimensions[4].label_short;
-    document.getElementById("label-revenue").innerText = config.revenue_name || queryResponse.fields.dimensions[5].label_short;
+    // Process measures and create metric elements
+    queryResponse.fields.measure_like.forEach((field, index) => {
+      const value = data[0][field.name].rendered || data[0][field.name].value;
+      createMetricElement(config[`label_${index}`] || field.label_short, value);
+    });
 
+    // Adjust the grid style for responsiveness
+    const numMetrics = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
+    if (numMetrics > 3) {
+      metricsGrid.style.gridTemplateColumns = 'repeat(3, 1fr)';
+    } else {
+      metricsGrid.style.gridTemplateColumns = `repeat(${numMetrics}, 1fr)`;
+    }
+    
     // Call done to indicate rendering is complete
     done();
   }
