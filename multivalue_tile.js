@@ -35,7 +35,7 @@ looker.plugins.visualizations.add({
           padding: 10px;
         }
         .viz-title {
-          font-size: 14px;
+          font-size: 14px; /* base size, will be adjusted */
           color: #6c757d;
         }
         .viz-value {
@@ -96,25 +96,25 @@ looker.plugins.visualizations.add({
       vizElement.appendChild(titleElement);
       vizContainer.appendChild(vizElement);
 
-      // Adjust font size to fit the value within the tile
-      adjustFontSize(valueElement, vizElement);
+      // Adjust font size to fit both the value and title within the tile
+      adjustFontSize(valueElement, titleElement, vizElement.clientHeight);
     });
 
     done();
   }
 });
 
-function adjustFontSize(valueElement, containerElement) {
-  const containerHeight = containerElement.clientHeight;
+function adjustFontSize(valueElement, titleElement, containerHeight) {
   const maxFontSize = containerHeight * 0.4; // Max font size is 40% of container height
-  const minFontSize = 10;  // Minimum font size
   let fontSize = maxFontSize;
 
   valueElement.style.fontSize = `${fontSize}px`; // Set initial font size
+  titleElement.style.fontSize = `${fontSize * 0.25}px`; // Set initial title font size as a fraction of the main font size
 
-  // Adjust font size until the element fits within its container
-  while (valueElement.scrollHeight > containerHeight && fontSize > minFontSize) {
+  // Adjust font size until the elements fit within the container
+  while ((valueElement.scrollHeight + titleElement.scrollHeight > containerHeight) && fontSize > 10) {
     fontSize -= 1; // Decrease font size
     valueElement.style.fontSize = `${fontSize}px`;
+    titleElement.style.fontSize = `${fontSize * 0.25}px`; // Adjust title font size proportionally
   }
 }
