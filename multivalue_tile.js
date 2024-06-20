@@ -25,7 +25,7 @@ looker.plugins.visualizations.add({
           display: grid;
           gap: 10px;
           padding: 10px;
-          background-color: ${config.background_color};
+          background-color: ${config.background_color || '#FFFFFF'};
           box-sizing: border-box;
         }
         .grid-item {
@@ -41,11 +41,11 @@ looker.plugins.visualizations.add({
         .title {
           font-weight: bold;
           margin-bottom: 10px;
-          color: ${config.font_color};
+          color: ${config.font_color || '#666666'};
         }
         .value {
           font-size: 24px;
-          color: ${config.font_color};
+          color: ${config.font_color || '#666666'};
         }
       </style>
       <div id="metricsGrid" class="grid-container"></div>
