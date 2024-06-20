@@ -2,7 +2,7 @@ looker.plugins.visualizations.add({
   id: 'dynamic_layout_viz',
   label: 'Dynamic Layout Viz',
   options: {
-    /* No default options needed */
+    /* Options will be generated dynamically */
   },
   create: function (element, config) {
     element.innerHTML = `
@@ -51,31 +51,20 @@ looker.plugins.visualizations.add({
     const measures = queryResponse.fields.measure_like;
     const items = [...dimensions, ...measures];
 
-    items.forEach(field => {
+    items.forEach((field, index) => {
       const fieldName = field.name;
-      this.options[`${fieldName}_group`] = {
-        type: "group",
-        label: `Metric: ${field.label_short || field.label}`
-      };
+      const labelIndex = index + 1;
       this.options[`${fieldName}_title`] = {
         type: 'string',
-        label: 'Title',
+        label: `Value ${labelIndex} Title`,
         display: 'text',
-        group: `${fieldName}_group`,
         default: field.label_short || field.label
       };
       this.options[`${fieldName}_color`] = {
         type: 'string',
-        label: 'Color',
+        label: `Value ${labelIndex} Color`,
         display: 'color',
-        group: `${fieldName}_group`,
         default: '#000000'
-      };
-      this.options[`${fieldName}_format`] = {
-        type: 'string',
-        label: 'Value Format',
-        display: 'text',
-        group: `${fieldName}_group`
       };
     });
 
@@ -94,12 +83,7 @@ looker.plugins.visualizations.add({
       const fieldName = field.name;
       const fieldLabel = config[fieldName + '_title'] || field.label_short || field.label;
       const fieldColor = config[fieldName + '_color'] || '#000000';
-      const fieldFormat = config[fieldName + '_format'] || '';
       let fieldValue = data[0][fieldName].rendered || data[0][fieldName].value;
-
-      if (fieldFormat) {
-        fieldValue = looker.utils.format_value(fieldValue, { value_format: fieldFormat });
-      }
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
@@ -147,7 +131,7 @@ function adjustFontSize(valueElement, titleElement, containerHeight) {
 function deleteDynamicOptions (viz) {
   const options = viz.options;
   for (const key in options) {
-    if (key.endsWith('_group') || key.endsWith('_title') || key.endsWith('_color') || key.endsWith('_format')) {
+    if (key.endsWith('_title') || key.endsWith('_color')) {
       delete options[key];
     }
   }
