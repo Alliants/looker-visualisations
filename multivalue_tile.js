@@ -1,3 +1,14 @@
+const layoutOptions = {
+  1: { '1x1': '1x1' },
+  2: { '2x1': '2x1', '1x2': '1x2' },
+  3: { '3x1': '3x1', '1x3': '1x3' },
+  4: { '2x2': '2x2', '4x1': '4x1', '1x4': '1x4' },
+  5: { '2x2 + 1x1': '2x2-1x1', '5x1': '5x1', '1x5': '1x5' },
+  6: { '3x2': '3x2', '2x3': '2x3' },
+  7: { '3x2 + 1x1': '3x2-1x1' },
+  8: { '4x2': '4x2', '2x4': '2x4' }
+};
+
 looker.plugins.visualizations.add({
   id: 'structured_layout_viz',
   label: 'Structured Layout Viz',
@@ -5,31 +16,7 @@ looker.plugins.visualizations.add({
     layout: {
       type: 'string',
       label: 'Layout',
-      display: 'select',
-      values: [
-        { 'Auto': 'auto' },
-        { '1x1': '1x1' },
-        { '2x1': '2x1' },
-        { '1x2': '1x2' },
-        { '3x1': '3x1' },
-        { '1x3': '1x3' },
-        { '2x2': '2x2' },
-        { '4x1': '4x1' },
-        { '1x4': '1x4' },
-        { '2x2 + 1x1': '2x2-1x1' },
-        { '5x1': '5x1' },
-        { '1x5': '1x5' },
-        { '3x2': '3x2' },
-        { '2x3': '2x3' },
-        { '2x2 + 2x1': '2x2-2x1' },
-        { '4x2': '4x2' },
-        { '2x4': '2x4' },
-        { '3x2 + 2x1': '3x2-2x1' },
-        { '4x2 + 1x1': '4x2-1x1' },
-        { '5x2': '5x2' },
-        { '2x5': '2x5' }
-      ],
-      default: 'auto'
+      display: 'select'
     }
   },
   create: function (element, config) {
@@ -116,12 +103,11 @@ looker.plugins.visualizations.add({
           grid-template-rows: repeat(3, 1fr);
           grid-template-columns: repeat(2, 1fr);
         }
-        .grid-2x2-2x1 {
+        .grid-3x2-2x1 {
           display: grid;
           grid-template-areas:
-            "a a b b"
-            "c c d d"
-            "e e . .";
+            "a a b b c c"
+            "d d e e f f";
         }
         .grid-4x2 {
           grid-template-rows: repeat(2, 1fr);
@@ -129,27 +115,6 @@ looker.plugins.visualizations.add({
         }
         .grid-2x4 {
           grid-template-rows: repeat(4, 1fr);
-          grid-template-columns: repeat(2, 1fr);
-        }
-        .grid-3x2-2x1 {
-          display: grid;
-          grid-template-areas:
-            "a a b b c c"
-            "d d e e f f";
-        }
-        .grid-4x2-1x1 {
-          display: grid;
-          grid-template-areas:
-            "a a b b"
-            "c c d d"
-            "e e f f";
-        }
-        .grid-5x2 {
-          grid-template-rows: repeat(2, 1fr);
-          grid-template-columns: repeat(5, 1fr);
-        }
-        .grid-2x5 {
-          grid-template-rows: repeat(5, 1fr);
           grid-template-columns: repeat(2, 1fr);
         }
       </style>
@@ -166,36 +131,17 @@ looker.plugins.visualizations.add({
     const measures = queryResponse.fields.measure_like;
     const items = [...dimensions, ...measures].slice(0, 8); // Limit to 8 metrics
 
+    const numberOfItems = items.length;
+
+    // Update layout options dynamically based on the number of items
+    const allowedLayouts = layoutOptions[numberOfItems] || { 'Auto': 'auto' };
+
+    // Clear and set new layout options
+    this.options.layout.values = allowedLayouts;
+    this.trigger('registerOptions', this.options);
+
     // Determine layout based on the number of items
-    let layout;
-    switch (items.length) {
-      case 1:
-        layout = '1x1';
-        break;
-      case 2:
-        layout = '2x1';
-        break;
-      case 3:
-        layout = '3x1';
-        break;
-      case 4:
-        layout = '2x2';
-        break;
-      case 5:
-        layout = '2x2-1x1';
-        break;
-      case 6:
-        layout = '3x2';
-        break;
-      case 7:
-        layout = '3x2-2x1';
-        break;
-      case 8:
-        layout = '4x2';
-        break;
-      default:
-        layout = 'auto';
-    }
+    let layout = Object.keys(allowedLayouts)[0]; // Default to the first option if 'auto' is not selected
     layout = config.layout === 'auto' ? layout : config.layout;
 
     // Clear previous options
