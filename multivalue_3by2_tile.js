@@ -129,8 +129,7 @@ looker.plugins.visualizations.add({
             justify-content: center;
             align-items: center;
             text-align: center;
-            padding: 10px;
-            gap: 10px;
+            column-gap: 10px;
             border-radius: 8px;
             height: 100%;
             box-sizing: border-box;
@@ -147,14 +146,19 @@ looker.plugins.visualizations.add({
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 10px;
             box-sizing: border-box;
             flex: 1 1 30%;
             min-width: 120px;
             font-family: ${config.font_family}, sans-serif;
           }
-          .viz-title, .viz-value {
+          .viz-value {
             margin: 0;
+            font-size: 2rem
+            font-family: ${config.font_family}, sans-serif;
+          }
+          .viz-title {
+            margin: 0;
+            font-size: 1rem
             font-family: ${config.font_family}, sans-serif;
           }
         </style>
@@ -200,7 +204,7 @@ looker.plugins.visualizations.add({
       const containerHeight = element.clientHeight;
       const containerWidth = element.clientWidth;
       const minContainerSize = Math.min(containerHeight, containerWidth);
-      const baseFontSize = minContainerSize / 10;
+      const baseFontSize = minContainerSize / 5;
   
       items.forEach((field, index) => {
         const fieldName = field.name;
@@ -216,13 +220,13 @@ looker.plugins.visualizations.add({
         const valueElement = document.createElement('div');
         valueElement.className = 'viz-value';
         valueElement.innerHTML = fieldValue;
-        valueElement.style.fontSize = `${baseFontSize}px`;
+        // valueElement.style.fontSize = `${baseFontSize}px`;
         valueElement.style.color = metricColor;
   
         const titleElement = document.createElement('div');
         titleElement.className = 'viz-title';
         titleElement.innerText = metricTitle;
-        titleElement.style.fontSize = `${baseFontSize / 2.5}px`;
+        // titleElement.style.fontSize = `${baseFontSize / 2}px`;
         titleElement.style.color = metricColor;
   
         vizElement.appendChild(valueElement);
