@@ -37,7 +37,66 @@ looker.plugins.visualizations.add({
       display: 'color',
       default: '#ff7f0e',
     },
-    // Add more metric colors as needed, up to 6
+    metric3_color: {
+      type: 'string',
+      label: 'Metric 3 Color',
+      display: 'color',
+      default: '#2ca02c',
+    },
+    metric4_color: {
+      type: 'string',
+      label: 'Metric 4 Color',
+      display: 'color',
+      default: '#d62728',
+    },
+    metric5_color: {
+      type: 'string',
+      label: 'Metric 5 Color',
+      display: 'color',
+      default: '#9467bd',
+    },
+    metric6_color: {
+      type: 'string',
+      label: 'Metric 6 Color',
+      display: 'color',
+      default: '#8c564b',
+    },
+    metric1_title: {
+      type: 'string',
+      label: 'Metric 1 Title',
+      display: 'text',
+      default: '',
+    },
+    metric2_title: {
+      type: 'string',
+      label: 'Metric 2 Title',
+      display: 'text',
+      default: '',
+    },
+    metric3_title: {
+      type: 'string',
+      label: 'Metric 3 Title',
+      display: 'text',
+      default: '',
+    },
+    metric4_title: {
+      type: 'string',
+      label: 'Metric 4 Title',
+      display: 'text',
+      default: '',
+    },
+    metric5_title: {
+      type: 'string',
+      label: 'Metric 5 Title',
+      display: 'text',
+      default: '',
+    },
+    metric6_title: {
+      type: 'string',
+      label: 'Metric 6 Title',
+      display: 'text',
+      default: '',
+    },
   },
   create: function (element, config) {
     element.innerHTML = `
@@ -59,6 +118,7 @@ looker.plugins.visualizations.add({
           width: 100%;
           text-align: ${config.title_position || 'center'};
           margin-bottom: 10px;
+          font-family: 'Lato Light', sans-serif;
         }
         .viz-element {
           display: flex;
@@ -110,7 +170,7 @@ looker.plugins.visualizations.add({
     const containerHeight = element.clientHeight;
     const containerWidth = element.clientWidth;
     const minContainerSize = Math.min(containerHeight, containerWidth);
-    const baseFontSize = minContainerSize / 10; 
+    const baseFontSize = minContainerSize / 10;
 
     items.forEach((field, index) => {
       const fieldName = field.name;
@@ -119,8 +179,9 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
-      
+
       const metricColor = config[`metric${index + 1}_color`] || config.master_color;
+      const metricTitle = config[`metric${index + 1}_title`] || fieldLabel;
 
       const valueElement = document.createElement('div');
       valueElement.className = 'viz-value';
@@ -130,7 +191,7 @@ looker.plugins.visualizations.add({
 
       const titleElement = document.createElement('div');
       titleElement.className = 'viz-title';
-      titleElement.innerText = fieldLabel;
+      titleElement.innerText = metricTitle;
       titleElement.style.fontSize = `${baseFontSize / 2.5}px`;
       titleElement.style.color = metricColor;
 
