@@ -140,6 +140,7 @@ looker.plugins.visualizations.add({
             text-align: ${config.title_position || 'center'};
             margin-bottom: 5px;
             font-family: ${config.font_family}, sans-serif;
+            font-size: 2.5vw;
           }
           .viz-element {
             display: flex;
@@ -153,12 +154,12 @@ looker.plugins.visualizations.add({
           }
           .viz-value {
             margin: 0;
-            font-size: 2rem;
+            font-size: 5vw;
             font-family: ${config.font_family}, sans-serif;
           }
           .viz-title {
             margin: 0;
-            font-size: 1rem;
+            font-size: 2.5vw;
             font-family: ${config.font_family}, sans-serif;
           }
         </style>
