@@ -207,6 +207,9 @@ looker.plugins.visualizations.add({
       const minContainerSize = Math.min(containerHeight, containerWidth);
       const baseFontSize = minContainerSize / 5;
   
+      // Adjust height of the viz-container to be less than the parent element
+      vizContainer.style.height = `${containerHeight - 20}px`;  // Adjust 20px to the margin/padding as per your requirement
+  
       items.forEach((field, index) => {
         const fieldName = field.name;
         const fieldLabel = field.label_short || field.label;
