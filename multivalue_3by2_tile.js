@@ -1,9 +1,125 @@
 looker.plugins.visualizations.add({
+  id: 'dynamic_layout_viz',
+  label: 'Dynamic Layout Viz',
+  options: {
+    title: {
+      type: 'string',
+      label: 'Title',
+      display: 'text',
+      default: '',
+    },
+    title_position: {
+      type: 'string',
+      label: 'Title Position',
+      display: 'select',
+      values: [
+        { 'Left': 'left' },
+        { 'Center': 'center' },
+        { 'Right': 'right' }
+      ],
+      default: 'center',
+    },
+    font_family: {
+      type: 'string',
+      label: 'Font Family',
+      display: 'select',
+      values: [
+        { 'Lato': 'Lato' },
+        { 'Arial': 'Arial' },
+        { 'Georgia': 'Georgia' },
+        { 'Courier New': 'Courier New' },
+        { 'Roboto': 'Roboto' },
+        { 'Open Sans': 'Open Sans' },
+        { 'Montserrat': 'Montserrat' },
+        { 'Oswald': 'Oswald' },
+        { 'Raleway': 'Raleway' },
+      ],
+      default: 'Lato',
+    },
+    master_color: {
+      type: 'string',
+      label: 'Master Color',
+      display: 'color',
+      default: '#333',
+    },
+    metric1_color: {
+      type: 'string',
+      label: 'Metric 1 Color',
+      display: 'color',
+      default: '#1f77b4',
+    },
+    metric2_color: {
+      type: 'string',
+      label: 'Metric 2 Color',
+      display: 'color',
+      default: '#ff7f0e',
+    },
+    metric3_color: {
+      type: 'string',
+      label: 'Metric 3 Color',
+      display: 'color',
+      default: '#2ca02c',
+    },
+    metric4_color: {
+      type: 'string',
+      label: 'Metric 4 Color',
+      display: 'color',
+      default: '#d62728',
+    },
+    metric5_color: {
+      type: 'string',
+      label: 'Metric 5 Color',
+      display: 'color',
+      default: '#9467bd',
+    },
+    metric6_color: {
+      type: 'string',
+      label: 'Metric 6 Color',
+      display: 'color',
+      default: '#8c564b',
+    },
+    metric1_title: {
+      type: 'string',
+      label: 'Metric 1 Title',
+      display: 'text',
+      default: '',
+    },
+    metric2_title: {
+      type: 'string',
+      label: 'Metric 2 Title',
+      display: 'text',
+      default: '',
+    },
+    metric3_title: {
+      type: 'string',
+      label: 'Metric 3 Title',
+      display: 'text',
+      default: '',
+    },
+    metric4_title: {
+      type: 'string',
+      label: 'Metric 4 Title',
+      display: 'text',
+      default: '',
+    },
+    metric5_title: {
+      type: 'string',
+      label: 'Metric 5 Title',
+      display: 'text',
+      default: '',
+    },
+    metric6_title: {
+      type: 'string',
+      label: 'Metric 6 Title',
+      display: 'text',
+      default: '',
+    },
+  },
   create: function (element, config) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`;
-    document.head.appendChild(link);
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
+    document.head.appendChild(link)
 
     element.innerHTML = `
       <style>
@@ -49,18 +165,12 @@ looker.plugins.visualizations.add({
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     // Apply font family style dynamically
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`;
-    document.head.appendChild(link);
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
+    document.head.appendChild(link)
 
     const vizTitleContainer = element.querySelector('.viz-title-container');
-    if (!vizTitleContainer) {
-      console.error('Viz title container is not available.');
-      done();
-      return;
-    }
-
     if (config.title) {
       vizTitleContainer.innerHTML = `<div style="text-align: ${config.title_position};">${config.title}</div>`;
     } else {
@@ -73,12 +183,6 @@ looker.plugins.visualizations.add({
     }
 
     const vizContainer = element.querySelector('.viz-container');
-    if (!vizContainer) {
-      console.error('Viz container is not available.');
-      done();
-      return;
-    }
-
     vizContainer.innerHTML = '';
 
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
@@ -105,7 +209,7 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
-
+      
       const metricColor = config[`metric${index + 1}_color`] || config.master_color;
       const metricTitle = config[`metric${index + 1}_title`] || fieldLabel;
 
