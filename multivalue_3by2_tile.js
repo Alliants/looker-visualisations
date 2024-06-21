@@ -19,6 +19,23 @@ looker.plugins.visualizations.add({
       ],
       default: 'center',
     },
+    font_family: {
+      type: 'string',
+      label: 'Font Family',
+      display: 'select',
+      values: [
+        { 'Lato': 'Lato, sans-serif' },
+        { 'Arial': 'Arial, sans-serif' },
+        { 'Georgia': 'Georgia, serif' },
+        { 'Courier New': '"Courier New", monospace' }
+      ],
+      default: 'Lato, sans-serif',
+    },
+    title_font_size: {
+      type: 'number',
+      label: 'Title Font Size',
+      default: 18,
+    },
     master_color: {
       type: 'string',
       label: 'Master Color',
@@ -110,15 +127,15 @@ looker.plugins.visualizations.add({
           padding: 10px;
           gap: 10px;
           border-radius: 8px;
-          font-family: 'Lato Light', sans-serif;
           height: 100%;
           box-sizing: border-box;
+          font-family: ${config.font_family || 'Lato, sans-serif'};
         }
         .viz-title-container {
           width: 100%;
           text-align: ${config.title_position || 'center'};
-          margin-bottom: 10px;
-          font-family: 'Lato Light', sans-serif;
+          margin-bottom: 5px;
+          font-size: ${config.title_font_size || 18}px;
         }
         .viz-element {
           display: flex;
@@ -142,7 +159,7 @@ looker.plugins.visualizations.add({
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const vizTitleContainer = element.querySelector('.viz-title-container');
     if (config.title) {
-      vizTitleContainer.innerHTML = `<h2 style="text-align: ${config.title_position};">${config.title}</h2>`;
+      vizTitleContainer.innerHTML = `<div style="text-align: ${config.title_position};">${config.title}</div>`;
     } else {
       vizTitleContainer.innerHTML = '';
     }
