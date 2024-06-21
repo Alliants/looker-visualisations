@@ -153,12 +153,12 @@ looker.plugins.visualizations.add({
           }
           .viz-value {
             margin: 0;
-            font-size: 2rem
+            font-size: 2rem;
             font-family: ${config.font_family}, sans-serif;
           }
           .viz-title {
             margin: 0;
-            font-size: 1rem
+            font-size: 1rem;
             font-family: ${config.font_family}, sans-serif;
           }
         </style>
