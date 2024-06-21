@@ -24,17 +24,17 @@ looker.plugins.visualizations.add({
       label: 'Font Family',
       display: 'select',
       values: [
-        { 'Lato': 'Lato, sans-serif' },
-        { 'Arial': 'Arial, sans-serif' },
-        { 'Georgia': 'Georgia, serif' },
-        { 'Courier New': '"Courier New", monospace' }
+        { 'Lato': 'Lato' },
+        { 'Arial': 'Arial' },
+        { 'Georgia': 'Georgia' },
+        { 'Courier New': 'Courier New' },
+        { 'Roboto': 'Roboto' },
+        { 'Open Sans': 'Open Sans' },
+        { 'Montserrat': 'Montserrat' },
+        { 'Oswald': 'Oswald' },
+        { 'Raleway': 'Raleway' },
       ],
-      default: 'Lato, sans-serif',
-    },
-    title_font_size: {
-      type: 'number',
-      label: 'Title Font Size',
-      default: 18,
+      default: 'Lato',
     },
     master_color: {
       type: 'string',
@@ -116,8 +116,19 @@ looker.plugins.visualizations.add({
     },
   },
   create: function (element, config) {
+    // Only include Font Family styles if the current selected value is not the default.
+    const loadFontFamilyStyles = () => {
+      if (config.font_family && config.font_family !== 'Lato') {
+        return `
+          @import url('https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap');
+        `;
+      }
+      return '';
+    };
+  
     element.innerHTML = `
       <style>
+        ${loadFontFamilyStyles()}
         .viz-container {
           display: flex;
           flex-wrap: wrap;
@@ -129,13 +140,13 @@ looker.plugins.visualizations.add({
           border-radius: 8px;
           height: 100%;
           box-sizing: border-box;
-          font-family: ${config.font_family || 'Lato, sans-serif'};
+          font-family: ${config.font_family}, sans-serif;
         }
         .viz-title-container {
           width: 100%;
           text-align: ${config.title_position || 'center'};
           margin-bottom: 5px;
-          font-size: ${config.title_font_size || 18}px;
+          font-family: ${config.font_family}, sans-serif;
         }
         .viz-element {
           display: flex;
@@ -146,9 +157,11 @@ looker.plugins.visualizations.add({
           box-sizing: border-box;
           flex: 1 1 30%;
           min-width: 120px;
+          font-family: ${config.font_family}, sans-serif;
         }
         .viz-title, .viz-value {
           margin: 0;
+          font-family: ${config.font_family}, sans-serif;
         }
       </style>
       <div class="viz-title-container"></div>
@@ -196,7 +209,7 @@ looker.plugins.visualizations.add({
 
       const vizElement = document.createElement('div');
       vizElement.className = 'viz-element';
-
+      
       const metricColor = config[`metric${index + 1}_color`] || config.master_color;
       const metricTitle = config[`metric${index + 1}_title`] || fieldLabel;
 
