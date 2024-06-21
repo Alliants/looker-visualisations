@@ -116,19 +116,13 @@ looker.plugins.visualizations.add({
     },
   },
   create: function (element, config) {
-    // Only include Font Family styles if the current selected value is not the default.
-    const loadFontFamilyStyles = () => {
-      if (config.font_family && config.font_family !== 'Lato') {
-        return `
-          @import url('https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap');
-        `;
-      }
-      return '';
-    };
-  
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
+    document.head.appendChild(link)
+
     element.innerHTML = `
       <style>
-        ${loadFontFamilyStyles()}
         .viz-container {
           display: flex;
           flex-wrap: wrap;
@@ -170,6 +164,12 @@ looker.plugins.visualizations.add({
     element.style.height = "100%";
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
+    // Apply font family style dynamically
+    const link = document.createElement('link')
+    link.rel = 'stylesheet'
+    link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
+    document.head.appendChild(link)
+
     const vizTitleContainer = element.querySelector('.viz-title-container');
     if (config.title) {
       vizTitleContainer.innerHTML = `<div style="text-align: ${config.title_position};">${config.title}</div>`;
