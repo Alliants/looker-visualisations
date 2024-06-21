@@ -1,235 +1,109 @@
-looker.plugins.visualizations.add({
-    id: 'dynamic_layout_viz',
-    label: 'Dynamic Layout Viz',
-    options: {
-      title: {
-        type: 'string',
-        label: 'Title',
-        display: 'text',
-        default: '',
-      },
-      title_position: {
-        type: 'string',
-        label: 'Title Position',
-        display: 'select',
-        values: [
-          { 'Left': 'left' },
-          { 'Center': 'center' },
-          { 'Right': 'right' }
-        ],
-        default: 'center',
-      },
-      font_family: {
-        type: 'string',
-        label: 'Font Family',
-        display: 'select',
-        values: [
-          { 'Lato': 'Lato' },
-          { 'Arial': 'Arial' },
-          { 'Georgia': 'Georgia' },
-          { 'Courier New': 'Courier New' },
-          { 'Roboto': 'Roboto' },
-          { 'Open Sans': 'Open Sans' },
-          { 'Montserrat': 'Montserrat' },
-          { 'Oswald': 'Oswald' },
-          { 'Raleway': 'Raleway' },
-        ],
-        default: 'Lato',
-      },
-      master_color: {
-        type: 'string',
-        label: 'Master Color',
-        display: 'color',
-        default: '#333',
-      },
-      metric1_color: {
-        type: 'string',
-        label: 'Metric 1 Color',
-        display: 'color',
-        default: '#1f77b4',
-      },
-      metric2_color: {
-        type: 'string',
-        label: 'Metric 2 Color',
-        display: 'color',
-        default: '#ff7f0e',
-      },
-      metric3_color: {
-        type: 'string',
-        label: 'Metric 3 Color',
-        display: 'color',
-        default: '#2ca02c',
-      },
-      metric4_color: {
-        type: 'string',
-        label: 'Metric 4 Color',
-        display: 'color',
-        default: '#d62728',
-      },
-      metric5_color: {
-        type: 'string',
-        label: 'Metric 5 Color',
-        display: 'color',
-        default: '#9467bd',
-      },
-      metric6_color: {
-        type: 'string',
-        label: 'Metric 6 Color',
-        display: 'color',
-        default: '#8c564b',
-      },
-      metric1_title: {
-        type: 'string',
-        label: 'Metric 1 Title',
-        display: 'text',
-        default: '',
-      },
-      metric2_title: {
-        type: 'string',
-        label: 'Metric 2 Title',
-        display: 'text',
-        default: '',
-      },
-      metric3_title: {
-        type: 'string',
-        label: 'Metric 3 Title',
-        display: 'text',
-        default: '',
-      },
-      metric4_title: {
-        type: 'string',
-        label: 'Metric 4 Title',
-        display: 'text',
-        default: '',
-      },
-      metric5_title: {
-        type: 'string',
-        label: 'Metric 5 Title',
-        display: 'text',
-        default: '',
-      },
-      metric6_title: {
-        type: 'string',
-        label: 'Metric 6 Title',
-        display: 'text',
-        default: '',
-      },
+// Import necessary libraries 
+import React from 'react';
+import ReactDOM from 'react-dom';
+import styled from 'styled-components';
+
+// Define styled components
+const Container = styled.div`
+    display: flex;
+    flex-direction: ${props => props.orientation};
+`;
+
+const DataGroup = styled.div`
+    margin: 10px;
+`;
+
+const DataPoint = styled.div`
+    font-size: ${props => props.fontSize}px;
+`;
+
+const PercentageChange = styled(DataPoint)`
+    color: green;
+`;
+
+// Define configuration options
+const options = {
+    font_size: {
+        label: "Font Size",
+        type: "number",
+        default: 12
     },
-    create: function (element, config) {
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
-      document.head.appendChild(link)
-  
-      element.innerHTML = `
-        <style>
-          .viz-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 10px;
-            gap: 10px;
-            border-radius: 8px;
-            height: 100%;
-            box-sizing: border-box;
-            font-family: ${config.font_family}, sans-serif;
-          }
-          .viz-title-container {
-            width: 100%;
-            text-align: ${config.title_position || 'center'};
-            margin-bottom: 5px;
-            font-family: ${config.font_family}, sans-serif;
-          }
-          .viz-element {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 10px;
-            box-sizing: border-box;
-            flex: 1 1 30%;
-            min-width: 120px;
-            font-family: ${config.font_family}, sans-serif;
-          }
-          .viz-title, .viz-value {
-            margin: 0;
-            font-family: ${config.font_family}, sans-serif;
-          }
-        </style>
-        <div class="viz-title-container"></div>
-        <div class="viz-container"></div>
-      `;
-      element.style.height = "100%";
+    orientation: {
+        label: "Orientation",
+        type: "string",
+        display: "radio",
+        values: [
+            { "Horizontal": "horizontal" },
+            { "Vertical": "vertical" }
+        ]
     },
-    updateAsync: function (data, element, config, queryResponse, details, done) {
-      // Apply font family style dynamically
-      const link = document.createElement('link')
-      link.rel = 'stylesheet'
-      link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
-      document.head.appendChild(link)
-  
-      const vizTitleContainer = element.querySelector('.viz-title-container');
-      if (config.title) {
-        vizTitleContainer.innerHTML = `<div style="text-align: ${config.title_position};">${config.title}</div>`;
-      } else {
-        vizTitleContainer.innerHTML = '';
-      }
-  
-      if (!data || data.length === 0) {
-        done();
-        return;
-      }
-  
-      const vizContainer = element.querySelector('.viz-container');
-      vizContainer.innerHTML = '';
-  
-      const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
-      const maxFields = 6;
-      if (fields.length > maxFields) {
-        const errorElement = document.createElement('div');
-        errorElement.innerHTML = `<p style="color: red;">Error: Please limit to 6 metrics/dimensions.</p>`;
-        vizContainer.appendChild(errorElement);
-        done();
-        return;
-      }
-  
-      const items = fields.slice(0, maxFields);
-  
-      const containerHeight = element.clientHeight;
-      const containerWidth = element.clientWidth;
-      const minContainerSize = Math.min(containerHeight, containerWidth);
-      const baseFontSize = minContainerSize / 10;
-  
-      items.forEach((field, index) => {
-        const fieldName = field.name;
-        const fieldLabel = field.label_short || field.label;
-        const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
-  
-        const vizElement = document.createElement('div');
-        vizElement.className = 'viz-element';
-        
-        const metricColor = config[`metric${index + 1}_color`] || config.master_color;
-        const metricTitle = config[`metric${index + 1}_title`] || fieldLabel;
-  
-        const valueElement = document.createElement('div');
-        valueElement.className = 'viz-value';
-        valueElement.innerHTML = fieldValue;
-        valueElement.style.fontSize = `${baseFontSize}px`;
-        valueElement.style.color = metricColor;
-  
-        const titleElement = document.createElement('div');
-        titleElement.className = 'viz-title';
-        titleElement.innerText = metricTitle;
-        titleElement.style.fontSize = `${baseFontSize / 2.5}px`;
-        titleElement.style.color = metricColor;
-  
-        vizElement.appendChild(valueElement);
-        vizElement.appendChild(titleElement);
-        vizContainer.appendChild(vizElement);
-      });
-  
-      done();
+    show_titles: {
+        label: "Show Titles",
+        type: "boolean",
+        default: true
+    },
+    compare_data_points: {
+        label: "Compare Data Points",
+        type: "boolean",
+        default: false
+    },
+    show_percentage_changes: {
+        label: "Show Percentage Changes",
+        type: "boolean",
+        default: false
+    },
+};
+
+// Process incoming data
+function processData(data, config) {
+    return data.map(row => ({
+        baseValue: row['base_measure'].value,
+        compareValue: config.compare_data_points ? row['compare_measure'].value : null,
+        percentageChange: config.show_percentage_changes ? calculatePercentageChange(row['base_measure'].value, row['compare_measure'].value) : null
+    }));
+}
+
+function calculatePercentageChange(base, compare) {
+    if (!compare) return null;
+    return ((compare - base) / base * 100).toFixed(2);
+}
+
+// Render the visualization
+function renderVisualization(data, config, element) {
+    element.innerHTML = '';
+
+    const component = (
+        <Container orientation={config.orientation === 'vertical' ? 'column' : 'row'}>
+            {data.map((item, index) => (
+                <DataGroup key={index}>
+                    <DataPoint fontSize={config.font_size}>{item.baseValue}</DataPoint>
+                    {config.compare_data_points && item.compareValue !== null 
+                        && <DataPoint fontSize={config.font_size}>{item.compareValue}</DataPoint>}
+                    {config.show_percentage_changes && item.percentageChange !== null 
+                        && <PercentageChange fontSize={config.font_size}>{item.percentageChange}%</PercentageChange>}
+                </DataGroup>
+            ))}
+        </Container>
+    );
+
+    ReactDOM.render(component, element);
+}
+
+// Main Looker Visualization class
+class CustomVisualization {
+    constructor() {
+        this.options = options;
     }
-  });
+
+    create(element, config) {
+        element.innerHTML = "<div id='root'></div>";
+    }
+
+    updateAsync(data, element, config, queryResponse, details, done) {
+        const processedData = processData(data, config);
+        renderVisualization(processedData, config, document.getElementById("root"));
+        done();
+    }
+}
+
+looker.plugins.visualizations.add(new CustomVisualization());
