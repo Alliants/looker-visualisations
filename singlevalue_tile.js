@@ -69,6 +69,7 @@ looker.plugins.visualizations.add({
         .single-value-title {
           font-size: 5vw;
           margin-bottom: 5px;
+          font-family: ${config.font_family}, sans-serif;
         }
         .single-value {
           font-size: 10vw;
