@@ -109,8 +109,8 @@ looker.plugins.visualizations.add({
     // Creating the big circle for the highest metric
     const bigCircleContent = `
       <div class="big-circle">
-        <div>${metrics[0].value} ${metrics[0].label}</div>
-        <div>${((metrics[0].value / total) * 100).toFixed(2)}%</div>
+        <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
+        <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(2)}%</div>
       </div>
     `;
 
