@@ -28,6 +28,8 @@ const styles = `
     color: white;
     flex-shrink: 0;
     font-size: 3vw;
+    padding: 1vw; /* Add padding here to prevent text from touching edges */
+    box-sizing: border-box; /* Ensure padding is included in the size */
   }
   .big-circle div {
     text-align: center;
@@ -51,18 +53,13 @@ const styles = `
     align-items: center;
     color: black;
     flex-shrink: 0;
-    font-size: 1.5vw;
   }
   .metric-callout {
     display: flex;
     align-items: center;
     margin-left: 10px;
-    font-size: 1.5vw;
   }
-  .metric-name {
-    margin-left: 5px;
-  }
-  .metric-percentage {
+  .metric-name, .metric-percentage {
     margin-left: 5px;
     color: grey;
   }
@@ -70,11 +67,11 @@ const styles = `
 `;
 
 looker.plugins.visualizations.add({
-  create: function (element, config) {
+  create: function(element, config) {
     element.style.fontFamily = `"Open Sans", "Helvetica", sans-serif`;
     element.innerHTML = styles;
   },
-  updateAsync: function (data, element, config, queryResponse, details, done) {
+  updateAsync: function(data, element, config, queryResponse, details, done) {
     element.innerHTML = ''; // Clear any existing content
     element.innerHTML += styles;
 
@@ -126,10 +123,11 @@ looker.plugins.visualizations.add({
     for (let i = 1; i < metrics.length; i++) {
       // Calculate the size based on the percentage of the biggest metric
       const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
+      const fontSizePercentage = sizePercentage * 0.4; // Adjust this value as needed for readability
 
       const calloutContent = `
-        <div class="metric-block">
-          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw;">
+        <div class="metric-block" style="font-size: ${fontSizePercentage}vw;">
+          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw;">
             ${metrics[i].value}
           </div>
           <div class="metric-callout">
