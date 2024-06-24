@@ -53,6 +53,7 @@ const styles = `
   .metric-block {
     display: flex;
     align-items: center;
+    font-size: 2.5vw;
   }
   .metric-callout {
     display: flex;
@@ -157,7 +158,7 @@ looker.plugins.visualizations.add({
       const fontSizePercentage = sizePercentage * 0.3; 
 
       const calloutContent = `
-        <div class="metric-block" style="font-size: ${fontSizePercentage}vw;">
+        <div class="metric-block">
           <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw; background-color: ${config.small_circle_color};">
             ${metrics[i].value}
           </div>
