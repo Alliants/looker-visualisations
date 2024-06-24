@@ -59,15 +59,18 @@ looker.plugins.visualizations.add({
     element.innerHTML = ''; // Clear any existing content
     element.innerHTML += styles;
 
-    const fields = queryResponse.fields.dimension_like;
-    const metrics = [
-      {label: "Solo Traveler", value: Number(fields[0].value)},
-      {label: "Couple Travel", value: Number(fields[1].value)},
-      {label: "Family Vacation", value: Number(fields[2].value)},
-      {label: "Festive Traveller", value: Number(fields[3].value)},
-      {label: "Summer Traveller", value: Number(fields[4].value)},
-      {label: "Weekend Traveller", value: Number(fields[5].value)}
-    ];
+    const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
+    const items = fields.slice(0, maxFields);
+
+    // const fields = queryResponse.fields.dimension_like;
+    // const metrics = [
+    //   {label: "Solo Traveler", value: Number(fields[0].value)},
+    //   {label: "Couple Travel", value: Number(fields[1].value)},
+    //   {label: "Family Vacation", value: Number(fields[2].value)},
+    //   {label: "Festive Traveller", value: Number(fields[3].value)},
+    //   {label: "Summer Traveller", value: Number(fields[4].value)},
+    //   {label: "Weekend Traveller", value: Number(fields[5].value)}
+    // ];
 
     // Sort metrics based on the value in descending order
     metrics.sort((a, b) => b.value - a.value);
@@ -108,6 +111,31 @@ looker.plugins.visualizations.add({
       smallCircleContainer.innerHTML = smallCircleContent;
       container.appendChild(smallCircleContainer);
     }
+    items.forEach((field, index) => {
+      const fieldName = field.name;
+      const fieldLabel = field.label_short || field.label;
+      const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
+
+      const vizElement = document.createElement('div');
+      vizElement.className = 'viz-element';
+
+      const metricColor = config[`metric${index + 1}_color`] || config.master_color;
+      const metricTitle = config[`metric${index + 1}_title`] || fieldLabel;
+
+      const valueElement = document.createElement('div');
+      valueElement.className = 'viz-value';
+      valueElement.innerHTML = fieldValue;
+      valueElement.style.color = metricColor;
+
+      const titleElement = document.createElement('div');
+      titleElement.className = 'viz-title';
+      titleElement.innerText = metricTitle;
+      titleElement.style.color = metricColor;
+
+      vizElement.appendChild(valueElement);
+      vizElement.appendChild(titleElement);
+      vizContainer.appendChild(vizElement);
+    });
     
     element.appendChild(container);
     done();
