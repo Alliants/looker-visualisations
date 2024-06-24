@@ -1,104 +1,243 @@
-// Include custom icons
-const icons = `
-<style>
-  .arrival-card {
-    border-radius: 10px;
-    padding: 20px;
-    width: 100%;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
-  .arrival-header, .arrival-details {
-    margin-bottom: 20px;
-  }
-  .arrival-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .arrival-header .status {
-    background: #ffb921;
-    padding: 5px 10px;
-    border-radius: 10px;
-    color: white;
-    font-weight: bold;
-  }
-  .arrival-details div {
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-  }
-  .icon {
-    margin-right: 10px;
-    width: 1em; /* Set icon width based on the font size */
-    height: 1em; /* Set icon height based on the font size */
-  }
-</style>
-`;
-
 looker.plugins.visualizations.add({
-  create: function(element, config) {
-    element.style.fontFamily = `"Open Sans", "Helvetica", sans-serif`;
-  },
-  updateAsync: function(data, element, config, queryResponse, details, done) {
-    element.innerHTML = ''; // Clear any existing content
+    id: 'dynamic_layout_viz',
+    label: 'Dynamic Layout Viz',
+    options: {
+      title: {
+        type: 'string',
+        label: 'Title',
+        display: 'text',
+        default: '',
+      },
+      title_position: {
+        type: 'string',
+        label: 'Title Position',
+        display: 'select',
+        values: [
+          { 'Left': 'left' },
+          { 'Center': 'center' },
+          { 'Right': 'right' }
+        ],
+        default: 'center',
+      },
+      font_family: {
+        type: 'string',
+        label: 'Font Family',
+        display: 'select',
+        values: [
+          { 'Lato': 'Lato' },
+          { 'Arial': 'Arial' },
+          { 'Georgia': 'Georgia' },
+          { 'Courier New': 'Courier New' },
+          { 'Roboto': 'Roboto' },
+          { 'Open Sans': 'Open Sans' },
+          { 'Montserrat': 'Montserrat' },
+          { 'Oswald': 'Oswald' },
+          { 'Raleway': 'Raleway' },
+        ],
+        default: 'Lato',
+      },
+      master_color: {
+        type: 'string',
+        label: 'Master Color',
+        display: 'color',
+        default: '#000000',
+      },
+      metric1_color: {
+        type: 'string',
+        label: 'Metric 1 Color',
+        display: 'color',
+        default: '',
+      },
+      metric2_color: {
+        type: 'string',
+        label: 'Metric 2 Color',
+        display: 'color',
+        default: '',
+      },
+      metric3_color: {
+        type: 'string',
+        label: 'Metric 3 Color',
+        display: 'color',
+        default: '',
+      },
+      metric4_color: {
+        type: 'string',
+        label: 'Metric 4 Color',
+        display: 'color',
+        default: '',
+      },
+      metric5_color: {
+        type: 'string',
+        label: 'Metric 5 Color',
+        display: 'color',
+        default: '',
+      },
+      metric6_color: {
+        type: 'string',
+        label: 'Metric 6 Color',
+        display: 'color',
+        default: '',
+      },
+      metric1_title: {
+        type: 'string',
+        label: 'Metric 1 Title',
+        display: 'text',
+        default: '',
+      },
+      metric2_title: {
+        type: 'string',
+        label: 'Metric 2 Title',
+        display: 'text',
+        default: '',
+      },
+      metric3_title: {
+        type: 'string',
+        label: 'Metric 3 Title',
+        display: 'text',
+        default: '',
+      },
+      metric4_title: {
+        type: 'string',
+        label: 'Metric 4 Title',
+        display: 'text',
+        default: '',
+      },
+      metric5_title: {
+        type: 'string',
+        label: 'Metric 5 Title',
+        display: 'text',
+        default: '',
+      },
+      metric6_title: {
+        type: 'string',
+        label: 'Metric 6 Title',
+        display: 'text',
+        default: '',
+      },
+    },
+    create: function (element, config) {
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
+      document.head.appendChild(link)
 
-    // Append CSS styles to the element
-    element.innerHTML += icons;
+      element.innerHTML = `
+        <style>
+          .viz-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            column-gap: 10px;
+            border-radius: 8px;
+            height: 100%;
+            box-sizing: border-box;
+            font-family: ${config.font_family}, sans-serif;
+          }
+          .viz-title-container {
+            width: 100%;
+            text-align: ${config.title_position || 'center'};
+            margin-bottom: 5px;
+            font-family: ${config.font_family}, sans-serif;
+            font-size: 2.5vw;
+          }
+          .viz-element {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            flex: 1 1 30%;
+            min-width: 120px;
+            font-family: ${config.font_family}, sans-serif;
+          }
+          .viz-value {
+            margin: 0;
+            font-size: 5vw;
+            font-family: ${config.font_family}, sans-serif;
+          }
+          .viz-title {
+            margin: 0;
+            font-size: 2.5vw;
+            font-family: ${config.font_family}, sans-serif;
+          }
+        </style>
+        <div class="viz-title-container"></div>
+        <div class="viz-container"></div>
+      `;
+      element.style.height = "100%";
+    },
+    updateAsync: function (data, element, config, queryResponse, details, done) {
+      // Apply font family style dynamically
+      const link = document.createElement('link')
+      link.rel = 'stylesheet'
+      link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`
+      document.head.appendChild(link)
 
-    // Extracting fields in the specific order
-    const fields = queryResponse.fields.dimension_like;
+      const vizTitleContainer = element.querySelector('.viz-title-container');
+      if (config.title) {
+        vizTitleContainer.innerHTML = `<div style="text-align: ${config.title_position};">${config.title}</div>`;
+      } else {
+        vizTitleContainer.innerHTML = '';
+      }
 
-    // Check if there are at least 7 fields available
-    if (fields.length < 7) {
-      element.innerHTML += 'Insufficient data fields';
+      if (!data || data.length === 0) {
+        done();
+        return;
+      }
+
+      const vizContainer = element.querySelector('.viz-container');
+      vizContainer.innerHTML = '';
+
+      const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
+      const maxFields = 6;
+      if (fields.length > maxFields) {
+        const errorElement = document.createElement('div');
+        errorElement.innerHTML = `<p style="color: red;">Error: Please limit to 6 metrics/dimensions.</p>`;
+        vizContainer.appendChild(errorElement);
+        done();
+        return;
+      }
+
+      const items = fields.slice(0, maxFields);
+
+      const containerHeight = element.clientHeight;
+      const containerWidth = element.clientWidth;
+      const minContainerSize = Math.min(containerHeight, containerWidth);
+      const baseFontSize = minContainerSize / 5;
+
+      // Adjust height of the viz-container to be less than the parent element
+      vizContainer.style.height = `${containerHeight - 20}px`;  // Adjust 20px to the margin/padding as per your requirement
+
+      items.forEach((field, index) => {
+        const fieldName = field.name;
+        const fieldLabel = field.label_short || field.label;
+        const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
+
+        const vizElement = document.createElement('div');
+        vizElement.className = 'viz-element';
+
+        const metricColor = config[`metric${index + 1}_color`] || config.master_color;
+        const metricTitle = config[`metric${index + 1}_title`] || fieldLabel;
+
+        const valueElement = document.createElement('div');
+        valueElement.className = 'viz-value';
+        valueElement.innerHTML = fieldValue;
+        // valueElement.style.fontSize = `${baseFontSize}px`;
+        valueElement.style.color = metricColor;
+
+        const titleElement = document.createElement('div');
+        titleElement.className = 'viz-title';
+        titleElement.innerText = metricTitle;
+        // titleElement.style.fontSize = `${baseFontSize / 2}px`;
+        titleElement.style.color = metricColor;
+
+        vizElement.appendChild(valueElement);
+        vizElement.appendChild(titleElement);
+        vizContainer.appendChild(vizElement);
+      });
+
       done();
-      return;
     }
-
-    // Extract data from the first row in the order specified
-    const row = data[0];
-    const due_in_time = row[fields[0].name].value;
-    const location = row[fields[1].name].value;
-    const start_date = row[fields[2].name].value;
-    const end_date = row[fields[3].name].value;
-    const num_nights = row[fields[4].name].value;
-    const num_guests = row[fields[5].name].value;
-    const room_numbers = row[fields[6].name].value;
-
-    // Set dynamic font size
-    const containerHeight = element.clientHeight;
-    const containerWidth = element.clientWidth;
-    const minContainerSize = Math.min(containerWidth, containerHeight);
-    const baseFontSize = Math.floor(minContainerSize / 20); // Use floor to prevent large increases
-
-    const arrivalCard = `
-      <div class="arrival-card" style="font-size: ${baseFontSize}vw; max-height: ${containerHeight - 20}px;">
-        <div class="arrival-header">
-          <div>Arrival Report</div>
-          <div class="status">Due in - ${due_in_time}</div>
-        </div>
-        <div class="arrival-details">
-          <div><strong>${location}</strong></div>
-          <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
-            ${start_date} - ${end_date} (${num_nights} nights)
-          </div>
-          <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiMTJmM2YwMDc3YTVjNmEyM2Q1YzIwYjZiYS0xNjA3NjIyMTkyLnN2ZyJ9:frontify:XKUzuk-yTmtyqPmtN1vMYqipmXGVfqtUtmLso-gWDxM?width=2400"></img>
-            ${num_guests} guests
-          </div>
-          <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2ZkXC80OTk5Mzc2XC9kMGUyN2I1Mzg0MTgxOTEzNTUwOWY4ZmU3YmY2NjkwNS0xNjA3NjIyNzI5LnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400"></img>
-            Rooms ${room_numbers}
-          </div>
-        </div>
-      </div>
-    `;
-    
-    // Append the card to the element
-    element.innerHTML += arrivalCard;
-    
-    done();
-  }
-});
+  });
