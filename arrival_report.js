@@ -32,9 +32,6 @@ const icons = `
     display: flex;
     align-items: center;
   }
-  .arrival-details-nights div {
-    justify-content: space-between;
-  }
   .icon {
     margin-right: 10px;
     width: 1em; /* Set icon width based on the font size */
@@ -87,7 +84,7 @@ looker.plugins.visualizations.add({
         </div>
         <div class="arrival-details"">
           <div><strong>${location}</strong></div>
-            <div class="arrival-details-nights"">
+            <div class="arrival-details-nights" style="justify-content: space-between;">
               <div>
                 <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
                 ${start_date} - ${end_date}</div>
