@@ -4,8 +4,9 @@ const icons = `
   .arrival-card {
     border-radius: 10px;
     padding: 20px;
-    width: 300px;
+    width: 100%;
     font-family: Arial, sans-serif;
+    box-sizing: border-box;
   }
   .arrival-header, .arrival-details {
     margin-bottom: 20px;
@@ -37,7 +38,7 @@ const icons = `
 
 looker.plugins.visualizations.add({
   create: function (element, config) {
-    element.style.fontFamily = `"Open Sans", "Helvetica", sans-serif`
+    element.style.fontFamily = `"Open Sans", "Helvetica", sans-serif`;
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     element.innerHTML = ''; // Clear any existing content
@@ -49,7 +50,7 @@ looker.plugins.visualizations.add({
     const fields = queryResponse.fields.dimension_like;
 
     // Check if there are at least 6 fields available
-    if (fields.length < 6) {
+    if (fields.length < 7) {
       element.innerHTML += 'Insufficient data fields';
       done();
       return;
@@ -65,9 +66,14 @@ looker.plugins.visualizations.add({
     const num_guests = row[fields[5].name].value;
     const room_numbers = row[fields[6].name].value;
 
-    // Create the HTML structure
+    // Set dynamic font size
+    const containerHeight = element.clientHeight;
+    const containerWidth = element.clientWidth;
+    const minContainerSize = Math.min(containerHeight, containerWidth);
+    const baseFontSize = minContainerSize / 20; // Adjust 20 to adjust font size scaling
+
     const arrivalCard = `
-      <div class="arrival-card">
+      <div class="arrival-card" style="font-size: ${baseFontSize}vw;">
         <div class="arrival-header">
           <div>Arrival Report</div>
           <div class="status">Due in - ${due_in_time}</div>
@@ -75,15 +81,15 @@ looker.plugins.visualizations.add({
         <div class="arrival-details">
           <div><strong>${location}</strong></div>
           <div>
-            <img class="icon" src="https://alliants.frontify.com/d/Zp2zi58MrKau/icon-library/show/eyJpZCI6NDk5OTE0NCwidGltZXN0YW1wIjoiMTcxOTIyMjk4MiJ9:frontify:ZK5seepHanopagqhaf0x3AJO4TdhbFQOF-aCSHl9C88"></img>
+            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
             ${start_date} - ${end_date} (${num_nights} nights)
           </div>
           <div>
-            <img class="icon" src="https://alliants.frontify.com/d/Zp2zi58MrKau/icon-library/show/eyJpZCI6NDk5OTA2OSwidGltZXN0YW1wIjoiMTcxOTIyMjc4MSJ9:frontify:mnKq88msTBja1iFK7f7A8O-nTvofXasDV1eMpjLo3o8"></img>
+            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiMTJmM2YwMDc3YTVjNmEyM2Q1YzIwYjZiYS0xNjA3NjIyMTkyLnN2ZyJ9:frontify:XKUzuk-yTmtyqPmtN1vMYqipmXGVfqtUtmLso-gWDxM?width=2400"></img>
             ${num_guests} guests
           </div>
           <div>
-            <img class="icon" src="https://alliants.frontify.com/d/Zp2zi58MrKau/icon-library/show/eyJpZCI6NDk5OTM3NiwidGltZXN0YW1wIjoiMTcxOTIyMzAwMSJ9:frontify:BK1jFWY0XNBt5LzOiAag7PYC62HTADPrI960YUNQ3uQ"></img>
+            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2ZkXC80OTk5Mzc2XC9kMGUyN2I1Mzg0MTgxOTEzNTUwOWY4ZmU3YmY2NjkwNS0xNjA3NjIyNzI5LnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400"></img>
             Rooms ${room_numbers}
           </div>
         </div>
