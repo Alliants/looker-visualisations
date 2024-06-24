@@ -84,7 +84,6 @@ looker.plugins.visualizations.add({
         flex-direction: column;
         justify-content: space-evenly;
         align-items: center;
-        color: white;
         flex-shrink: 0;
         font-size: 3vw;
         padding: 2vw; /* Add padding here to prevent text from touching edges */
@@ -100,7 +99,6 @@ looker.plugins.visualizations.add({
         display: flex;
         justify-content: center;
         align-items: center;
-        color: black;
         flex-shrink: 0;
       }
       .metrics-container {
