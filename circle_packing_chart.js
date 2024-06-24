@@ -23,11 +23,11 @@ const styles = `
     border-radius: 50%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-evenly;
     align-items: center;
     color: white;
     flex-shrink: 0;
-    font-size: 1.5vw;
+    font-size: 3vw;
   }
   .big-circle div {
     text-align: center;
@@ -109,8 +109,7 @@ looker.plugins.visualizations.add({
     // Creating the big circle for the highest metric
     const bigCircleContent = `
       <div class="big-circle">
-        <div>${metrics[0].value}</div>
-        <div>${metrics[0].label}</div>
+        <div>${metrics[0].value} ${metrics[0].label}</div>
         <div>${((metrics[0].value / total) * 100).toFixed(2)}%</div>
       </div>
     `;
