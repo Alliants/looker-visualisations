@@ -5,7 +5,7 @@ looker.plugins.visualizations.add({
     show_title: {
       type: 'boolean',
       label: 'Show Title',
-      default: true,
+      default: false,
     },
     title: {
       type: 'string',
@@ -67,11 +67,11 @@ looker.plugins.visualizations.add({
           font-family: ${config.font_family}, sans-serif;
         }
         .single-value-title {
-          font-size: 2.5vw;
+          font-size: 5vw;
           margin-bottom: 5px;
         }
         .single-value {
-          font-size: 5vw;
+          font-size: 10vw;
         }
       </style>
       <div class="single-value-title-container"></div>
