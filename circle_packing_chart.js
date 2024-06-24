@@ -3,48 +3,53 @@ const styles = `
 <style>
   .meta-container {
     display: flex;
-    flex-direction: row;
     align-items: center;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
   }
-  .persona-breakdown {
+  .big-circle-container {
     display: flex;
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    margin-bottom: 10px;
   }
-  .circle {
+  .big-circle {
+    background-color: #4D6EBF;
+    width: 10vw;
+    height: 10vw;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-weight: bold;
     color: white;
+    flex-shrink: 0;
+  }
+  .big-circle div {
     text-align: center;
-  }
-  .big-circle {
-    background-color: #4D6EBF;
-    min-width: 10vw;
-    min-height: 10vw;
-    font-size: 2vw;
-  }
-  .small-circle {
-    background-color: #EAEAEA;
-    color: black;
-    min-width: 5vw;
-    min-height: 5vw;
-    margin-left: 10px;
   }
   .metrics-container {
     display: flex;
     flex-direction: column;
+    justify-content: space-evenly;
+    height: 10vw; /* This ensures the height matches the big circle */
     margin-left: 20px;
   }
   .metric-block {
     display: flex;
     align-items: center;
     margin-bottom: 5px;
+  }
+  .small-circle {
+    background-color: #EAEAEA;
+    width: 5vw;
+    height: 5vw;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: black;
+    flex-shrink: 0;
   }
   .metric-callout {
     display: flex;
@@ -100,15 +105,15 @@ looker.plugins.visualizations.add({
 
     // Creating the big circle for the highest metric
     const bigCircleContent = `
-      <div class="circle big-circle">
+      <div class="big-circle">
         ${metrics[0].value}
-        <div style="font-size: 1.5vw;">${metrics[0].label}</div>
-        <div style="font-size: 1vw;">${((metrics[0].value / total) * 100).toFixed(2)}%</div>
+        <div>${metrics[0].label}</div>
+        <div>${((metrics[0].value / total) * 100).toFixed(2)}%</div>
       </div>
     `;
 
     const bigCircleContainer = document.createElement('div');
-    bigCircleContainer.classList.add('persona-breakdown');
+    bigCircleContainer.classList.add('big-circle-container');
     bigCircleContainer.innerHTML = bigCircleContent;
     container.appendChild(bigCircleContainer);
 
@@ -119,7 +124,7 @@ looker.plugins.visualizations.add({
     for (let i = 1; i < metrics.length; i++) {
       const calloutContent = `
         <div class="metric-block">
-          <div class="circle small-circle">
+          <div class="small-circle">
             ${metrics[i].value}
           </div>
           <div class="metric-callout">
@@ -129,7 +134,7 @@ looker.plugins.visualizations.add({
         </div>
       `;
       const calloutContainer = document.createElement('div');
-      calloutContainer.classList.add('persona-breakdown');
+      calloutContainer.classList.add('metric-block');
       calloutContainer.innerHTML = calloutContent;
       metricsContainer.appendChild(calloutContainer);
     }
