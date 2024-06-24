@@ -13,17 +13,21 @@ const styles = `
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    min-width: 30vw; /* Fixed size for big circle container */
+    min-height: 30vw; /* Fixed size for big circle container */
   }
   .big-circle {
     background-color: #4D6EBF;
-    width: 30vw;
-    height: 30vw;
+    width: 30vw; /* Fixed size for big circle */
+    height: 30vw; /* Fixed size for big circle */
     border-radius: 50%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     color: white;
     flex-shrink: 0;
+    font-size: 1.5vw;
   }
   .big-circle div {
     text-align: center;
@@ -32,24 +36,22 @@ const styles = `
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    height: 30vw; /* This ensures the height matches the big circle */
+    height: 30vw; /* Match height with big circle */
     margin-left: 20px;
   }
   .metric-block {
     display: flex;
     align-items: center;
-    margin-bottom: 5px;
   }
   .small-circle {
     background-color: #EAEAEA;
-    width: 5vw;
-    height: 5vw;
     border-radius: 50%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: black;
     flex-shrink: 0;
+    font-size: 1.5vw;
   }
   .metric-callout {
     display: flex;
@@ -92,13 +94,14 @@ looker.plugins.visualizations.add({
 
     // Ensure there are enough metrics
     if (metrics.length === 0) {
-      element.innerHTML += 'No valid data available';
+      element.innerHTML += 'No valid data is available';
       done();
       return;
     }
 
     // Calculate the total sum of metrics
     const total = metrics.reduce((sum, metric) => sum + metric.value, 0);
+    const maxMetricValue = metrics[0].value;
 
     const container = document.createElement('div');
     container.classList.add('meta-container');
@@ -106,7 +109,7 @@ looker.plugins.visualizations.add({
     // Creating the big circle for the highest metric
     const bigCircleContent = `
       <div class="big-circle">
-        ${metrics[0].value}
+        <div>${metrics[0].value}</div>
         <div>${metrics[0].label}</div>
         <div>${((metrics[0].value / total) * 100).toFixed(2)}%</div>
       </div>
@@ -122,9 +125,12 @@ looker.plugins.visualizations.add({
     metricsContainer.classList.add('metrics-container');
 
     for (let i = 1; i < metrics.length; i++) {
+      // Calculate the size based on the percentage of the biggest metric
+      const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
+
       const calloutContent = `
         <div class="metric-block">
-          <div class="small-circle">
+          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw;">
             ${metrics[i].value}
           </div>
           <div class="metric-callout">
