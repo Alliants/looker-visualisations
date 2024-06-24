@@ -2,11 +2,15 @@ looker.plugins.visualizations.add({
   id: 'single_value_viz',
   label: 'Single Value Viz',
   options: {
+    show_title: {
+      type: 'boolean',
+      label: 'Show Title',
+      default: true,
+    },
     title: {
       type: 'string',
       label: 'Title',
       display: 'text',
-      default: '',
     },
     title_position: {
       type: 'string',
@@ -99,15 +103,17 @@ looker.plugins.visualizations.add({
       return;
     }
 
-    if (config.title) {
-      titleContainer.innerHTML = `<div class="single-value-title" style="text-align: ${config.title_position};">${config.title}</div>`;
+    const field = fields[0];
+    const fieldName = field.name;
+    const fieldLabel = field.label_short || field.label;
+    const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
+
+    if (config.show_title) {
+      const titleText = config.title ? config.title : fieldLabel;
+      titleContainer.innerHTML = `<div class="single-value-title" style="text-align: ${config.title_position};">${titleText}</div>`;
     } else {
       titleContainer.innerHTML = '';
     }
-
-    const field = fields[0];
-    const fieldName = field.name;
-    const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
 
     const valueElement = document.createElement('div');
     valueElement.className = 'single-value';
