@@ -1,9 +1,7 @@
-// Include Font Awesome stylesheet
+// Include custom icons
 const icons = `
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
   .arrival-card {
-    border: 1px solid #e0e0e0;
     border-radius: 10px;
     padding: 20px;
     width: 300px;
@@ -18,9 +16,9 @@ const icons = `
     align-items: center;
   }
   .arrival-header .status {
-    background: #ffcc00;
+    background: #ffb921;
     padding: 5px 10px;
-    border-radius: 5px;
+    border-radius: 10px;
     color: white;
     font-weight: bold;
   }
@@ -31,13 +29,15 @@ const icons = `
   }
   .icon {
     margin-right: 10px;
+    width: 18px;
+    height: 18px;
   }
 </style>
 `;
 
 looker.plugins.visualizations.add({
   create: function (element, config) {
-    element.style.fontFamily = `"Open Sans", "Helvetica", sans-serif`;
+    element.style.fontFamily = `"Open Sans", "Helvetica", sans-serif`
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
     element.innerHTML = ''; // Clear any existing content
@@ -75,13 +75,16 @@ looker.plugins.visualizations.add({
         <div class="arrival-details">
           <div><strong>${location}</strong></div>
           <div>
-            <i class="far fa-calendar-alt icon"></i>${start_date} - ${end_date} (${num_nights} nights)
+            <img class="icon" src="https://alliants.frontify.com/d/Zp2zi58MrKau/icon-library/show/eyJpZCI6NDk5OTE0NCwidGltZXN0YW1wIjoiMTcxOTIyMjk4MiJ9:frontify:ZK5seepHanopagqhaf0x3AJO4TdhbFQOF-aCSHl9C88"></img>
+            ${start_date} - ${end_date} (${num_nights} nights)
           </div>
           <div>
-            <i class="fas fa-users icon"></i>${num_guests} guests
+            <img class="icon" src="https://alliants.frontify.com/d/Zp2zi58MrKau/icon-library/show/eyJpZCI6NDk5OTA2OSwidGltZXN0YW1wIjoiMTcxOTIyMjc4MSJ9:frontify:mnKq88msTBja1iFK7f7A8O-nTvofXasDV1eMpjLo3o8"></img>
+            ${num_guests} guests
           </div>
           <div>
-            <i class="fas fa-door-closed icon"></i>Rooms ${room_numbers}
+            <img class="icon" src="https://alliants.frontify.com/d/Zp2zi58MrKau/icon-library/show/eyJpZCI6NDk5OTM3NiwidGltZXN0YW1wIjoiMTcxOTIyMzAwMSJ9:frontify:BK1jFWY0XNBt5LzOiAag7PYC62HTADPrI960YUNQ3uQ"></img>
+            Rooms ${room_numbers}
           </div>
         </div>
       </div>
