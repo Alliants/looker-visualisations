@@ -73,7 +73,7 @@ looker.plugins.visualizations.add({
     // Calculate dynamic line height based on container height
     const containerHeight = element.clientHeight;
     const lineHeight = containerHeight / 26; // Adjust this value to distribute contents properly
-    const statusLineHeight = lineHeight * 0.75; // Adjust this value to distribute contents properly
+    const statusLineHeight = lineHeight * 0.4; // Adjust this value to distribute contents properly
 
     // Construct the arrival card with dynamic line height
     const arrivalCard = `
