@@ -6,7 +6,7 @@ const icons = `
     padding: 20px;
     width: 100%;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: Lato, sans-serif;
     font-size: 4vw;
     display: flex;
     flex-direction: column;
