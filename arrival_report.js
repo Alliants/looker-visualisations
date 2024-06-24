@@ -7,6 +7,7 @@ const icons = `
     width: 100%;
     box-sizing: border-box;
     font-family: Arial, sans-serif;
+    font-size: 4vw;
   }
   .arrival-header, .arrival-details {
     margin-bottom: 20px;
@@ -70,10 +71,9 @@ looker.plugins.visualizations.add({
     const containerHeight = element.clientHeight;
     const containerWidth = element.clientWidth;
     const minContainerSize = Math.min(containerWidth, containerHeight);
-    const baseFontSize = Math.floor(minContainerSize / 20); // Use floor to prevent large increases
 
     const arrivalCard = `
-      <div class="arrival-card" style="font-size: ${baseFontSize}vw; max-height: ${containerHeight - 20}px;">
+      <div class="arrival-card" style="max-height: ${containerHeight - 20}px;">
         <div class="arrival-header">
           <div>Arrival Report</div>
           <div class="status">Due in - ${due_in_time}</div>
