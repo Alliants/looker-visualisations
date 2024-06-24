@@ -172,7 +172,7 @@ looker.plugins.visualizations.add({
 
     const bigCircleContent = `
       <div class="big-circle" style="background-color: ${config.big_circle_color}; color: ${metrics[0].color};">
-        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}">` : ''}</div>
+        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=255,255,255,1">` : ''}</div>
         <div style="color: ${metrics[0].color};"><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
         <div style="font-size: 2.5vw; color: ${metrics[0].color};">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
       </div>
@@ -197,7 +197,7 @@ looker.plugins.visualizations.add({
           </div>
           <div class="metric-callout">
             <div class="metric-name">
-              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}">` : ''} <span style="color: ${metrics[i].color};"> ${metrics[i].label}</span> <span class="metric-percentage">${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</span>
+              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}">` : ''} <span style="color: ${metrics[i].color};"> ${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</span>
             </div>
           </div>
         </div>
