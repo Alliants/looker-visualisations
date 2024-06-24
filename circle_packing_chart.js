@@ -1,9 +1,10 @@
-// Include custom icons and styles
+// Include custom styles
 const styles = `
 <style>
   .meta-container {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     height: 100%;
     width: 100%;
     box-sizing: border-box;
@@ -11,7 +12,6 @@ const styles = `
   .persona-breakdown {
     display: flex;
     align-items: center;
-    font-size: 1.5vw;
     margin-bottom: 10px;
   }
   .circle {
@@ -19,34 +19,45 @@ const styles = `
     display: flex;
     justify-content: center;
     align-items: center;
-    font-size: 4vw;
     font-weight: bold;
     color: white;
     text-align: center;
   }
   .big-circle {
     background-color: #4D6EBF;
-    width: 10vw;
-    height: 10vw;
-    flex-shrink: 0;
+    min-width: 10vw;
+    min-height: 10vw;
+    font-size: 2vw;
   }
   .small-circle {
     background-color: #EAEAEA;
     color: black;
-    width: 5vw;
-    height: 5vw;
+    min-width: 5vw;
+    min-height: 5vw;
     margin-left: 10px;
-    flex-shrink: 0;
   }
-  .text-content {
+  .metrics-container {
+    display: flex;
+    flex-direction: column;
+    margin-left: 20px;
+  }
+  .metric-block {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+  }
+  .metric-callout {
     display: flex;
     align-items: center;
     margin-left: 10px;
-    justify-content: space-between;
-    flex-grow: 1;
+    font-size: 1.5vw;
   }
   .metric-name {
-    margin-right: 5px;
+    margin-left: 5px;
+  }
+  .metric-percentage {
+    margin-left: 5px;
+    color: grey;
   }
 </style>
 `;
@@ -91,7 +102,7 @@ looker.plugins.visualizations.add({
     const bigCircleContent = `
       <div class="circle big-circle">
         ${metrics[0].value}
-        <div style="font-size: 2vw;">${metrics[0].label}</div>
+        <div style="font-size: 1.5vw;">${metrics[0].label}</div>
         <div style="font-size: 1vw;">${((metrics[0].value / total) * 100).toFixed(2)}%</div>
       </div>
     `;
@@ -101,23 +112,29 @@ looker.plugins.visualizations.add({
     bigCircleContainer.innerHTML = bigCircleContent;
     container.appendChild(bigCircleContainer);
 
-    // Creating small circles for the remaining metrics
+    // Creating the callouts for the remaining metrics
+    const metricsContainer = document.createElement('div');
+    metricsContainer.classList.add('metrics-container');
+
     for (let i = 1; i < metrics.length; i++) {
-      const smallCircleContent = `
-        <div class="circle small-circle">
-          ${metrics[i].value}
-        </div>
-        <div class="text-content">
-          <div class="metric-name">${metrics[i].label}</div>
-          <div>${((metrics[i].value / total) * 100).toFixed(2)}%</div>
+      const calloutContent = `
+        <div class="metric-block">
+          <div class="circle small-circle">
+            ${metrics[i].value}
+          </div>
+          <div class="metric-callout">
+            <div class="metric-name">${metrics[i].label}</div>
+            <div class="metric-percentage">${((metrics[i].value / total) * 100).toFixed(2)}%</div>
+          </div>
         </div>
       `;
-      const smallCircleContainer = document.createElement('div');
-      smallCircleContainer.classList.add('persona-breakdown');
-      smallCircleContainer.innerHTML = smallCircleContent;
-      container.appendChild(smallCircleContainer);
+      const calloutContainer = document.createElement('div');
+      calloutContainer.classList.add('persona-breakdown');
+      calloutContainer.innerHTML = calloutContent;
+      metricsContainer.appendChild(calloutContainer);
     }
 
+    container.appendChild(metricsContainer);
     element.appendChild(container);
     done();
   }
