@@ -13,7 +13,7 @@ const icons = `
     justify-content: space-between;
     height: 100%; /* Ensure full height usage */
   }
-  .arrival-header, .arrival-details {
+  .arrival-header, .arrival-details, .arrival-details-nights {
     flex: 1;
   }
   .arrival-header {
@@ -29,6 +29,10 @@ const icons = `
     font-weight: bold;
   }
   .arrival-details div {
+    display: flex;
+    align-items: center;
+  }
+  .arrival-details-nights div {
     display: flex;
     align-items: center;
   }
@@ -84,20 +88,22 @@ looker.plugins.visualizations.add({
         </div>
         <div class="arrival-details"">
           <div><strong>${location}</strong></div>
-          <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
-            ${start_date} - ${end_date}</div>
-            <div class="nights"><img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2Y4XC80OTk5MDU4XC9hM2MzM2MyZmVmZTYyYTQ3NTBlZDkzZDI2ODc0YWNkNC0xNjA3NjIyMTkyLnN2ZyJ9:frontify:cLkhh1-xYamDkYHdQWOtmVNKFRElcvUisK6PfG7JUk0?width=2400"></img> ${num_nights}</div>
-          <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiMTJmM2YwMDc3YTVjNmEyM2Q1YzIwYjZiYS0xNjA3NjIyMTkyLnN2ZyJ9:frontify:XKUzuk-yTmtyqPmtN1vMYqipmXGVfqtUtmLso-gWDxM?width=2400"></img>
-            ${num_guests} guests
-          </div>
-          <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2ZkXC80OTk5Mzc2XC9kMGUyN2I1Mzg0MTgxOTEzNTUwOWY4ZmU3YmY2NjkwNS0xNjA3NjIyNzI5LnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400"></img>
-            Rooms ${room_numbers}
-          </div>
+            <div class="arrival-details-nights"">
+              <div>
+                <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
+                ${start_date} - ${end_date}</div>
+                <div class="nights"><img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2Y4XC80OTk5MDU4XC9hM2MzM2MyZmVmZTYyYTQ3NTBlZDkzZDI2ODc0YWNkNC0xNjA3NjIyMTkyLnN2ZyJ9:frontify:cLkhh1-xYamDkYHdQWOtmVNKFRElcvUisK6PfG7JUk0?width=2400"></img> ${num_nights}</div>
+              </div>
+            <div>
+              <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiMTJmM2YwMDc3YTVjNmEyM2Q1YzIwYjZiYS0xNjA3NjIyMTkyLnN2ZyJ9:frontify:XKUzuk-yTmtyqPmtN1vMYqipmXGVfqtUtmLso-gWDxM?width=2400"></img>
+              ${num_guests} guests
+            </div>
+        <div>
+          <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2ZkXC80OTk5Mzc2XC9kMGUyN2I1Mzg0MTgxOTEzNTUwOWY4ZmU3YmY2NjkwNS0xNjA3NjIyNzI5LnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400"></img>
+          Rooms ${room_numbers}
         </div>
       </div>
+    </div>
     `;
     
     // Append the card to the element
