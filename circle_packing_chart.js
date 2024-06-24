@@ -19,30 +19,30 @@ looker.plugins.visualizations.add({
       default: "#EAEAEA",
       display: "color",
       order: 3
-    },
-    // Options for custom labels and icons
-    metric_label_0: {
-      type: "string",
-      label: "Label for Biggest Circle",
-      default: "",
-      order: 4
-    },
-    metric_icon_0: {
-      type: "string",
-      label: "Icon URL for Biggest Circle",
-      default: "",
-      order: 5
-    },
-    metric_icon_1: {
-      type: "string",
-      label: "Icon URL for Small Circles",
-      default: "",
-      order: 6
     }
   },
+  
+  // Dynamically add options for custom labels and icons
+  updateDynamicOptions: function(config, queryResponse) {
+    const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
+    fields.forEach((field, index) => {
+      this.options[`metric_label_${index}`] = {
+        type: "string",
+        label: `Label for Metric ${index + 1}`,
+        default: "",
+        order: 4 + index * 2
+      };
+      this.options[`metric_icon_${index}`] = {
+        type: "string",
+        label: `Icon URL for Metric ${index + 1}`,
+        default: "",
+        order: 5 + index * 2
+      };
+    });
+  },
+  
   create: function(element, config) {
     element.style.fontFamily = `"Lato", sans-serif`;
-    // Basic styles for the visualization
     element.innerHTML = `
       <style>
         .big-circle {
@@ -86,6 +86,9 @@ looker.plugins.visualizations.add({
     `;
   },
   updateAsync: function(data, element, config, queryResponse, details, done) {
+    // Update dynamic options based on the data
+    this.updateDynamicOptions(config, queryResponse);
+
     // Clear the content
     element.innerHTML = ''; 
     element.innerHTML += `
