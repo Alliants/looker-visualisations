@@ -28,7 +28,7 @@ const styles = `
     color: white;
     flex-shrink: 0;
     font-size: 3vw;
-    padding: 1vw; /* Add padding here to prevent text from touching edges */
+    padding: 2vw; /* Add padding here to prevent text from touching edges */
     box-sizing: border-box; /* Ensure padding is included in the size */
   }
   .big-circle div {
@@ -58,6 +58,7 @@ const styles = `
     display: flex;
     align-items: center;
     margin-left: 10px;
+    font-size: 3vw;
   }
   .metric-name, .metric-percentage {
     margin-left: 5px;
@@ -126,7 +127,7 @@ looker.plugins.visualizations.add({
       const fontSizePercentage = sizePercentage * 0.4; // Adjust this value as needed for readability
 
       const calloutContent = `
-        <div class="metric-block" style="font-size: ${fontSizePercentage}vw;">
+        <div class="metric-block">
           <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw;">
             ${metrics[i].value}
           </div>
