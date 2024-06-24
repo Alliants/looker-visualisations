@@ -7,6 +7,7 @@ const styles = `
     height: 100%;
     width: 100%;
     box-sizing: border-box;
+    font-family: Lato, sans-serif;
   }
   .big-circle-container {
     display: flex;
@@ -124,7 +125,7 @@ looker.plugins.visualizations.add({
     for (let i = 1; i < metrics.length; i++) {
       // Calculate the size based on the percentage of the biggest metric
       const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
-      const fontSizePercentage = sizePercentage * 0.4; // Adjust this value as needed for readability
+      const fontSizePercentage = sizePercentage * 0.3; // Adjust this value as needed for readability
 
       const calloutContent = `
         <div class="metric-block">
