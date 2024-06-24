@@ -115,8 +115,8 @@ looker.plugins.visualizations.add({
           text-align: center;
         }
         .big-circle-icon {
-          max-width: 8vw; 
-          max-height: 8vh; 
+          max-width: 12vw; 
+          max-height: 12vh; 
           padding-bottom: 0.5vw;
         }
         .small-circle {
@@ -149,8 +149,8 @@ looker.plugins.visualizations.add({
           display: flex;
         }
         .small-circle-icon {
-          max-width: 5vw;
-          max-height: 5vh;
+          max-width: 8vw;
+          max-height: 8vh;
           padding-right: 0.5vw;
           align-self: center;
           vertical-align: middle;
