@@ -33,8 +33,7 @@ const icons = `
     align-items: center;
   }
   .arrival-details-nights div {
-    display: flex;
-    align-items: center;
+    justify-content: space-between;
   }
   .icon {
     margin-right: 10px;
