@@ -72,7 +72,7 @@ looker.plugins.visualizations.add({
 
     // Calculate dynamic line height based on container height
     const containerHeight = element.clientHeight;
-    const lineHeight = containerHeight / 10; // Adjust this value to distribute contents properly
+    const lineHeight = containerHeight / 26; // Adjust this value to distribute contents properly
 
     // Construct the arrival card with dynamic line height
     const arrivalCard = `
@@ -81,7 +81,7 @@ looker.plugins.visualizations.add({
           <div>Arrival Report</div>
           <div class="status">Due in - ${due_in_time}</div>
         </div>
-        <div class="arrival-details" style="line-height: ${lineHeight}px;">
+        <div class="arrival-details" style="line-height: ${lineHeight}vw;">
           <div><strong>${location}</strong></div>
           <div>
             <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
