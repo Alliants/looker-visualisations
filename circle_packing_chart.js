@@ -42,11 +42,17 @@ looker.plugins.visualizations.add({
         default: "",
         order: 4 + i * 2
       };
+      this.options[`metric_colour_${i}`] = {
+        type: "string",
+        label: `Font color for Metric ${i + 1}`,
+        default: "#000000",
+        order: 5 + i * 2
+      };
       this.options[`metric_icon_${i}`] = {
         type: "string",
         label: `Icon URL for Metric ${i + 1}`,
         default: "",
-        order: 5 + i * 2
+        order: 6 + i * 2
       };
     }
     this.trigger('registerOptions', this.options);
@@ -139,10 +145,12 @@ looker.plugins.visualizations.add({
     const metrics = fields.map((field, index) => {
       const value = data[0][field.name]?.value;
       const label = config[`metric_label_${index}`] || field.label_short || field.label;
+      const color = config[`metric_color_${index}`];
       const icon = config[`metric_icon_${index}`] || "";
       return {
         label: label,
         value: isNaN(value) ? 0 : Number(value),
+        color: color
         icon: icon
       };
     }).filter(metric => metric.value !== 0);
@@ -162,7 +170,7 @@ looker.plugins.visualizations.add({
     container.classList.add('meta-container');
 
     const bigCircleContent = `
-      <div class="big-circle" style="background-color: ${config.big_circle_color};">
+      <div class="big-circle" style="background-color: ${config.big_circle_color}; style="background-color: ${metrics[0].color};">
         <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=255,255,255,1">` : ''}</div>
         <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
         <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
@@ -183,7 +191,7 @@ looker.plugins.visualizations.add({
 
       const calloutContent = `
         <div class="metric-block">
-          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw; background-color: ${config.small_circle_color};">
+          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw; background-color: ${config.small_circle_color}; style="background-color: ${metrics[i].color};">
             ${metrics[i].value}
           </div>
           <div class="metric-callout">
