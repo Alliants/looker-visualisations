@@ -16,8 +16,8 @@ const styles = `
   }
   .big-circle {
     background-color: #4D6EBF;
-    width: 10vw;
-    height: 10vw;
+    width: 30vw;
+    height: 30vw;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -32,7 +32,7 @@ const styles = `
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    height: 10vw; /* This ensures the height matches the big circle */
+    height: 30vw; /* This ensures the height matches the big circle */
     margin-left: 20px;
   }
   .metric-block {
