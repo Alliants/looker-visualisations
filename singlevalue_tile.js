@@ -1,6 +1,6 @@
 looker.plugins.visualizations.add({
-  id: 'single_value_tile_viz',
-  label: 'Single Value Tile Viz',
+  id: 'single_value_viz',
+  label: 'Single Value Viz',
   options: {
     title: {
       type: 'string',
@@ -36,9 +36,9 @@ looker.plugins.visualizations.add({
       ],
       default: 'Lato',
     },
-    master_color: {
+    color: {
       type: 'string',
-      label: 'Master Color',
+      label: 'Color',
       display: 'color',
       default: '#000000',
     },
@@ -51,100 +51,70 @@ looker.plugins.visualizations.add({
 
     element.innerHTML = `
       <style>
-        .viz-container {
+        .single-value-container {
           display: flex;
+          flex-direction: column;
           justify-content: center;
           align-items: center;
           text-align: center;
-          column-gap: 10px;
-          border-radius: 8px;
           height: 100%;
-          box-sizing: border-box;
-          font-family: ${config.font_family}, sans-serif;
-        }
-        .viz-title-container {
           width: 100%;
-          text-align: ${config.title_position || 'center'};
-          margin-bottom: 5px;
-          font-family: ${config.font_family}, sans-serif;
-          font-size: 2.5vw;
-        }
-        .viz-element {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
           box-sizing: border-box;
-          flex: 1 1 30%;
-          min-width: 120px;
           font-family: ${config.font_family}, sans-serif;
         }
-        .viz-value {
-          margin: 0;
-          font-size: 5vw;
-          font-family: ${config.font_family}, sans-serif;
-          color: ${config.master_color};
-        }
-        .viz-title {
-          margin: 0;
+        .single-value-title {
           font-size: 2.5vw;
-          font-family: ${config.font_family}, sans-serif;
-          color: ${config.master_color};
+          margin-bottom: 5px;
+        }
+        .single-value {
+          font-size: 5vw;
         }
       </style>
-      <div class="viz-title-container"></div>
-      <div class="viz-container"></div>
+      <div class="single-value-title-container"></div>
+      <div class="single-value-container"></div>
     `;
-    element.style.height = "100%";
   },
   updateAsync: function (data, element, config, queryResponse, details, done) {
-    // Apply font family style dynamically
     const link = document.createElement('link');
     link.rel = 'stylesheet';
     link.href = `https://fonts.googleapis.com/css2?family=${config.font_family.replace(/ /g, '+')}&display=swap`;
     document.head.appendChild(link);
 
-    const vizTitleContainer = element.querySelector('.viz-title-container');
-    if (config.title) {
-      vizTitleContainer.innerHTML = `<div style="text-align: ${config.title_position};">${config.title}</div>`;
-    } else {
-      vizTitleContainer.innerHTML = '';
-    }
+    const titleContainer = element.querySelector('.single-value-title-container');
+    const valueContainer = element.querySelector('.single-value-container');
+    valueContainer.innerHTML = '';
 
-    const vizContainer = element.querySelector('.viz-container');
-    vizContainer.innerHTML = '';
-
-    // Check if there is more than one measure or dimension
-    const dimensions = queryResponse.fields.dimension_like;
-    const measures = queryResponse.fields.measure_like;
-    
-    if (!data || data.length === 0 || (dimensions.length + measures.length) !== 1) {
-      const errorElement = document.createElement('div');
-      errorElement.innerHTML = `<p style="color: red;">Error: Please input exactly one dimension or measure.</p>`;
-      vizContainer.appendChild(errorElement);
+    if (!data || data.length === 0) {
       done();
       return;
     }
 
-    const field = dimensions.length === 1 ? dimensions[0] : measures[0];
+    const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
+
+    if (fields.length !== 1) {
+      const errorElement = document.createElement('div');
+      errorElement.innerHTML = `<p style="color: red;">Error: Please provide exactly one metric or dimension.</p>`;
+      valueContainer.appendChild(errorElement);
+      done();
+      return;
+    }
+
+    if (config.title) {
+      titleContainer.innerHTML = `<div class="single-value-title" style="text-align: ${config.title_position};">${config.title}</div>`;
+    } else {
+      titleContainer.innerHTML = '';
+    }
+
+    const field = fields[0];
     const fieldName = field.name;
     const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
 
-    const vizElement = document.createElement('div');
-    vizElement.className = 'viz-element';
-
     const valueElement = document.createElement('div');
-    valueElement.className = 'viz-value';
+    valueElement.className = 'single-value';
+    valueElement.style.color = config.color;
     valueElement.innerHTML = fieldValue;
 
-    const titleElement = document.createElement('div');
-    titleElement.className = 'viz-title';
-    titleElement.innerText = config.title || field.label_short || field.label;
-
-    vizElement.appendChild(valueElement);
-    vizElement.appendChild(titleElement);
-    vizContainer.appendChild(vizElement);
-    
+    valueContainer.appendChild(valueElement);
     done();
   }
 });
