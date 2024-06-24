@@ -5,8 +5,8 @@ const icons = `
     border-radius: 10px;
     padding: 20px;
     width: 100%;
-    font-family: Arial, sans-serif;
     box-sizing: border-box;
+    font-family: Arial, sans-serif;
   }
   .arrival-header, .arrival-details {
     margin-bottom: 20px;
@@ -30,17 +30,17 @@ const icons = `
   }
   .icon {
     margin-right: 10px;
-    width: 18px;
-    height: 18px;
+    width: 1em; /* Set icon width based on the font size */
+    height: 1em; /* Set icon height based on the font size */
   }
 </style>
 `;
 
 looker.plugins.visualizations.add({
-  create: function (element, config) {
+  create: function(element, config) {
     element.style.fontFamily = `"Open Sans", "Helvetica", sans-serif`;
   },
-  updateAsync: function (data, element, config, queryResponse, details, done) {
+  updateAsync: function(data, element, config, queryResponse, details, done) {
     element.innerHTML = ''; // Clear any existing content
 
     // Append CSS styles to the element
@@ -49,7 +49,7 @@ looker.plugins.visualizations.add({
     // Extracting fields in the specific order
     const fields = queryResponse.fields.dimension_like;
 
-    // Check if there are at least 6 fields available
+    // Check if there are at least 7 fields available
     if (fields.length < 7) {
       element.innerHTML += 'Insufficient data fields';
       done();
@@ -69,11 +69,11 @@ looker.plugins.visualizations.add({
     // Set dynamic font size
     const containerHeight = element.clientHeight;
     const containerWidth = element.clientWidth;
-    const minContainerSize = Math.min(containerHeight, containerWidth);
-    const baseFontSize = minContainerSize / 20; // Adjust 20 to adjust font size scaling
+    const minContainerSize = Math.min(containerWidth, containerHeight);
+    const baseFontSize = Math.floor(minContainerSize / 20); // Use floor to prevent large increases
 
     const arrivalCard = `
-      <div class="arrival-card" style="font-size: ${baseFontSize}vw;">
+      <div class="arrival-card" style="font-size: ${baseFontSize}px;">
         <div class="arrival-header">
           <div>Arrival Report</div>
           <div class="status">Due in - ${due_in_time}</div>
