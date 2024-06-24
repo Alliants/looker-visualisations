@@ -216,7 +216,7 @@ looker.plugins.visualizations.add({
           </div>
           <div class="metric-callout">
             <div class="metric-name">
-              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}&color=${smallCircleIconColor},1">` : ''} <span>${metrics[i].label}</span> <span class="metric-percentage">${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</span>
+              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}&color=${smallCircleIconColor},1">` : ''} <span>${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</span>
             </div>
           </div>
         </div>
