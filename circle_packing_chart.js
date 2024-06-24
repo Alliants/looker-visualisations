@@ -163,7 +163,7 @@ looker.plugins.visualizations.add({
 
     const bigCircleContent = `
       <div class="big-circle" style="background-color: ${config.big_circle_color};">
-        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}">` : ''}</div>
+        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=255,255,255,255">` : ''}</div>
         <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
         <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
       </div>
