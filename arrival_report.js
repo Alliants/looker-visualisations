@@ -73,7 +73,7 @@ looker.plugins.visualizations.add({
     const baseFontSize = Math.floor(minContainerSize / 20); // Use floor to prevent large increases
 
     const arrivalCard = `
-      <div class="arrival-card" style="font-size: ${baseFontSize}px;">
+      <div class="arrival-card" style="font-size: ${baseFontSize}vw; max-height: ${containerHeight - 20}px;">
         <div class="arrival-header">
           <div>Arrival Report</div>
           <div class="status">Due in - ${due_in_time}</div>
