@@ -20,6 +20,7 @@ const icons = `
     display: flex;
     justify-content: space-between;
     align-items: center;
+    line-height: 4vw; /* Overarching line height */
   }
   .arrival-header .status {
     background: #ffb921;
@@ -27,6 +28,10 @@ const icons = `
     border-radius: 10px;
     color: white;
     font-weight: bold;
+    line-height: 2vw; /* Specific line height for status */
+  }
+  .arrival-details, .arrival-details-nights {
+    line-height: 3vw; /* Line height for details */
   }
   .arrival-details div {
     display: flex;
@@ -70,41 +75,55 @@ looker.plugins.visualizations.add({
     const num_guests = row[fields[5].name].value;
     const room_numbers = row[fields[6].name].value;
 
-    // Calculate dynamic line height based on container height
+    // Calculate dynamic font size and line height
     const containerHeight = element.clientHeight;
-    const lineHeight = containerHeight / 26; // Adjust this value to distribute contents properly
-    const statusLineHeight = lineHeight * 0.4; // Adjust this value to distribute contents properly
+    const containerWidth = element.clientWidth;
+    const minContainerSize = Math.min(containerHeight, containerWidth);
+    const baseFontSize = minContainerSize / 5; // Use for setting a fixed base font size
+    const lineHeight = containerHeight / 26; // Adjust this value if needed
+
+    // Adjust the height of the viz-container to fit within the parent element
+    const vizContainer = document.createElement('div');
+    vizContainer.style.height = `${containerHeight - 20}px`; // Adjust 20px to the margin/padding as per your requirement
+    vizContainer.style.overflow = 'hidden'; // Ensure content doesn't overflow
 
     // Construct the arrival card with dynamic line height
     const arrivalCard = `
       <div class="arrival-card" style="line-height: ${lineHeight}vw;">
         <div class="arrival-header">
           <div>Arrival Report</div>
-          <div class="status" style="line-height: ${statusLineHeight}vw;">Due in - ${due_in_time}</div>
+          <div class="status" style="line-height: ${lineHeight * 0.4}vw;">Due in - ${due_in_time}</div>
         </div>
-        <div class="arrival-details"">
+        <div class="arrival-details">
           <div><strong>${location}</strong></div>
-            <div class="arrival-details-nights" style="justify-content: space-between;">
-              <div>
-                <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
-                ${start_date} - ${end_date}</div>
-                <div class="nights"><img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2Y4XC80OTk5MDU4XC9hM2MzM2MyZmVmZTYyYTQ3NTBlZDkzZDI2ODc0YWNkNC0xNjA3NjIyMTkyLnN2ZyJ9:frontify:cLkhh1-xYamDkYHdQWOtmVNKFRElcvUisK6PfG7JUk0?width=2400"></img> ${num_nights}</div>
-              </div>
+          <div class="arrival-details-nights" style="justify-content: space-between;">
             <div>
-              <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiMTJmM2YwMDc3YTVjNmEyM2Q1YzIwYjZiYS0xNjA3NjIyMTkyLnN2ZyJ9:frontify:XKUzuk-yTmtyqPmtN1vMYqipmXGVfqtUtmLso-gWDxM?width=2400"></img>
-              ${num_guests} guests
+              <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZ"></img>
+              ${start_date} - ${end_date}
             </div>
-        <div>
-          <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2ZkXC80OTk5Mzc2XC9kMGUyN2I1Mzg0MTgxOTEzNTUwOWY4ZmU3YmY2NjkwNS0xNjA3NjIyNzI5LnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400"></img>
-          Rooms ${room_numbers}
+            <div class="nights">
+              <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/e"></img>
+              ${num_nights}
+            </div>
+          </div>
+          <div>
+            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/"></img>
+            ${num_guests} guests
+          </div>
+          <div>
+            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/"></img>
+            Rooms ${room_numbers}
+          </div>
         </div>
       </div>
-    </div>
     `;
     
-    // Append the card to the element
-    element.innerHTML += arrivalCard;
-    
+    // Append the arrival card to the vizContainer
+    vizContainer.innerHTML = arrivalCard;
+
+    // Append the vizContainer to the element
+    element.appendChild(vizContainer);
+
     done();
   }
 });
