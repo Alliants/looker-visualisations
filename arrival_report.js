@@ -77,10 +77,10 @@ looker.plugins.visualizations.add({
 
     // Construct the arrival card with dynamic line height
     const arrivalCard = `
-      <div class="arrival-card" style="line-height: ${lineHeight}vw;>
+      <div class="arrival-card" style="line-height: ${lineHeight}vw;">
         <div class="arrival-header">
           <div>Arrival Report</div>
-          <div class="status" style="line-height: ${statusLineHeight}vw;>Due in - ${due_in_time}</div>
+          <div class="status" style="line-height: ${statusLineHeight}vw;">Due in - ${due_in_time}</div>
         </div>
         <div class="arrival-details"">
           <div><strong>${location}</strong></div>
