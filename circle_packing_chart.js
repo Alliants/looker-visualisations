@@ -109,9 +109,10 @@ looker.plugins.visualizations.add({
           align-items: center;
           color: ${config.big_circle_font_color};
           flex-shrink: 0;
-          font-size: 3vw;
+          font-size: 4vw;
           padding: 2vw; /* Add padding here to prevent text from touching edges */
           box-sizing: border-box; /* Ensure padding is included in the size */
+          text-align: center;
         }
         .big-circle-icon {
           max-width: 8vw; 
