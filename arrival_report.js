@@ -1,4 +1,4 @@
-// Include custom icons
+// Include custom icons and styles
 const icons = `
 <style>
   .arrival-card {
@@ -8,9 +8,13 @@ const icons = `
     box-sizing: border-box;
     font-family: Arial, sans-serif;
     font-size: 4vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%; /* Ensure full height usage */
   }
   .arrival-header, .arrival-details {
-    margin-bottom: 20px;
+    flex: 1;
   }
   .arrival-header {
     display: flex;
@@ -25,7 +29,6 @@ const icons = `
     font-weight: bold;
   }
   .arrival-details div {
-    margin-bottom: 10px;
     display: flex;
     align-items: center;
   }
@@ -67,13 +70,13 @@ looker.plugins.visualizations.add({
     const num_guests = row[fields[5].name].value;
     const room_numbers = row[fields[6].name].value;
 
-    // Set dynamic font size
+    // Calculate dynamic line height based on container height
     const containerHeight = element.clientHeight;
-    const containerWidth = element.clientWidth;
-    const minContainerSize = Math.min(containerWidth, containerHeight);
+    const lineHeight = containerHeight / 10; // Adjust this value to distribute contents properly
 
+    // Construct the arrival card with dynamic line height
     const arrivalCard = `
-      <div class="arrival-card" style="max-height: ${containerHeight - 20}px;">
+      <div class="arrival-card" style="line-height: ${lineHeight}px;">
         <div class="arrival-header">
           <div>Arrival Report</div>
           <div class="status">Due in - ${due_in_time}</div>
@@ -81,7 +84,7 @@ looker.plugins.visualizations.add({
         <div class="arrival-details">
           <div><strong>${location}</strong></div>
           <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
+            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291ڀ248yNFwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400"></img>
             ${start_date} - ${end_date} (${num_nights} nights)
           </div>
           <div>
@@ -89,7 +92,7 @@ looker.plugins.visualizations.add({
             ${num_guests} guests
           </div>
           <div>
-            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2ZkXC80OTk5Mzc2XC9kMGUyN2I1Mzg0MTgxOTEzNTUwOWY4ZmU3YmY2NjkwNS0xNjA3NjIyNzI5LnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400"></img>
+            <img class="icon" src="https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2Fjc21vLnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400"></img>
             Rooms ${room_numbers}
           </div>
         </div>
