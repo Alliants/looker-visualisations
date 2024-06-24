@@ -56,6 +56,7 @@ looker.plugins.visualizations.add({
           justify-content: center;
           align-items: center;
           text-align: center;
+          column-gap: 10px;
           border-radius: 8px;
           height: 100%;
           box-sizing: border-box;
@@ -74,6 +75,8 @@ looker.plugins.visualizations.add({
           align-items: center;
           justify-content: center;
           box-sizing: border-box;
+          flex: 1 1 30%;
+          min-width: 120px;
           font-family: ${config.font_family}, sans-serif;
         }
         .viz-value {
@@ -108,15 +111,17 @@ looker.plugins.visualizations.add({
       vizTitleContainer.innerHTML = '';
     }
 
-    if (!data || data.length === 0 || queryResponse.fields.measure_like.length > 1) {
-      const vizContainer = element.querySelector('.viz-container');
-      vizContainer.innerHTML = `<p style="color: red;">Error: This visualization supports only a single value.</p>`;
+    const vizContainer = element.querySelector('.viz-container');
+    vizContainer.innerHTML = '';
+
+    // Check if there is more than one measure
+    if (!data || data.length === 0 || queryResponse.fields.measure_like.length !== 1) {
+      const errorElement = document.createElement('div');
+      errorElement.innerHTML = `<p style="color: red;">Error: Please input exactly one metric.</p>`;
+      vizContainer.appendChild(errorElement);
       done();
       return;
     }
-
-    const vizContainer = element.querySelector('.viz-container');
-    vizContainer.innerHTML = '';
 
     const measure = queryResponse.fields.measure_like[0];
     const measureName = measure.name;
