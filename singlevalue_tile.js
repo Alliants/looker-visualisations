@@ -114,29 +114,32 @@ looker.plugins.visualizations.add({
     const vizContainer = element.querySelector('.viz-container');
     vizContainer.innerHTML = '';
 
-    // Check if there is more than one measure
-    if (!data || data.length === 0 || queryResponse.fields.measure_like.length !== 1) {
+    // Check if there is more than one measure or dimension
+    const dimensions = queryResponse.fields.dimension_like;
+    const measures = queryResponse.fields.measure_like;
+    
+    if (!data || data.length === 0 || (dimensions.length + measures.length) !== 1) {
       const errorElement = document.createElement('div');
-      errorElement.innerHTML = `<p style="color: red;">Error: Please input exactly one metric.</p>`;
+      errorElement.innerHTML = `<p style="color: red;">Error: Please input exactly one dimension or measure.</p>`;
       vizContainer.appendChild(errorElement);
       done();
       return;
     }
 
-    const measure = queryResponse.fields.measure_like[0];
-    const measureName = measure.name;
-    const measureValue = data[0][measureName].rendered || data[0][measureName].value || '∅';
+    const field = dimensions.length === 1 ? dimensions[0] : measures[0];
+    const fieldName = field.name;
+    const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
 
     const vizElement = document.createElement('div');
     vizElement.className = 'viz-element';
 
     const valueElement = document.createElement('div');
     valueElement.className = 'viz-value';
-    valueElement.innerHTML = measureValue;
+    valueElement.innerHTML = fieldValue;
 
     const titleElement = document.createElement('div');
     titleElement.className = 'viz-title';
-    titleElement.innerText = config.title || measure.label_short || measure.label;
+    titleElement.innerText = config.title || field.label_short || field.label;
 
     vizElement.appendChild(valueElement);
     vizElement.appendChild(titleElement);
