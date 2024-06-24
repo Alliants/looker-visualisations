@@ -188,10 +188,8 @@ looker.plugins.visualizations.add({
           </div>
           <div class="metric-callout">
             <div class="metric-name">
-              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}">` : ''} ${metrics[i].label}
+              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}">` : ''} ${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%
             </div>
-            <div class="metric-percentage">${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</div>
-          </div>
         </div>
       `;
       const calloutContainer = document.createElement('div');
