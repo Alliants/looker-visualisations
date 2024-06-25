@@ -118,7 +118,7 @@ looker.plugins.visualizations.add({
 
         const metricContainer = document.createElement('div');
         metricContainer.className = 'metric-container';
-        metricContainer.style = 'flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;';
+        metricContainer.style = 'flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 12vh';
 
         const valueElement = document.createElement('div');
         valueElement.className = 'metric-value';
@@ -140,7 +140,7 @@ looker.plugins.visualizations.add({
         labelElement.className = 'metric-label';
         labelElement.innerText = fieldLabel;
         labelElement.style.color = validMetricColor;
-        labelElement.style.fontSize = 'calc(1rem + 0.5vw)';
+        labelElement.style.fontSize = 'calc(0.75rem + 0.5vw)';
         labelElement.style.textAlign = 'center'; // Ensuring text is centered
         
         metricContainer.appendChild(labelElement);
