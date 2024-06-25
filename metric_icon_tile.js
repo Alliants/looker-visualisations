@@ -7,7 +7,6 @@ looker.plugins.visualizations.add({
       label: 'Master Color',
       display: 'color',
       default: '#000000',
-      order: 1,
     },
   },
 
@@ -33,7 +32,8 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        default: '#000000',
+        // Ensure this value is a proper string default
+        default: String(this.options.master_color || '#000000'),
         order: 2 + index * 2,
       };
       this.options[`icon_url_${fieldName}`] = {
@@ -57,11 +57,19 @@ looker.plugins.visualizations.add({
   },
 
   hexToRgb: function(hex) {
-    // Safety checks for valid hex strings
-    if (typeof hex !== 'string' || !/^#[0-9A-Fa-f]{6}$/i.test(hex)) {
+    if (typeof hex !== 'string') {
       console.error('Invalid hex color:', hex);
       return '0,0,0'; // Default to black if the input is invalid
     }
+
+    // Expand shorthand form (e.g., "#03F") to full form (e.g., "#0033FF")
+    if (hex.length === 4) {
+      hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
+    } else if (!/^#[0-9A-Fa-f]{6}$/i.test(hex)) {
+      console.error('Invalid hex color:', hex);
+      return '0,0,0'; // Default to black if the input is invalid
+    }
+
     hex = hex.replace('#', '');
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
@@ -98,10 +106,9 @@ looker.plugins.visualizations.add({
 
         const field = fields[metricIndex];
         const fieldName = field.name.replace(/\./g, '_');
+        
         // Ensure metric colors default to master color if unspecified
         const metricColor = config[`metric_color_${fieldName}`] || config.master_color || '#000000';
-
-        // Ensure metricColor is a string
         const validMetricColor = typeof metricColor === 'string' ? metricColor : '#000000';
 
         const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
@@ -118,7 +125,7 @@ looker.plugins.visualizations.add({
         valueElement.innerText = fieldValue;
         valueElement.style.color = validMetricColor;
         valueElement.style.fontSize = 'calc(1.5rem + 1vw)';
-        valueElement.style.textAlign = 'center';
+        valueElement.style.textAlign = 'center'; // Ensuring value element is centered
         metricContainer.appendChild(valueElement);
 
         if (iconURL) {
@@ -132,10 +139,13 @@ looker.plugins.visualizations.add({
         const labelElement = document.createElement('div');
         labelElement.className = 'metric-label';
         labelElement.innerText = fieldLabel;
-        labelElement.style.color = metricColor;
-        labelElement.style.fontSize = `1rem`;
-        labelElement.style.textAlign = 'center';
+        labelElement.style.color = validMetricColor;
+        labelElement.style.fontSize = 'calc(1rem + 0.5vw)';
+        labelElement.style.textAlign = 'center'; // Ensuring text is centered
+        
         metricContainer.appendChild(labelElement);
+
+        row.appendChild(metricContainer);
       }
     }
 
