@@ -33,8 +33,7 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        // Ensure this value is a proper string default
-        default: String(this.options.master_color || '#000000'),
+        default: '#000000',
         order: 2 + index * 2,
       };
       this.options[`icon_url_${fieldName}`] = {
@@ -133,15 +132,10 @@ looker.plugins.visualizations.add({
         const labelElement = document.createElement('div');
         labelElement.className = 'metric-label';
         labelElement.innerText = fieldLabel;
-        labelElement.style.color = validMetricColor;
-        labelElement.style.fontSize = 'calc(1rem + 0.5vw)';
+        labelElement.style.color = metricColor;
+        labelElement.style.fontSize = `1rem`;
         labelElement.style.textAlign = 'center';
-        labelElement.style.display = 'flex';
-        labelElement.style.justifyContent = 'center';
-        labelElement.style.alignItems = 'center';
-        labelElement.style.flexWrap = 'wrap';
-
-        row.appendChild(metricContainer);
+        metricContainer.appendChild(labelElement);
       }
     }
 
