@@ -34,21 +34,21 @@ looker.plugins.visualizations.add({
         label: `Metric ${index + 1} Color`,
         display: 'color',
         default: this.options.master_color || '#000000',
-        order: 2 + i * 2
+        order: 2 + i * 2,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 3 + i * 2
+        order: 3 + i * 2,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 4 + i * 2
+        order: 4 + i * 2,
       };
     });
 
@@ -107,14 +107,14 @@ looker.plugins.visualizations.add({
         valueElement.className = 'metric-value';
         valueElement.innerText = fieldValue;
         valueElement.style.color = metricColor;
-        valueElement.style.fontSize = `${containerWidth / 20}px`;
+        valueElement.style.fontSize = `5vw`;
         metricContainer.appendChild(valueElement);
 
         if (iconURL) {
           const iconElement = document.createElement('img');
           iconElement.src = `${iconURL}&color=${iconColor}`;
-          iconElement.style.width = `${containerWidth / 10}px`;
-          iconElement.style.height = `${containerHeight / 10}px`;
+          iconElement.style.width = `10vw`;
+          iconElement.style.height = `10vh`;
           metricContainer.appendChild(iconElement);
         }
 
@@ -122,7 +122,7 @@ looker.plugins.visualizations.add({
         labelElement.className = 'metric-label';
         labelElement.innerText = fieldLabel;
         labelElement.style.color = metricColor;
-        labelElement.style.fontSize = `${containerWidth / 30}px`;
+        labelElement.style.fontSize = `2.5vw`;
         metricContainer.appendChild(labelElement);
 
         row.appendChild(metricContainer);
