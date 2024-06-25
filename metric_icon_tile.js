@@ -1,6 +1,6 @@
 looker.plugins.visualizations.add({
-  id: 'dynamic_metric_display_v2',
-  label: 'Dynamic Metric Display v2',
+  id: 'dynamic_metric_display_v3',
+  label: 'Dynamic Metric Display v3',
   options: {
     master_color: {
       type: 'string',
@@ -16,30 +16,37 @@ looker.plugins.visualizations.add({
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const container = element.querySelector('.viz-container');
     container.innerHTML = '';
-    
+
     const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
 
     // Remove any existing dynamic options
     const options = this.options;
     Object.keys(options).forEach(key => {
-      if (key.startsWith('icon_url_') || key.startsWith('metric_color_')) {
+      if (key.startsWith('icon_url_') || key.startsWith('metric_color_') || key.startsWith('metric_label_')) {
         delete options[key];
       }
     });
 
     // Add dynamic options based on the number of fields
     fields.forEach((field, index) => {
-      options[`icon_url_${index + 1}`] = {
+      const fieldName = field.name.replace(/\./g, '_');
+      options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL ${index + 1}`,
         display: 'text',
         default: ''
       };
-      options[`metric_color_${index + 1}`] = {
+      options[`metric_color_${fieldName}`] = {
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
         default: config.master_color
+      };
+      options[`metric_label_${fieldName}`] = {
+        type: 'string',
+        label: `Metric ${index + 1} Label`,
+        display: 'text',
+        default: field.label_short || field.label
       };
     });
 
@@ -62,11 +69,11 @@ looker.plugins.visualizations.add({
         if (metricIndex >= numMetrics) break;
     
         const field = fields[metricIndex];
-        const fieldName = field.name;
-        const fieldLabel = field.label_short || field.label;
-        const fieldValue = data[0][fieldName].rendered || data[0][fieldName].value || '∅';
-        const iconURL = config[`icon_url_${metricIndex + 1}`] || '';
-        const metricColor = config[`metric_color_${metricIndex + 1}`] || config.master_color;
+        const fieldName = field.name.replace(/\./g, '_');
+        const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
+        const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
+        const iconURL = config[`icon_url_${fieldName}`] || '';
+        const metricColor = config[`metric_color_${fieldName}`] || config.master_color;
     
         const metricContainer = document.createElement('div');
         metricContainer.className = 'metric-container';
