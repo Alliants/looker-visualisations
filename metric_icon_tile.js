@@ -56,15 +56,6 @@ looker.plugins.visualizations.add({
     this.trigger('registerOptions', this.options);
   },
 
-  hexToRgb: function(hex) {
-    hex = hex.replace('#', '');
-    const bigint = parseInt(hex, 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-    return `${r},${g},${b}`;
-  },
-
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const container = element.querySelector('.viz-container');
     container.innerHTML = '';
@@ -79,6 +70,20 @@ looker.plugins.visualizations.add({
     const numMetrics = fields.length;
     const numColumns = Math.ceil(Math.sqrt(numMetrics));
     const numRows = Math.ceil(numMetrics / numColumns);
+
+    // Helper function to convert HEX color to RGB
+    function hexToRgb(hex) {
+      // Remove the "#" if present
+      hex = hex.replace(/^#/, '');
+
+      // Parse the hex color
+      const bigint = parseInt(hex, 16);
+      const r = (bigint >> 16) & 255;
+      const g = (bigint >> 8) & 255;
+      const b = bigint & 255;
+
+      return [r, g, b];
+    }
 
     for (let i = 0; i < numRows; i++) {
       const row = document.createElement('div');
@@ -97,8 +102,10 @@ looker.plugins.visualizations.add({
         const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
         const iconURL = config[`icon_url_${fieldName}`] || '';
         const metricColor = config[`metric_color_${fieldName}`] || config.master_color;
-        const iconColor = this.hexToRgb(metricColor);
 
+        // Convert metricColor from HEX to RGB
+        const [r, g, b] = hexToRgb(metricColor);
+        const colorParam = `&color=${r},${g},${b},1`;
 
         const metricContainer = document.createElement('div');
         metricContainer.className = 'metric-container';
@@ -113,7 +120,7 @@ looker.plugins.visualizations.add({
 
         if (iconURL) {
           const iconElement = document.createElement('img');
-          iconElement.src = `${iconURL}&color=${iconColor},1`;
+          iconElement.src = `${iconURL}${colorParam}`;
           iconElement.style.width = `${containerWidth / 10}px`;
           iconElement.style.height = `${containerHeight / 10}px`;
           metricContainer.appendChild(iconElement);
