@@ -119,6 +119,7 @@ looker.plugins.visualizations.add({
         valueElement.innerText = fieldValue;
         valueElement.style.color = validMetricColor;
         valueElement.style.fontSize = 'calc(1.5rem + 1vw)';
+        valueElement.style.textAlign = 'center';
         metricContainer.appendChild(valueElement);
 
         if (iconURL) {
@@ -134,7 +135,11 @@ looker.plugins.visualizations.add({
         labelElement.innerText = fieldLabel;
         labelElement.style.color = validMetricColor;
         labelElement.style.fontSize = 'calc(1rem + 0.5vw)';
-        metricContainer.appendChild(labelElement);
+        labelElement.style.textAlign = 'center';
+        labelElement.style.display = 'flex';
+        labelElement.style.justifyContent = 'center';
+        labelElement.style.alignItems = 'center';
+        labelElement.style.flexWrap = 'wrap';
 
         row.appendChild(metricContainer);
       }
