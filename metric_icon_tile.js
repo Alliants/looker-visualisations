@@ -17,7 +17,6 @@ looker.plugins.visualizations.add({
 
   updateDynamicOptions: function (queryResponse) {
     const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
-    const numFields = fields.length;
 
     // Remove previous dynamic options
     Object.keys(this.options).forEach((key) => {
@@ -33,7 +32,8 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        default: this.options.master_color || '#000000',
+        // Providing a string default directly to avoid [object Object] issues
+        default: String(this.options.master_color || '#000000'),
         order: 2 + index * 2,
       };
       this.options[`icon_url_${fieldName}`] = {
@@ -56,6 +56,20 @@ looker.plugins.visualizations.add({
     this.trigger('registerOptions', this.options);
   },
 
+  hexToRgb: function(hex) {
+    // Safety checks for valid hex strings
+    if (typeof hex !== 'string' || !/^#[0-9A-Fa-f]{6}$/i.test(hex)) {
+      console.error('Invalid hex color:', hex);
+      return '0,0,0'; // Default to black if the input is invalid
+    }
+    hex = hex.replace('#', '');
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = (bigint) & 255;
+    return `${r},${g},${b}`;
+  },
+
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const container = element.querySelector('.viz-container');
     container.innerHTML = '';
@@ -66,24 +80,10 @@ looker.plugins.visualizations.add({
     const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
     const containerWidth = element.clientWidth;
     const containerHeight = element.clientHeight;
-
+    
     const numMetrics = fields.length;
     const numColumns = Math.ceil(Math.sqrt(numMetrics));
     const numRows = Math.ceil(numMetrics / numColumns);
-
-    // Helper function to convert HEX color to RGB
-    function hexToRgb(hex) {
-      // Remove the "#" if present
-      hex = hex.replace(/^#/, '');
-
-      // Parse the hex color
-      const bigint = parseInt(hex, 16);
-      const r = (bigint >> 16) & 255;
-      const g = (bigint >> 8) & 255;
-      const b = bigint & 255;
-
-      return [r, g, b];
-    }
 
     for (let i = 0; i < numRows; i++) {
       const row = document.createElement('div');
@@ -98,14 +98,13 @@ looker.plugins.visualizations.add({
 
         const field = fields[metricIndex];
         const fieldName = field.name.replace(/\./g, '_');
+        // Ensure metric colors default to master color if unspecified
+        const metricColor = config[`metric_color_${fieldName}`] || config.master_color || '#000000';
+
         const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
         const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
         const iconURL = config[`icon_url_${fieldName}`] || '';
-        const metricColor = config[`metric_color_${fieldName}`] || config.master_color;
-
-        // Convert metricColor from HEX to RGB
-        const [r, g, b] = hexToRgb(metricColor);
-        const colorParam = `&color=${r},${g},${b},1`;
+        const iconColor = this.hexToRgb(metricColor);
 
         const metricContainer = document.createElement('div');
         metricContainer.className = 'metric-container';
@@ -120,7 +119,7 @@ looker.plugins.visualizations.add({
 
         if (iconURL) {
           const iconElement = document.createElement('img');
-          iconElement.src = `${iconURL}${colorParam}`;
+          iconElement.src = `${iconURL}&color=${iconColor},1`;
           iconElement.style.width = `${containerWidth / 10}px`;
           iconElement.style.height = `${containerHeight / 10}px`;
           metricContainer.appendChild(iconElement);
