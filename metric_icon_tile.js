@@ -34,23 +34,35 @@ looker.plugins.visualizations.add({
         label: `Metric ${index + 1} Color`,
         display: 'color',
         default: this.options.master_color || '#000000',
+        order: 2 + i * 2
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
+        order: 3 + i * 2
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
+        order: 4 + i * 2
       };
     });
 
     // Register the updated options with Looker
     this.trigger('registerOptions', this.options);
+  },
+
+  hexToRgb: function(hex) {
+    hex = hex.replace('#', '');
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r},${g},${b}`;
   },
 
   updateAsync: function (data, element, config, queryResponse, details, done) {
@@ -85,18 +97,11 @@ looker.plugins.visualizations.add({
         const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
         const iconURL = config[`icon_url_${fieldName}`] || '';
         const metricColor = config[`metric_color_${fieldName}`] || config.master_color;
+        const iconColor = this.hexToRgb(metricColor);
 
         const metricContainer = document.createElement('div');
         metricContainer.className = 'metric-container';
         metricContainer.style = 'flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;';
-
-        if (iconURL) {
-          const iconElement = document.createElement('img');
-          iconElement.src = `${iconURL}&RGB=${metricColor.replace('#', '')}`;
-          iconElement.style.width = `${containerWidth / 10}px`;
-          iconElement.style.height = `${containerHeight / 10}px`;
-          metricContainer.appendChild(iconElement);
-        }
 
         const valueElement = document.createElement('div');
         valueElement.className = 'metric-value';
@@ -104,6 +109,14 @@ looker.plugins.visualizations.add({
         valueElement.style.color = metricColor;
         valueElement.style.fontSize = `${containerWidth / 20}px`;
         metricContainer.appendChild(valueElement);
+
+        if (iconURL) {
+          const iconElement = document.createElement('img');
+          iconElement.src = `${iconURL}&color=${iconColor}`;
+          iconElement.style.width = `${containerWidth / 10}px`;
+          iconElement.style.height = `${containerHeight / 10}px`;
+          metricContainer.appendChild(iconElement);
+        }
 
         const labelElement = document.createElement('div');
         labelElement.className = 'metric-label';
