@@ -7,6 +7,7 @@ looker.plugins.visualizations.add({
       label: 'Master Color',
       display: 'color',
       default: '#000000',
+      order: 1,
     },
   },
 
