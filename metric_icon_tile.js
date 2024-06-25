@@ -13,6 +13,7 @@ looker.plugins.visualizations.add({
   create: function (element, config) {
     element.innerHTML = '<div class="viz-container"></div>';
     element.style.fontFamily = 'Lato, sans-serif';
+    element.style.height = 'calc(100% - 10px)'
   },
 
   updateDynamicOptions: function (queryResponse) {
@@ -118,7 +119,7 @@ looker.plugins.visualizations.add({
 
         const metricContainer = document.createElement('div');
         metricContainer.className = 'metric-container';
-        metricContainer.style = 'flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 12vh';
+        metricContainer.style = 'flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;';
 
         const valueElement = document.createElement('div');
         valueElement.className = 'metric-value';
