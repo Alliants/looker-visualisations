@@ -105,7 +105,7 @@ looker.plugins.visualizations.add({
           border-radius: 50%;
           display: flex;
           flex-direction: column;
-          justify-content: space-evenly;
+          justify-content: center;
           align-items: center;
           color: ${config.big_circle_font_color};
           flex-shrink: 0;
@@ -137,6 +137,7 @@ looker.plugins.visualizations.add({
         .metric-block {
           display: flex;
           align-items: center;
+          justify-content: center;
           font-size: 2.5vw;
         }
         .metric-callout {
@@ -147,6 +148,8 @@ looker.plugins.visualizations.add({
         .metric-name, .metric-percentage {
           margin-left: 5px;
           display: flex;
+          align-items: center;
+          justify-content: center;
         }
         .small-circle-icon {
           max-width: 8vw;
