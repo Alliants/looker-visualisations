@@ -33,7 +33,7 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        // Providing a string default directly to avoid [object Object] issues
+        // Ensure this value is a proper string default
         default: String(this.options.master_color || '#000000'),
         order: 2 + index * 2,
       };
@@ -102,10 +102,13 @@ looker.plugins.visualizations.add({
         // Ensure metric colors default to master color if unspecified
         const metricColor = config[`metric_color_${fieldName}`] || config.master_color || '#000000';
 
+        // Ensure metricColor is a string
+        const validMetricColor = typeof metricColor === 'string' ? metricColor : '#000000';
+
         const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
         const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
         const iconURL = config[`icon_url_${fieldName}`] || '';
-        const iconColor = this.hexToRgb(metricColor);
+        const iconColor = this.hexToRgb(validMetricColor);
 
         const metricContainer = document.createElement('div');
         metricContainer.className = 'metric-container';
@@ -114,8 +117,8 @@ looker.plugins.visualizations.add({
         const valueElement = document.createElement('div');
         valueElement.className = 'metric-value';
         valueElement.innerText = fieldValue;
-        valueElement.style.color = metricColor;
-        valueElement.style.fontSize = `2rem`;
+        valueElement.style.color = validMetricColor;
+        valueElement.style.fontSize = 'calc(1.5rem + 1vw)';
         metricContainer.appendChild(valueElement);
 
         if (iconURL) {
@@ -129,8 +132,8 @@ looker.plugins.visualizations.add({
         const labelElement = document.createElement('div');
         labelElement.className = 'metric-label';
         labelElement.innerText = fieldLabel;
-        labelElement.style.color = metricColor;
-        labelElement.style.fontSize = `1rem`;
+        labelElement.style.color = validMetricColor;
+        labelElement.style.fontSize = 'calc(1rem + 0.5vw)';
         metricContainer.appendChild(labelElement);
 
         row.appendChild(metricContainer);
