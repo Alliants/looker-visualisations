@@ -114,7 +114,7 @@ looker.plugins.visualizations.add({
         valueElement.className = 'metric-value';
         valueElement.innerText = fieldValue;
         valueElement.style.color = metricColor;
-        valueElement.style.fontSize = `${containerWidth / 20}px`;
+        valueElement.style.fontSize = `2rem`;
         metricContainer.appendChild(valueElement);
 
         if (iconURL) {
@@ -129,7 +129,7 @@ looker.plugins.visualizations.add({
         labelElement.className = 'metric-label';
         labelElement.innerText = fieldLabel;
         labelElement.style.color = metricColor;
-        labelElement.style.fontSize = `${containerWidth / 30}px`;
+        labelElement.style.fontSize = `1rem`;
         metricContainer.appendChild(labelElement);
 
         row.appendChild(metricContainer);
