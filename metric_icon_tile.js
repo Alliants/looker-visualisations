@@ -20,7 +20,7 @@ looker.plugins.visualizations.add({
     const numFields = fields.length;
 
     // Remove previous dynamic options
-    Object.keys(this.options).forEach((key) => {
+    Object.keys(this.options || {}).forEach((key) => {
       if (key.startsWith('metric_color_') || key.startsWith('icon_url_') || key.startsWith('metric_label_')) {
         delete this.options[key];
       }
@@ -34,21 +34,21 @@ looker.plugins.visualizations.add({
         label: `Metric ${index + 1} Color`,
         display: 'color',
         default: this.options.master_color || '#000000',
-        order: 2 + i * 2,
+        order: 2 + index * 2,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 3 + i * 2,
+        order: 3 + index * 2,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 4 + i * 2,
+        order: 4 + index * 2,
       };
     });
 
@@ -94,7 +94,7 @@ looker.plugins.visualizations.add({
         const field = fields[metricIndex];
         const fieldName = field.name.replace(/\./g, '_');
         const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
-        const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
+        const fieldValue = (data[0][field.name] && (data[0][field.name].rendered || data[0][field.name].value)) || '∅';
         const iconURL = config[`icon_url_${fieldName}`] || '';
         const metricColor = config[`metric_color_${fieldName}`] || config.master_color;
         const iconColor = this.hexToRgb(metricColor);
@@ -107,14 +107,14 @@ looker.plugins.visualizations.add({
         valueElement.className = 'metric-value';
         valueElement.innerText = fieldValue;
         valueElement.style.color = metricColor;
-        valueElement.style.fontSize = `5vw`;
+        valueElement.style.fontSize = '5vw';
         metricContainer.appendChild(valueElement);
 
         if (iconURL) {
           const iconElement = document.createElement('img');
           iconElement.src = `${iconURL}&color=${iconColor}`;
-          iconElement.style.width = `10vw`;
-          iconElement.style.height = `10vh`;
+          iconElement.style.width = '10vw';
+          iconElement.style.height = '10vh';
           metricContainer.appendChild(iconElement);
         }
 
@@ -122,7 +122,7 @@ looker.plugins.visualizations.add({
         labelElement.className = 'metric-label';
         labelElement.innerText = fieldLabel;
         labelElement.style.color = metricColor;
-        labelElement.style.fontSize = `2.5vw`;
+        labelElement.style.fontSize = '2.5vw';
         metricContainer.appendChild(labelElement);
 
         row.appendChild(metricContainer);
