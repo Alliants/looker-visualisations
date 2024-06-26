@@ -7,35 +7,43 @@ looker.plugins.visualizations.add({
       label: 'Master Color',
       display: 'color',
       default: '#000000',
-    },
-    value_size: {
-      type: 'number',
-      label: 'Value Size (em)',
-      display: 'number',
-      default: 1.5,
-    },
-    label_size: {
-      type: 'number',
-      label: 'Label Size (em)',
-      display: 'number',
-      default: 1,
-    },
-    icon_size: {
-      type: 'number',
-      label: 'Icon Size (%)',
-      display: 'number',
-      default: 20,
+      order: 1,
     },
     component_order: {
-      type: 'array',
+      type: 'string',
       display: 'select',
       label: 'Component Order (top to bottom)',
-      default: ['value', 'icon', 'label'],
+      default: 'value_icon_label',
+      order: 2,
       values: [
-        { 'Value': 'value' },
-        { 'Label': 'label' },
-        { 'Icon': 'icon' },
+        { 'Value - Icon - Label': 'value_icon_label' },
+        { 'Value - Label - Icon': 'value_label_icon' },
+        { 'Icon - Value - Label': 'icon_value_label' },
+        { 'Icon - Label - Value': 'icon_label_value' },
+        { 'Label - Value - Icon': 'label_value_icon' },
+        { 'Label - Icon - Value': 'label_icon_value' }
       ],
+    },
+    value_scale: {
+      type: 'number',
+      label: 'Value Scale (%)',
+      display: 'number',
+      default: 100,
+      order: 3,
+    },
+    label_scale: {
+      type: 'number',
+      label: 'Label Scale (%)',
+      display: 'number',
+      default: 100,
+      order: 4,
+    },
+    icon_scale: {
+      type: 'number',
+      label: 'Icon Scale (%)',
+      display: 'number',
+      default: 100,
+      order: 5,
     },
   },
 
@@ -63,21 +71,21 @@ looker.plugins.visualizations.add({
         display: 'color',
         // Ensure this value is a proper string default
         default: String(this.options.master_color || '#000000'),
-        order: 2 + index * 2,
+        order: 6 + index * 2,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 3 + index * 2,
+        order: 7 + index * 2,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 4 + index * 2,
+        order: 8 + index * 2,
       };
     });
 
@@ -155,14 +163,14 @@ looker.plugins.visualizations.add({
       valueElement.className = 'metric-value';
       valueElement.innerText = fieldValue;
       valueElement.style.color = validMetricColor;
-      valueElement.style.fontSize = `${config.value_size}em`;
+      valueElement.style.fontSize = `calc(1.5rem + 1vw) * (config.value_scale / 100)`;
       valueElement.style.textAlign = 'center'; // Ensuring value element is centered
 
       const iconElement = document.createElement('img');
       if (iconURL) {
         iconElement.src = `${iconURL}&color=${iconColor},1`;
-        iconElement.style.width = `${config.icon_size}%`;
-        iconElement.style.height = `${config.icon_size}%`;
+        iconElement.style.width = `20% * (config.icon_scale / 100)`;
+        iconElement.style.height = `20% * (config.icon_scale / 100)`;
         iconElement.style.objectFit = 'contain';
       }
 
@@ -170,23 +178,18 @@ looker.plugins.visualizations.add({
       labelElement.className = 'metric-label';
       labelElement.innerText = fieldLabel;
       labelElement.style.color = validMetricColor;
-      labelElement.style.fontSize = `${config.label_size}em`;
+      labelElement.style.fontSize = `calc(0.75rem + 0.5vw) * (config.label_scale / 100)`;
       labelElement.style.textAlign = 'center'; // Ensuring text is centered
 
-      const order = config.component_order || ['value', 'icon', 'label'];
-      order.forEach(component => {
-        switch (component) {
-          case 'value':
-            metricContainer.appendChild(valueElement);
-            break;
-          case 'icon':
-            if (iconURL) {
-              metricContainer.appendChild(iconElement);
-            }
-            break;
-          case 'label':
-            metricContainer.appendChild(labelElement);
-            break;
+      const order = config.component_order || 'value_icon_label';
+      const orderedComponents = {
+        value: valueElement,
+        icon: iconElement,
+        label: labelElement
+      };
+      order.split('_').forEach(component => {
+        if (orderedComponents[component]) {
+          metricContainer.appendChild(orderedComponents[component]);
         }
       });
 
