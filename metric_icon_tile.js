@@ -152,7 +152,7 @@ looker.plugins.visualizations.add({
       metricContainer.className = 'metric-container';
       metricContainer.style = `width: ${metricWidth}px; height: ${metricHeight}px; display: flex; flex-direction: column; align-items: center; justify-content: center;`;
       const valueFontSize = 1.5 * (config.value_scale / 100)
-      const labelFontSize = 0.75 * (config.value_scale / 100)
+      const labelFontSize = 0.75 * (config.label_scale / 100)
 
       const valueElement = document.createElement('div');
       valueElement.className = 'metric-value';
