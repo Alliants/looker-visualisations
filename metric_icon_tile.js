@@ -13,7 +13,7 @@ looker.plugins.visualizations.add({
   create: function (element, config) {
     element.innerHTML = '<div class="viz-container"></div>';
     element.style.fontFamily = 'Lato, sans-serif';
-    element.style.height = 'calc(100% - 10px)'
+    element.style.height = 'calc(100% - 10px)';
   },
 
   updateDynamicOptions: function (queryResponse) {
@@ -91,70 +91,59 @@ looker.plugins.visualizations.add({
     const containerHeight = element.clientHeight;
     
     const numMetrics = fields.length;
-    const numColumns = Math.ceil(Math.sqrt(numMetrics));
-    const numRows = Math.ceil(numMetrics / numColumns);
+    const numColumns = Math.ceil(Math.sqrt(numMetrics)); // Estimate columns for even distribution
+    const metricWidth = containerWidth / numColumns;
+    const metricHeight = containerHeight / Math.ceil(numMetrics / numColumns); // Rows adjusted by the actual metrics
 
-    for (let i = 0; i < numRows; i++) {
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.style.display = 'flex';
-      row.style.flex = '1';
-      container.appendChild(row);
 
-      for (let j = 0; j < numColumns; j++) {
-        const metricIndex = i * numColumns + j;
-        if (metricIndex >= numMetrics) break;
+    fields.forEach((field, metricIndex) => {
+      const fieldName = field.name.replace(/\./g, '_');
+      
+      // Ensure metric colors default to master color if unspecified
+      const metricColor = config[`metric_color_${fieldName}`] || config.master_color || '#000000';
+      const validMetricColor = typeof metricColor === 'string' ? metricColor : '#000000';
 
-        const field = fields[metricIndex];
-        const fieldName = field.name.replace(/\./g, '_');
-        
-        // Ensure metric colors default to master color if unspecified
-        const metricColor = config[`metric_color_${fieldName}`] || config.master_color || '#000000';
-        const validMetricColor = typeof metricColor === 'string' ? metricColor : '#000000';
+      const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
+      const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
+      const iconURL = config[`icon_url_${fieldName}`] || '';
+      const iconColor = this.hexToRgb(validMetricColor);
 
-        const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
-        const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
-        const iconURL = config[`icon_url_${fieldName}`] || '';
-        const iconColor = this.hexToRgb(validMetricColor);
+      const metricContainer = document.createElement('div');
+      metricContainer.className = 'metric-container';
+      metricContainer.style = `width: ${metricWidth}px; height: ${metricHeight}px; display: flex; flex-direction: column; align-items: center; justify-content: center;`;
 
-        const metricContainer = document.createElement('div');
-        metricContainer.className = 'metric-container';
-        metricContainer.style = 'flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;';
+      const valueElement = document.createElement('div');
+      valueElement.className = 'metric-value';
+      valueElement.innerText = fieldValue;
+      valueElement.style.color = validMetricColor;
+      valueElement.style.fontSize = 'calc(1.5rem + 1vw)';
+      valueElement.style.textAlign = 'center'; // Ensuring value element is centered
+      metricContainer.appendChild(valueElement);
 
-        const valueElement = document.createElement('div');
-        valueElement.className = 'metric-value';
-        valueElement.innerText = fieldValue;
-        valueElement.style.color = validMetricColor;
-        valueElement.style.fontSize = 'calc(1.5rem + 1vw)';
-        valueElement.style.textAlign = 'center'; // Ensuring value element is centered
-        metricContainer.appendChild(valueElement);
-
-        if (iconURL) {
-          const iconElement = document.createElement('img');
-          iconElement.src = `${iconURL}&color=${iconColor},1`;
-          iconElement.style.width = `${containerWidth / 10}px`;
-          iconElement.style.height = `${containerHeight / 10}px`;
-          metricContainer.appendChild(iconElement);
-        }
-
-        const labelElement = document.createElement('div');
-        labelElement.className = 'metric-label';
-        labelElement.innerText = fieldLabel;
-        labelElement.style.color = validMetricColor;
-        labelElement.style.fontSize = 'calc(0.75rem + 0.5vw)';
-        labelElement.style.textAlign = 'center'; // Ensuring text is centered
-        
-        metricContainer.appendChild(labelElement);
-
-        row.appendChild(metricContainer);
+      if (iconURL) {
+        const iconElement = document.createElement('img');
+        iconElement.src = `${iconURL}&color=${iconColor},1`;
+        iconElement.style.width = '20%';
+        iconElement.style.height = '20%';
+        iconElement.style.objectFit = 'contain';
+        metricContainer.appendChild(iconElement);
       }
-    }
+
+      const labelElement = document.createElement('div');
+      labelElement.className = 'metric-label';
+      labelElement.innerText = fieldLabel;
+      labelElement.style.color = validMetricColor;
+      labelElement.style.fontSize = 'calc(0.75rem + 0.5vw)';
+      labelElement.style.textAlign = 'center'; // Ensuring text is centered
+      metricContainer.appendChild(labelElement);
+
+      container.appendChild(metricContainer);
+    });
 
     container.style.display = 'flex';
-    container.style.flexDirection = 'column';
-    container.style.justifyContent = 'space-around';
-    container.style.alignItems = 'center';
     container.style.flexWrap = 'wrap';
+    container.style.justifyContent = 'space-around'; // Ensures even spacing
+    container.style.alignItems = 'center';
     container.style.height = '100%';
 
     done();
