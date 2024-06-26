@@ -89,12 +89,14 @@ looker.plugins.visualizations.add({
     const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
     const containerWidth = element.clientWidth;
     const containerHeight = element.clientHeight;
+    const containerArea = containerHeight * containerWidth;
     
     const numMetrics = fields.length;
+    const metricArea = containerArea / numMetrics;
 
     // Calculate the estimated width and height per metric container
-    const metricMinWidth = 150; // An estimated min width for each metric
-    const metricMinHeight = 150; // An estimated min height for each metric
+    const metricMinWidth = Math.sqrt(metricArea); // An estimated min width for each metric
+    const metricMinHeight = Math.sqrt(metricArea); // An estimated min height for each metric
 
     // Decide the number of columns (adjusting for minimum width per metric)
     const numColumns = Math.max(1, Math.floor(containerWidth / metricMinWidth));
