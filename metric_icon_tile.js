@@ -91,10 +91,16 @@ looker.plugins.visualizations.add({
     const containerHeight = element.clientHeight;
     
     const numMetrics = fields.length;
-    const numColumns = Math.ceil(Math.sqrt(numMetrics)); // Estimate columns for even distribution
-    const metricWidth = containerWidth / numColumns;
-    const metricHeight = containerHeight / Math.ceil(numMetrics / numColumns); // Rows adjusted by the actual metrics
 
+    // Decide whether to have multiple columns or a single row based on container dimensions
+    let numColumns;
+    if (containerWidth > containerHeight) {
+      numColumns = numMetrics; // In a wide container, display in a single row
+    } else {
+      numColumns = Math.ceil(Math.sqrt(numMetrics)); // In a taller container, calculate columns for even distribution
+    }
+    const metricWidth = containerWidth / numColumns;
+    const metricHeight = containerHeight / Math.ceil(numMetrics / numColumns);
 
     fields.forEach((field, metricIndex) => {
       const fieldName = field.name.replace(/\./g, '_');
@@ -142,7 +148,7 @@ looker.plugins.visualizations.add({
 
     container.style.display = 'flex';
     container.style.flexWrap = 'wrap';
-    container.style.justifyContent = 'space-around'; // Ensures even spacing
+    container.style.justifyContent = 'center'; // Ensures even spacing
     container.style.alignItems = 'center';
     container.style.height = '100%';
 
