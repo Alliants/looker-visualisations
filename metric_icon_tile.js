@@ -64,28 +64,28 @@ looker.plugins.visualizations.add({
         display: 'color',
         // Ensure this value is a proper string default
         default: String(this.options.master_color || '#000000'),
-        order: 1 + index * 4,
+        order: 5 + index * 4,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 2 + index * 4,
+        order: 6 + index * 4,
       };
       this.options[`metric_show_label_${fieldName}`] = {
         type: 'boolean',
         label: `Show Label for Metric ${index + 1}?`,
         display: 'text',
         default: true,
-        order: 3 + index * 4,
+        order: 7 + index * 4,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 4 + index * 4,
+        order: 8 + index * 4,
       };
     });
 
