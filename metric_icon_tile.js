@@ -103,8 +103,8 @@ looker.plugins.visualizations.add({
     const numRows = Math.ceil(numMetrics / numColumns);
 
     // Calculate width and height for each metric container
-    const metricWidth = containerWidth / numColumns;
-    const metricHeight = Math.max(metricMinHeight, containerHeight / numRows);
+    const metricWidth = (containerWidth / numColumns) * 0.9;
+    const metricHeight = Math.max(metricMinHeight, containerHeight / numRows) * 0.9;
 
     fields.forEach((field, metricIndex) => {
       const fieldName = field.name.replace(/\./g, '_');
