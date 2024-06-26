@@ -81,7 +81,7 @@ looker.plugins.visualizations.add({
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const container = element.querySelector('.viz-container');
     container.innerHTML = '';
-    container.style.alignContent = 'flex-end';
+    container.style.alignContent = 'space-evenly';
 
     // Ensure dynamic options are updated
     this.updateDynamicOptions(queryResponse);
