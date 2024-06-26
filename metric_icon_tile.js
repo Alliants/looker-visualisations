@@ -92,15 +92,17 @@ looker.plugins.visualizations.add({
     
     const numMetrics = fields.length;
 
-    // Decide whether to have multiple columns or a single row based on container dimensions
-    let numColumns;
-    if (containerWidth > containerHeight) {
-      numColumns = numMetrics; // In a wide container, display in a single row
-    } else {
-      numColumns = Math.ceil(Math.sqrt(numMetrics)); // In a taller container, calculate columns for even distribution
-    }
+    // Calculate the estimated width and height per metric container
+    const metricMinWidth = 150; // An estimated min width for each metric
+    const metricMinHeight = 150; // An estimated min height for each metric
+
+    // Decide the number of columns (adjusting for minimum width per metric)
+    const numColumns = Math.max(1, Math.floor(containerWidth / metricMinWidth));
+    const numRows = Math.ceil(numMetrics / numColumns);
+
+    // Calculate width and height for each metric container
     const metricWidth = containerWidth / numColumns;
-    const metricHeight = containerHeight / Math.ceil(numMetrics / numColumns);
+    const metricHeight = Math.max(metricMinHeight, containerHeight / numRows);
 
     fields.forEach((field, metricIndex) => {
       const fieldName = field.name.replace(/\./g, '_');
