@@ -151,12 +151,14 @@ looker.plugins.visualizations.add({
       const metricContainer = document.createElement('div');
       metricContainer.className = 'metric-container';
       metricContainer.style = `width: ${metricWidth}px; height: ${metricHeight}px; display: flex; flex-direction: column; align-items: center; justify-content: center;`;
+      const valueFontSize = 1.5 * (config.value_scale / 100)
+      const labelFontSize = 0.75 * (config.value_scale / 100)
 
       const valueElement = document.createElement('div');
       valueElement.className = 'metric-value';
       valueElement.innerText = fieldValue;
       valueElement.style.color = validMetricColor;
-      valueElement.style.fontSize = `calc(calc(1.5 * config.value_scale / 100)rem + 1vw)`;
+      valueElement.style.fontSize = `calc(${valueFontSize}rem + 1vw)`;
       valueElement.style.textAlign = 'center'; // Ensuring value element is centered
 
       const iconElement = document.createElement('img');
@@ -171,7 +173,7 @@ looker.plugins.visualizations.add({
       labelElement.className = 'metric-label';
       labelElement.innerText = fieldLabel;
       labelElement.style.color = validMetricColor;
-      labelElement.style.fontSize = `calc(calc(0.75 * config.label_scale / 100)rem + 0.5vw)`;
+      labelElement.style.fontSize = `calc(${labelFontSize}rem + 0.5vw)`;
       labelElement.style.textAlign = 'center'; // Ensuring text is centered
 
       const order = config.component_order || 'value_icon_label';
