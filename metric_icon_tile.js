@@ -64,21 +64,28 @@ looker.plugins.visualizations.add({
         display: 'color',
         // Ensure this value is a proper string default
         default: String(this.options.master_color || '#000000'),
-        order: 5 + index * 2,
+        order: 1 + index * 4,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 6 + index * 2,
+        order: 2 + index * 4,
+      };
+      this.options[`metric_show_label_${fieldName}`] = {
+        type: 'boolean',
+        label: `Show Label for Metric ${index + 1}?`,
+        display: 'text',
+        default: true,
+        order: 3 + index * 4,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 7 + index * 2,
+        order: 4 + index * 4,
       };
     });
 
@@ -120,7 +127,7 @@ looker.plugins.visualizations.add({
     const containerWidth = element.clientWidth;
     const containerHeight = element.clientHeight;
     const containerArea = containerHeight * containerWidth;
-    
+
     const numMetrics = fields.length;
     const metricArea = containerArea / numMetrics;
 
@@ -151,8 +158,8 @@ looker.plugins.visualizations.add({
       const metricContainer = document.createElement('div');
       metricContainer.className = 'metric-container';
       metricContainer.style = `width: ${metricWidth}px; height: ${metricHeight}px; display: flex; flex-direction: column; align-items: center; justify-content: center;`;
-      const valueFontSize = 1.5 * (config.value_scale / 100)
-      const labelFontSize = 0.75 * (config.label_scale / 100)
+      const valueFontSize = 1.5 * (config.value_scale / 100);
+      const labelFontSize = 0.75 * (config.label_scale / 100);
 
       const valueElement = document.createElement('div');
       valueElement.className = 'metric-value';
@@ -180,7 +187,7 @@ looker.plugins.visualizations.add({
       const orderedComponents = {
         value: valueElement,
         icon: iconElement,
-        label: labelElement
+        label: config[`metric_show_label_${fieldName}`] ? labelElement : null // Conditionally include label
       };
       order.split('_').forEach(component => {
         if (orderedComponents[component]) {
