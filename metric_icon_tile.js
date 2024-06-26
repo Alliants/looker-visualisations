@@ -13,7 +13,6 @@ looker.plugins.visualizations.add({
   create: function (element, config) {
     element.innerHTML = '<div class="viz-container"></div>';
     element.style.fontFamily = 'Lato, sans-serif';
-    element.style.height = 'calc(100% - 10px)';
   },
 
   updateDynamicOptions: function (queryResponse) {
@@ -82,6 +81,7 @@ looker.plugins.visualizations.add({
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const container = element.querySelector('.viz-container');
     container.innerHTML = '';
+    container.style.alignContent = 'flex-end';
 
     // Ensure dynamic options are updated
     this.updateDynamicOptions(queryResponse);
