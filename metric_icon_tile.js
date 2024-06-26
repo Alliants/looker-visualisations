@@ -8,6 +8,35 @@ looker.plugins.visualizations.add({
       display: 'color',
       default: '#000000',
     },
+    value_size: {
+      type: 'number',
+      label: 'Value Size (em)',
+      display: 'number',
+      default: 1.5,
+    },
+    label_size: {
+      type: 'number',
+      label: 'Label Size (em)',
+      display: 'number',
+      default: 1,
+    },
+    icon_size: {
+      type: 'number',
+      label: 'Icon Size (%)',
+      display: 'number',
+      default: 20,
+    },
+    component_order: {
+      type: 'array',
+      display: 'select',
+      label: 'Component Order (top to bottom)',
+      default: ['value', 'icon', 'label'],
+      values: [
+        { 'Value': 'value' },
+        { 'Label': 'label' },
+        { 'Icon': 'icon' },
+      ],
+    },
   },
 
   create: function (element, config) {
@@ -126,26 +155,40 @@ looker.plugins.visualizations.add({
       valueElement.className = 'metric-value';
       valueElement.innerText = fieldValue;
       valueElement.style.color = validMetricColor;
-      valueElement.style.fontSize = 'calc(1.5rem + 1vw)';
+      valueElement.style.fontSize = `${config.value_size}em`;
       valueElement.style.textAlign = 'center'; // Ensuring value element is centered
-      metricContainer.appendChild(valueElement);
 
+      const iconElement = document.createElement('img');
       if (iconURL) {
-        const iconElement = document.createElement('img');
         iconElement.src = `${iconURL}&color=${iconColor},1`;
-        iconElement.style.width = '20%';
-        iconElement.style.height = '20%';
+        iconElement.style.width = `${config.icon_size}%`;
+        iconElement.style.height = `${config.icon_size}%`;
         iconElement.style.objectFit = 'contain';
-        metricContainer.appendChild(iconElement);
       }
 
       const labelElement = document.createElement('div');
       labelElement.className = 'metric-label';
       labelElement.innerText = fieldLabel;
       labelElement.style.color = validMetricColor;
-      labelElement.style.fontSize = 'calc(0.75rem + 0.5vw)';
+      labelElement.style.fontSize = `${config.label_size}em`;
       labelElement.style.textAlign = 'center'; // Ensuring text is centered
-      metricContainer.appendChild(labelElement);
+
+      const order = config.component_order || ['value', 'icon', 'label'];
+      order.forEach(component => {
+        switch (component) {
+          case 'value':
+            metricContainer.appendChild(valueElement);
+            break;
+          case 'icon':
+            if (iconURL) {
+              metricContainer.appendChild(iconElement);
+            }
+            break;
+          case 'label':
+            metricContainer.appendChild(labelElement);
+            break;
+        }
+      });
 
       container.appendChild(metricContainer);
     });
