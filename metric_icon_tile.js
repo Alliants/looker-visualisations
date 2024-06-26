@@ -38,13 +38,6 @@ looker.plugins.visualizations.add({
       default: 100,
       order: 4,
     },
-    icon_scale: {
-      type: 'number',
-      label: 'Icon Scale (%)',
-      display: 'number',
-      default: 100,
-      order: 5,
-    },
   },
 
   create: function (element, config) {
@@ -71,21 +64,21 @@ looker.plugins.visualizations.add({
         display: 'color',
         // Ensure this value is a proper string default
         default: String(this.options.master_color || '#000000'),
-        order: 6 + index * 2,
+        order: 5 + index * 2,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 7 + index * 2,
+        order: 6 + index * 2,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 8 + index * 2,
+        order: 7 + index * 2,
       };
     });
 
@@ -169,8 +162,8 @@ looker.plugins.visualizations.add({
       const iconElement = document.createElement('img');
       if (iconURL) {
         iconElement.src = `${iconURL}&color=${iconColor},1`;
-        iconElement.style.width = `20% * (config.icon_scale / 100)`;
-        iconElement.style.height = `20% * (config.icon_scale / 100)`;
+        iconElement.style.width = '20%';
+        iconElement.style.height = '20%';
         iconElement.style.objectFit = 'contain';
       }
 
