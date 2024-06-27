@@ -109,8 +109,6 @@ looker.plugins.visualizations.add({
         display: flex;
         justify-content: center;
         align-items: center;
-        color: ${config.small_circle_font_color};
-        background-color: ${config.small_circle_color};
         position: relative;
         text-align: center;
       }
@@ -164,21 +162,24 @@ looker.plugins.visualizations.add({
     const bigCircle = document.createElement('div');
     bigCircle.className = 'big-circle';
 
+    const bigCircleIcon = document.createElement('img');
+    if (config.big_circle_icon) {
+      bigCircleIcon.className = 'big-circle-icon';
+      bigCircleIcon.src = config.big_circle_icon;
+      bigCircle.appendChild(bigCircleIcon);
+    }
+
     const bigCircleLabel = document.createElement('div');
     bigCircleLabel.className = 'big-circle-label';
     bigCircleLabel.innerText = config.big_circle_label || (dimension ? largest[dimension.name].value : 'Total');
-    
+    bigCircle.appendChild(bigCircleLabel);
+
     const bigCircleValue = document.createElement('div');
     bigCircleValue.innerText = largestValue.toFixed(config.decimal_places);
-
-    const bigCircleIcon = document.createElement('img');
-    bigCircleIcon.className = 'big-circle-icon';
-    bigCircleIcon.src = config.big_circle_icon || '';
-
-    bigCircle.appendChild(bigCircleIcon);
-    bigCircle.appendChild(bigCircleLabel);
     bigCircle.appendChild(bigCircleValue);
+
     bigCircleContainer.appendChild(bigCircle);
+    container.appendChild(bigCircleContainer);
 
     const smallCirclesContainer = document.createElement('div');
     smallCirclesContainer.className = 'small-circles-container';
@@ -193,7 +194,9 @@ looker.plugins.visualizations.add({
       smallCircle.className = 'small-circle';
       smallCircle.style.width = `${smallCircleDiameter}vw`;
       smallCircle.style.height = `${smallCircleDiameter}vw`;
-      
+      smallCircle.style.color = config.small_circle_font_color;
+      smallCircle.style.backgroundColor = config.small_circle_color;
+
       const smallCircleValue = document.createElement('div');
       smallCircleValue.innerText = value.toFixed(config.decimal_places);
 
@@ -209,7 +212,7 @@ looker.plugins.visualizations.add({
       smallCircle.appendChild(smallCircleValue);
       smallCircle.appendChild(smallCircleCalloutLabel);
       smallCirclesContainer.appendChild(smallCircle);
-      
+
       const calloutLine = document.createElement('div');
       calloutLine.className = 'callout-line';
       calloutLine.style.top = '50%';
@@ -219,8 +222,8 @@ looker.plugins.visualizations.add({
       smallCircle.appendChild(calloutLine);
     });
 
-    container.appendChild(bigCircleContainer);
     container.appendChild(smallCirclesContainer);
+
     done();
   }
 });
