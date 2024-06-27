@@ -82,88 +82,8 @@ looker.plugins.visualizations.add({
     // Remove any existing content
     element.innerHTML = '';
 
-    const styles = `
-      <style>
-        .meta-container {
-          display: flex;
-          align-items: center;
-          height: 100%;
-          width: 100%;
-          box-sizing: border-box;
-        }
-        .big-circle-container {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          min-width: 30vw; /* Fixed size for big circle container */
-          min-height: 30vw; /* Fixed size for big circle container */
-        }
-        .big-circle {
-          width: 30vw; /* Fixed size for big circle */
-          height: 30vw; /* Fixed size for big circle */
-          border-radius: 50%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          color: ${config.big_circle_font_color};
-          flex-shrink: 0;
-          font-size: 4vw;
-          padding: 2vw; /* Add padding here to prevent text from touching edges */
-          box-sizing: border-box; /* Ensure padding is included in the size */
-          text-align: center;
-        }
-        .big-circle-icon {
-          max-width: 12vw; 
-          max-height: 12vh; 
-          padding-bottom: 0.5vw;
-        }
-        .small-circle {
-          border-radius: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-shrink: 0;
-          color: ${config.small_circle_font_color};
-        }
-        .metrics-container {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-evenly;
-          height: 30vw; /* Match height with big circle */
-          margin-left: 20px;
-        }
-        .metric-block {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 2.5vw;
-        }
-        .metric-callout {
-          display: flex;
-          align-items: center;
-          margin-left: 10px;
-        }
-        .metric-name, .metric-percentage {
-          margin-left: 5px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .small-circle-icon {
-          max-width: 8vw;
-          max-height: 8vh;
-          padding-right: 0.5vw;
-          align-self: center;
-          vertical-align: middle;
-        }
-      </style>
-    `;
-    element.innerHTML += styles;
-
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
-    const that = this; // To avoid scope issues inside map function
+    const that = this;
 
     const metrics = fields.map((field, index) => {
       const value = data[0][field.name]?.value;
@@ -190,45 +110,68 @@ looker.plugins.visualizations.add({
     const container = document.createElement('div');
     container.classList.add('meta-container');
 
-    const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
-    const bigCircleContent = `
-      <div class="big-circle" style="background-color: ${config.big_circle_color};">
-        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1">` : ''}</div>
-        <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
-        <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
-      </div>
-    `;
-
-    const bigCircleContainer = document.createElement('div');
-    bigCircleContainer.classList.add('big-circle-container');
-    bigCircleContainer.innerHTML = bigCircleContent;
-    container.appendChild(bigCircleContainer);
-
     const metricsContainer = document.createElement('div');
     metricsContainer.classList.add('metrics-container');
+    metricsContainer.style.display = 'flex';
+    metricsContainer.style.flexDirection = 'column';
+    metricsContainer.style.justifyContent = 'space-evenly';
+    metricsContainer.style.height = '30vw';
+    metricsContainer.style.marginLeft = '20px';
 
-    for (let i = 1; i < metrics.length; i++) {
-      const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
-      const fontSizePercentage = sizePercentage * 0.3;
-      const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
+    metrics.forEach((metric, i) => {
+      const sizePercentage = (metric.value / maxMetricValue) * 100; // Example calculation
+      const fontSizePercentage = (Math.min(metric.value, maxMetricValue) / maxMetricValue) * 10; // Example calculation
 
-      const calloutContent = `
-        <div class="metric-block">
-          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw; background-color: ${config.small_circle_color};">
-            ${metrics[i].value}
-          </div>
-          <div class="metric-callout">
-            <div class="metric-name">
-              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}&color=${smallCircleIconColor},1">` : ''} <span>${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</span>
-            </div>
-          </div>
-        </div>
-      `;
-      const calloutContainer = document.createElement('div');
-      calloutContainer.classList.add('metric-block');
-      calloutContainer.innerHTML = calloutContent;
-      metricsContainer.appendChild(calloutContainer);
-    }
+      const metricBlock = document.createElement('div');
+      metricBlock.classList.add('metric-block');
+
+      const smallCircle = document.createElement('div');
+      smallCircle.classList.add('small-circle');
+      smallCircle.style.width = `${sizePercentage}vw`;
+      smallCircle.style.height = `${sizePercentage}vw`;
+      smallCircle.style.fontSize = `${fontSizePercentage}vw`;
+      smallCircle.style.backgroundColor = config.small_circle_color;
+      smallCircle.style.color = config.small_circle_font_color;
+      smallCircle.style.display = 'flex';
+      smallCircle.style.justifyContent = 'center';
+      smallCircle.style.alignItems = 'center';
+      smallCircle.style.borderRadius = '50%';
+      smallCircle.textContent = metric.value;
+
+      metricBlock.appendChild(smallCircle);
+
+      const metricCallout = document.createElement('div');
+      metricCallout.classList.add('metric-callout');
+      metricCallout.style.display = 'flex';
+      metricCallout.style.alignItems = 'center';
+      metricCallout.style.marginLeft = '10px';
+
+      const metricName = document.createElement('div');
+      metricName.classList.add('metric-name');
+      metricName.style.display = 'flex';
+      metricName.style.alignItems = 'center';
+      metricName.style.justifyContent = 'center';
+
+      if (metric.icon) {
+        const icon = document.createElement('img');
+        icon.classList.add('small-circle-icon');
+        icon.style.maxWidth = '8vw';
+        icon.style.maxHeight = '8vh';
+        icon.style.paddingRight = '0.5vw';
+        icon.style.alignSelf = 'center';
+        icon.style.verticalAlign = 'middle';
+        icon.src = `${metric.icon}&color=${this.hexToRgb(config.small_circle_font_color)},1`;
+        metricName.appendChild(icon);
+      }
+
+      const label = document.createElement('span');
+      label.textContent = `${metric.label} ${((metric.value / total) * 100).toFixed(config.decimal_places)}%`;
+
+      metricName.appendChild(label);
+      metricCallout.appendChild(metricName);
+      metricBlock.appendChild(metricCallout);
+      metricsContainer.appendChild(metricBlock);
+    });
 
     container.appendChild(metricsContainer);
     element.appendChild(container);
