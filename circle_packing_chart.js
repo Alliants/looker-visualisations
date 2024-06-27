@@ -1,150 +1,237 @@
 looker.plugins.visualizations.add({
-  id: "circle_packing",
-  label: "Circle Packing",
   options: {
-    color: {
-      type: "string",
-      label: "Base Color",
-      default: "#1f77b4",
-    },
-    label_size: {
+    decimal_places: {
       type: "number",
-      label: "Label Size",
-      default: 12,
-    },
-    show_icons: {
-      type: "boolean",
-      label: "Show Icons",
-      default: false,
-    },
-    icon_url: {
-      type: "string",
-      label: "Icon URL Field",
+      label: "Decimal Places for Percentages",
+      default: 2,
+      order: 1
     },
     big_circle_color: {
       type: "string",
       label: "Big Circle Color",
       default: "#4D6EBF",
+      display: "color",
+      order: 2
     },
     big_circle_font_color: {
       type: "string",
       label: "Big Circle Font Color",
       default: "#FFFFFF",
+      display: "color",
+      order: 3
     },
     small_circle_color: {
       type: "string",
       label: "Small Circle Color",
       default: "#EAEAEA",
+      display: "color",
+      order: 4
     },
     small_circle_font_color: {
       type: "string",
       label: "Small Circle Font Color",
       default: "#000000",
+      display: "color",
+      order: 5
     }
   },
+
   create: function(element, config) {
-    element.innerHTML = `
+    element.style.fontFamily = `"Lato", sans-serif`;
+  },
+
+  updateDynamicOptions: function(queryResponse) {
+    const numFields = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
+    // Clear existing dynamic options
+    Object.keys(this.options).forEach((key) => {
+      if (key.startsWith("metric_label_") || key.startsWith("metric_icon_")) {
+        delete this.options[key];
+      }
+    });
+    // Add dynamic options for each metric
+    for (let i = 0; i < numFields; i++) {
+      this.options[`metric_label_${i}`] = {
+        type: "string",
+        label: `Label for Metric ${i + 1}`,
+        default: "",
+        order: 6 + i * 2
+      };
+      this.options[`metric_icon_${i}`] = {
+        type: "string",
+        label: `Icon URL for Metric ${i + 1}`,
+        default: "",
+        order: 7 + i * 2
+      };
+    }
+    this.trigger('registerOptions', this.options);
+  },
+
+  hexToRgb: function(hex) {
+    hex = hex.replace('#', '');
+    const bigint = parseInt(hex, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return `${r},${g},${b}`;
+  },
+
+  updateAsync: function(data, element, config, queryResponse, details, done) {
+    // Update dynamic options
+    this.updateDynamicOptions(queryResponse);
+
+    // Remove any existing content
+    element.innerHTML = '';
+
+    const styles = `
       <style>
-        .circle-packing text {
-          font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-          font-size: ${config.label_size}px;
-          fill: ${config.big_circle_font_color};
+        .meta-container {
+          display: flex;
+          align-items: center;
+          height: 100%;
+          width: 100%;
+          box-sizing: border-box;
         }
-        .circle-packing .label {
-          text-anchor: middle;
+        .big-circle-container {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          min-width: 30vw; /* Fixed size for big circle container */
+          min-height: 30vw; /* Fixed size for big circle container */
         }
-        .circle-packing .icon {
-          width: 24px;
-          height: 24px;
+        .big-circle {
+          width: 30vw; /* Fixed size for big circle */
+          height: 30vw; /* Fixed size for big circle */
+          border-radius: 50%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          color: ${config.big_circle_font_color};
+          flex-shrink: 0;
+          font-size: 4vw;
+          padding: 2vw; /* Add padding here to prevent text from touching edges */
+          box-sizing: border-box; /* Ensure padding is included in the size */
+          text-align: center;
+        }
+        .big-circle-icon {
+          max-width: 12vw; 
+          max-height: 12vh; 
+          padding-bottom: 0.5vw;
+        }
+        .small-circle {
+          border-radius: 50%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-shrink: 0;
+          color: ${config.small_circle_font_color};
+        }
+        .metrics-container {
+          display: flex;
+          flex-direction: column;
+          justify-content: space-evenly;
+          height: 30vw; /* Match height with big circle */
+          margin-left: 20px;
+        }
+        .metric-block {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 2.5vw;
+        }
+        .metric-callout {
+          display: flex;
+          align-items: center;
+          margin-left: 10px;
+        }
+        .metric-name, .metric-percentage {
+          margin-left: 5px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .small-circle-icon {
+          max-width: 8vw;
+          max-height: 8vh;
+          padding-right: 0.5vw;
+          align-self: center;
+          vertical-align: middle;
         }
       </style>
-      <svg></svg>
     `;
-    this.svg = d3.select(element).select("svg")
-  },
-  updateAsync: function(data, element, config, queryResponse, details, doneRendering) {
-    if (!queryResponse.fields.dimensions.length || !queryResponse.fields.measures.length) {
-      this.addError({title: "No Dimensions or Measures Found", message: "This visualization requires at least one dimension and one measure."});
+    element.innerHTML += styles;
+
+    const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
+    const that = this; // To avoid scope issues inside map function
+
+    const metrics = fields.map((field, index) => {
+      const value = data[0][field.name]?.value;
+      const label = config[`metric_label_${index}`] || field.label_short || field.label;
+      const icon = config[`metric_icon_${index}`] || "";
+      return {
+        label: label,
+        value: isNaN(value) ? 0 : Number(value),
+        icon: icon
+      };
+    }).filter(metric => metric.value !== 0);
+
+    metrics.sort((a, b) => b.value - a.value);
+
+    if (metrics.length === 0) {
+      element.innerHTML += 'No valid data is available';
+      done();
       return;
     }
 
-    this.svg.selectAll("*").remove();
+    const total = metrics.reduce((sum, metric) => sum + metric.value, 0);
+    const maxMetricValue = metrics[0].value;
 
-    var diameter = Math.min(element.clientWidth, element.clientHeight);
-    this.svg.attr("width", diameter).attr("height", diameter);
+    const container = document.createElement('div');
+    container.classList.add('meta-container');
 
-    let formattedData = data.map(row => ({
-      name: row[queryResponse.fields.dimensions[0].name]["value"],
-      value: row[queryResponse.fields.measures[0].name]["value"],
-      icon: config.show_icons && config.icon_url ? row[config.icon_url]["value"] : null
-    }));
+    const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
+    const bigCircleContent = `
+      <div class="big-circle" style="background-color: ${config.big_circle_color};">
+        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1">` : ''}</div>
+        <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
+        <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
+      </div>
+    `;
 
-    // Sort to ensure the largest value is at the start
-    formattedData.sort((a, b) => b.value - a.value);
+    const bigCircleContainer = document.createElement('div');
+    bigCircleContainer.classList.add('big-circle-container');
+    bigCircleContainer.innerHTML = bigCircleContent;
+    container.appendChild(bigCircleContainer);
 
-    // Split data into big circle and the rest
-    const [bigCircleData, ...restData] = formattedData;
+    const metricsContainer = document.createElement('div');
+    metricsContainer.classList.add('metrics-container');
 
-    // Calculate total of all values for scaling purposes
-    const totalValue = formattedData.reduce((sum, d) => sum + d.value, 0);
+    for (let i = 1; i < metrics.length; i++) {
+      const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
+      const fontSizePercentage = sizePercentage * 0.3;
+      const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
 
-    const pack = data => d3.pack()
-      .size([diameter, diameter])
-      .padding(3)(d3.hierarchy({children: data}).sum(d => d.value));
-
-    const root = pack(restData);
-
-    // Add big circle separately
-    const bigCircleGroup = this.svg.append("g")
-      .attr("transform", `translate(${diameter * 0.2},${diameter / 2})`);
-    
-    bigCircleGroup.append("circle")
-      .attr("r", diameter * 0.2)
-      .attr("fill", config.big_circle_color);
-
-    bigCircleGroup.append("text")
-      .attr("class", "label")
-      .attr("dy", "0.3em")
-      .text(bigCircleData.name);
-
-    bigCircleGroup.append("text")
-      .attr("class", "label")
-      .attr("dy", "1.3em")
-      .text(bigCircleData.value);
-
-    if (bigCircleData.icon) {
-      bigCircleGroup.append("image")
-        .attr("class", "icon")
-        .attr("xlink:href", bigCircleData.icon)
-        .attr("x", -12)
-        .attr("y", -12);
+      const calloutContent = `
+        <div class="metric-block">
+          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw; background-color: ${config.small_circle_color};">
+            ${metrics[i].value}
+          </div>
+          <div class="metric-callout">
+            <div class="metric-name">
+              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}&color=${smallCircleIconColor},1">` : ''} <span>${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</span>
+            </div>
+          </div>
+        </div>
+      `;
+      const calloutContainer = document.createElement('div');
+      calloutContainer.classList.add('metric-block');
+      calloutContainer.innerHTML = calloutContent;
+      metricsContainer.appendChild(calloutContainer);
     }
 
-    // Draw the rest of the circles
-    const node = this.svg.append("g")
-      .attr("transform", `translate(${diameter * 0.6}, 0)`)
-      .selectAll("g")
-      .data(root.leaves())
-      .enter().append("g")
-      .attr("transform", d => `translate(${d.x},${d.y})`);
-
-    node.append("circle")
-      .attr("r", d => d.r)
-      .attr("fill", config.small_circle_color);
-
-    node.append("text")
-      .attr("class", "label")
-      .attr("dy", "0.3em")
-      .text(d => d.data.name.substring(0, d.r / 3));
-
-    if (config.show_icons) {
-      node.append("image")
-        .attr("class", "icon")
-        .attr("xlink:href", d => d.data.icon)
-        .attr("x", -12)
-        .attr("y", -12);
-    }
-
-    doneRendering();
+    container.appendChild(metricsContainer);
+    element.appendChild(container);
+    done();
   }
 });
