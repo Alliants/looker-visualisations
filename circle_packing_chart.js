@@ -83,7 +83,7 @@ looker.plugins.visualizations.add({
     element.innerHTML = '';
 
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
-    const that = this;
+    const that = this; // To avoid scope issues inside map function
 
     const metrics = fields.map((field, index) => {
       const value = data[0][field.name]?.value;
@@ -110,21 +110,36 @@ looker.plugins.visualizations.add({
     const container = document.createElement('div');
     container.classList.add('meta-container');
 
+    // Create the big circle for the largest metric
+    const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
+    const bigCircle = document.createElement('div');
+    bigCircle.classList.add('big-circle');
+    bigCircle.style.backgroundColor = config.big_circle_color;
+    bigCircle.innerHTML = `
+        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1">` : ''}</div>
+        <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
+        <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
+    `;
+
+    const bigCircleContainer = document.createElement('div');
+    bigCircleContainer.classList.add('big-circle-container');
+    bigCircleContainer.appendChild(bigCircle);
+    container.appendChild(bigCircleContainer);
+
     const metricsContainer = document.createElement('div');
     metricsContainer.classList.add('metrics-container');
     metricsContainer.style.display = 'flex';
     metricsContainer.style.flexDirection = 'column';
     metricsContainer.style.justifyContent = 'space-evenly';
-    metricsContainer.style.height = '30vw';
+    metricsContainer.style.height = '30vw'; // Match height with big circle
     metricsContainer.style.marginLeft = '20px';
 
-    metrics.forEach((metric, i) => {
-      const sizePercentage = (metric.value / maxMetricValue) * 100; // Example calculation
-      const fontSizePercentage = (Math.min(metric.value, maxMetricValue) / maxMetricValue) * 10; // Example calculation
+    for (let i = 1; i < metrics.length; i++) {
+      const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
+      const fontSizePercentage = sizePercentage * 0.3;
+      const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
 
-      const metricBlock = document.createElement('div');
-      metricBlock.classList.add('metric-block');
-
+      // Create small circles for the rest of the metrics
       const smallCircle = document.createElement('div');
       smallCircle.classList.add('small-circle');
       smallCircle.style.width = `${sizePercentage}vw`;
@@ -136,9 +151,7 @@ looker.plugins.visualizations.add({
       smallCircle.style.justifyContent = 'center';
       smallCircle.style.alignItems = 'center';
       smallCircle.style.borderRadius = '50%';
-      smallCircle.textContent = metric.value;
-
-      metricBlock.appendChild(smallCircle);
+      smallCircle.textContent = metrics[i].value;
 
       const metricCallout = document.createElement('div');
       metricCallout.classList.add('metric-callout');
@@ -152,7 +165,7 @@ looker.plugins.visualizations.add({
       metricName.style.alignItems = 'center';
       metricName.style.justifyContent = 'center';
 
-      if (metric.icon) {
+      if (metrics[i].icon) {
         const icon = document.createElement('img');
         icon.classList.add('small-circle-icon');
         icon.style.maxWidth = '8vw';
@@ -160,18 +173,18 @@ looker.plugins.visualizations.add({
         icon.style.paddingRight = '0.5vw';
         icon.style.alignSelf = 'center';
         icon.style.verticalAlign = 'middle';
-        icon.src = `${metric.icon}&color=${this.hexToRgb(config.small_circle_font_color)},1`;
+        icon.src = `${metrics[i].icon}&color=${smallCircleIconColor},1`;
         metricName.appendChild(icon);
       }
 
       const label = document.createElement('span');
-      label.textContent = `${metric.label} ${((metric.value / total) * 100).toFixed(config.decimal_places)}%`;
+      label.textContent = `${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%`;
 
       metricName.appendChild(label);
       metricCallout.appendChild(metricName);
-      metricBlock.appendChild(metricCallout);
-      metricsContainer.appendChild(metricBlock);
-    });
+      smallCircle.appendChild(metricCallout);
+      metricsContainer.appendChild(smallCircle);
+    }
 
     container.appendChild(metricsContainer);
     element.appendChild(container);
