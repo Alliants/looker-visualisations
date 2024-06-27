@@ -126,14 +126,10 @@ looker.plugins.visualizations.add({
 
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const container = element.querySelector('.viz-container');
+    if (!container) return;
+
     container.innerHTML = '';
     container.className = 'meta-container';
-
-    const measureField = queryResponse.fields.measure_like[0];
-    const dimensionField = queryResponse.fields.dimension_like ? queryResponse.fields.dimension_like[0] : null;
-
-    // Calculate the total value
-    const total = data.reduce((acc, row) => acc + (measureField ? row[measureField.name].value : 1), 0);
 
     const bigCircleContainer = document.createElement('div');
     bigCircleContainer.className = 'big-circle-container';
@@ -141,12 +137,23 @@ looker.plugins.visualizations.add({
     const bigCircle = document.createElement('div');
     bigCircle.className = 'big-circle';
 
+    const measure = queryResponse.fields.measure_like.length ? queryResponse.fields.measure_like[0] : null;
+    const dimension = queryResponse.fields.dimension_like.length ? queryResponse.fields.dimension_like[0] : null;
+
+    if (!measure && !dimension) {
+      container.innerHTML = 'This chart requires at least one measure or dimension.';
+      done();
+      return;
+    }
+
+    const total = data.reduce((acc, row) => acc + (measure ? row[measure.name].value : 1), 0);
+
     const bigCircleText = document.createElement('div');
     bigCircleText.innerText = total.toFixed(config.decimal_places);
 
     const bigCircleIcon = document.createElement('img');
-    if (data[0].icon) {
-      bigCircleIcon.src = `${data[0].icon}&color=${config.big_circle_font_color},1`;
+    if (bigCircle.icon) {
+      bigCircleIcon.src = `${bigCircle.icon}&color=${config.big_circle_font_color},1`;
       bigCircleIcon.className = 'big-circle-icon';
     }
 
@@ -158,21 +165,18 @@ looker.plugins.visualizations.add({
     metricsContainer.className = 'metrics-container';
 
     data.forEach(row => {
-      const value = measureField ? row[measureField.name].value : 1;
-      const label = dimensionField ? row[dimensionField.name].value : `Item ${data.indexOf(row) + 1}`;
+      const value = measure ? row[measure.name].value : 1;
+      const label = dimension ? row[dimension.name].value : `Item ${data.indexOf(row) + 1}`;
 
       const metricBlock = document.createElement('div');
       metricBlock.className = 'metric-block';
 
-      const percentage = value / total;
-      const smallCircleDiameter = Math.sqrt(percentage) * 30; // Diameter in vw based on proportion
-
       const smallCircle = document.createElement('div');
       smallCircle.className = 'small-circle';
-      smallCircle.style.width = `${smallCircleDiameter}vw`;
-      smallCircle.style.height = `${smallCircleDiameter}vw`;
-      smallCircle.style.fontSize = `${percentage * 10}vw`;  // Reduce font size if circle is too small
-      smallCircle.innerText = value.toFixed(config.decimal_places);
+      smallCircle.style.width = `${value / total * 30}vw`;
+      smallCircle.style.height = `${value / total * 30}vw`;
+      smallCircle.style.fontSize = `${value / total * 10}vw`;
+      smallCircle.innerText = value;
 
       const metricCallout = document.createElement('div');
       metricCallout.className = 'metric-callout';
@@ -182,9 +186,9 @@ looker.plugins.visualizations.add({
       metricName.innerText = `${label} ${((value / total) * 100).toFixed(config.decimal_places)}%`;
 
       const smallCircleIcon = document.createElement('img');
-      if (row.icon) {
+      if (smallCircle.icon) {
         smallCircleIcon.className = 'small-circle-icon';
-        smallCircleIcon.src = `${row.icon}&color=${config.small_circle_font_color},1`;
+        smallCircleIcon.src = `${smallCircle.icon}&color=${config.small_circle_font_color},1`;
       }
 
       metricCallout.appendChild(smallCircleIcon);
