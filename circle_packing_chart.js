@@ -155,7 +155,6 @@ looker.plugins.visualizations.add({
 
     for (let i = 1; i < metrics.length; i++) {
       const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter; // Relative to 30vw of the big circle
-      const fontSizePercentage = sizePercentage * 0.3;
       const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
 
       // Create small circles for the rest of the metrics
@@ -163,13 +162,16 @@ looker.plugins.visualizations.add({
       smallCircle.classList.add('small-circle');
       smallCircle.style.width = `${sizePercentage}vw`;
       smallCircle.style.height = `${sizePercentage}vw`;
-      smallCircle.style.fontSize = `${fontSizePercentage}vw`;
       smallCircle.style.backgroundColor = config.small_circle_color;
       smallCircle.style.color = config.small_circle_font_color;
       smallCircle.style.display = 'flex';
       smallCircle.style.justifyContent = 'center';
       smallCircle.style.alignItems = 'center';
       smallCircle.style.borderRadius = '50%';
+      smallCircle.style.minWidth = `8vw`;
+      smallCircle.style.minHeight = `8vw`;
+      smallCircle.style.maxWidth = `25vw`;
+      smallCircle.style.maxHeight = `25vw`;
       smallCircle.textContent = metrics[i].value;
 
       const metricCallout = document.createElement('div');
