@@ -115,8 +115,17 @@ looker.plugins.visualizations.add({
   updateAsync: function (data, element, config, queryResponse, details, done) {
     const container = element.querySelector('.viz-container');
     container.innerHTML = '';
-    
-    const total = data.reduce((acc, row) => acc + row[queryResponse.fields.measure_like[0].name].value, 0);
+
+    const measureField = queryResponse.fields.measure_like && queryResponse.fields.measure_like[0];
+    const dimensionField = queryResponse.fields.dimension_like && queryResponse.fields.dimension_like[0];
+
+    if (!measureField || !dimensionField) {
+      console.error("Required fields are missing. Ensure your query includes at least one dimension and one measure.");
+      done();
+      return;
+    }
+
+    const total = data.reduce((acc, row) => acc + row[measureField.name].value, 0);
 
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
@@ -161,9 +170,8 @@ looker.plugins.visualizations.add({
     data.forEach((row, index) => {
       if (index === 0) return;
 
-      const measure = queryResponse.fields.measure_like[0];
-      const value = row[measure.name].value;
-      const label = row[queryResponse.fields.dimension_like[0].name].value;
+      const value = row[measureField.name].value;
+      const label = row[dimensionField.name].value;
       const percentage = value / total;
       const smallCircleArea = bigCircleArea * percentage;
       const smallCircleDiameter = Math.sqrt((smallCircleArea * 4) / Math.PI);
