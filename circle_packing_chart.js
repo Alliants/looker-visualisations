@@ -109,13 +109,17 @@ looker.plugins.visualizations.add({
 
     const container = document.createElement('div');
     container.classList.add('meta-container');
+    container.style.display = 'flex';
+    container.style.alignItems = 'center';
+    container.style.height = '100%';
+    container.style.width = '100%';
 
     // Create the big circle for the largest metric
     const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
     const bigCircle = document.createElement('div');
     bigCircle.classList.add('big-circle');
     bigCircle.style.backgroundColor = config.big_circle_color;
-    bigCircle.style.weight = '30vw';
+    bigCircle.style.width = '30vw';
     bigCircle.style.height = '30vh';
     bigCircle.style.borderRadius = '50%';
     bigCircle.style.display = 'flex';
