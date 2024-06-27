@@ -1,4 +1,6 @@
 looker.plugins.visualizations.add({
+  id: 'circle_packing_chart_customvis',
+  label: 'Circle Packing Chart',
   options: {
     decimal_places: {
       type: "number",
@@ -36,202 +38,175 @@ looker.plugins.visualizations.add({
     }
   },
 
-  create: function(element, config) {
-    element.style.fontFamily = `"Lato", sans-serif`;
-  },
+  create: function (element, config) {
+    element.innerHTML = '<div class="viz-container"></div>';
+    element.style.fontFamily = 'Lato, sans-serif';
 
-  updateDynamicOptions: function(queryResponse) {
-    const numFields = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
-    // Clear existing dynamic options
-    Object.keys(this.options).forEach((key) => {
-      if (key.startsWith("metric_label_") || key.startsWith("metric_icon_")) {
-        delete this.options[key];
+    const styleTag = document.createElement('style');
+    styleTag.textContent = `
+      .meta-container {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        justify-content: center;
       }
-    });
-    // Add dynamic options for each metric
-    for (let i = 0; i < numFields; i++) {
-      this.options[`metric_label_${i}`] = {
-        type: "string",
-        label: `Label for Metric ${i + 1}`,
-        default: "",
-        order: 6 + i * 2
-      };
-      this.options[`metric_icon_${i}`] = {
-        type: "string",
-        label: `Icon URL for Metric ${i + 1}`,
-        default: "",
-        order: 7 + i * 2
-      };
-    }
-    this.trigger('registerOptions', this.options);
+      .big-circle-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      .big-circle {
+        border-radius: 50%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: ${config.big_circle_font_color};
+        background-color: ${config.big_circle_color};
+        padding: 10px;
+        box-sizing: border-box;
+        text-align: center;
+        overflow: hidden;
+      }
+      .big-circle-icon {
+        max-width: 20%;
+        max-height: 20%;
+        padding-bottom: 0.5vw;
+      }
+      .small-circle {
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: ${config.small_circle_font_color};
+        background-color: ${config.small_circle_color};
+      }
+      .metrics-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        padding-left: 20px;
+        box-sizing: border-box;
+      }
+      .metric-block {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5vw;
+      }
+      .metric-callout {
+        display: flex;
+        align-items: center;
+        margin-left: 10px;
+      }
+      .metric-name {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .small-circle-icon {
+        max-width: 20%;
+        max-height: 20%;
+        padding-right: 0.5vw;
+      }
+    `;
+    document.head.appendChild(styleTag);
   },
 
-  hexToRgb: function(hex) {
-    hex = hex.replace('#', '');
-    const bigint = parseInt(hex, 16);
-    const r = (bigint >> 16) & 255;
-    const g = (bigint >> 8) & 255;
-    const b = bigint & 255;
-    return `${r},${g},${b}`;
-  },
+  updateAsync: function (data, element, config, queryResponse, details, done) {
+    const container = element.querySelector('.viz-container');
+    container.innerHTML = '';
+    container.className = 'meta-container';
 
-  updateAsync: function(data, element, config, queryResponse, details, done) {
-    // Update dynamic options
-    this.updateDynamicOptions(queryResponse);
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const containerArea = containerWidth * containerHeight;
 
-    // Remove any existing content
-    element.innerHTML = '';
+    const total = data.reduce((acc, row) => acc + row[queryResponse.fields.measure_like[0].name].value, 0);
 
-    const styles = `
-      <style>
-        .meta-container {
-          display: flex;
-          align-items: center;
-          height: 100%;
-          width: 100%;
-          box-sizing: border-box;
-        }
-        .big-circle-container {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          min-width: 30vw; /* Fixed size for big circle container */
-          min-height: 30vw; /* Fixed size for big circle container */
-        }
-        .big-circle {
-          width: 30vw; /* Fixed size for big circle */
-          height: 30vw; /* Fixed size for big circle */
-          border-radius: 50%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          color: ${config.big_circle_font_color};
-          flex-shrink: 0;
-          font-size: 4vw;
-          padding: 2vw; /* Add padding here to prevent text from touching edges */
-          box-sizing: border-box; /* Ensure padding is included in the size */
-          text-align: center;
-        }
-        .big-circle-icon {
-          max-width: 12vw; 
-          max-height: 12vh; 
-          padding-bottom: 0.5vw;
-        }
-        .small-circle {
-          border-radius: 50%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          flex-shrink: 0;
-          color: ${config.small_circle_font_color};
-        }
-        .metrics-container {
-          display: flex;
-          flex-direction: column;
-          justify-content: space-evenly;
-          height: 30vw; /* Match height with big circle */
-          margin-left: 20px;
-        }
-        .metric-block {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 2.5vw;
-        }
-        .metric-callout {
-          display: flex;
-          align-items: center;
-          margin-left: 10px;
-        }
-        .metric-name, .metric-percentage {
-          margin-left: 5px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .small-circle-icon {
-          max-width: 8vw;
-          max-height: 8vh;
-          padding-right: 0.5vw;
-          align-self: center;
-          vertical-align: middle;
-        }
-      </style>
-    `;
-    element.innerHTML += styles;
-
-    const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
-    const that = this; // To avoid scope issues inside map function
-
-    const metrics = fields.map((field, index) => {
-      const value = data[0][field.name]?.value;
-      const label = config[`metric_label_${index}`] || field.label_short || field.label;
-      const icon = config[`metric_icon_${index}`] || "";
-      return {
-        label: label,
-        value: isNaN(value) ? 0 : Number(value),
-        icon: icon
-      };
-    }).filter(metric => metric.value !== 0);
-
-    metrics.sort((a, b) => b.value - a.value);
-
-    if (metrics.length === 0) {
-      element.innerHTML += 'No valid data is available';
-      done();
-      return;
-    }
-
-    const total = metrics.reduce((sum, metric) => sum + metric.value, 0);
-    const maxMetricValue = metrics[0].value;
-
-    const container = document.createElement('div');
-    container.classList.add('meta-container');
-
-    const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
-    const bigCircleContent = `
-      <div class="big-circle" style="background-color: ${config.big_circle_color};">
-        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1">` : ''}</div>
-        <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
-        <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
-      </div>
-    `;
+    // Big Circle Calculations
+    const bigCircleArea = containerArea * 0.5; // Let's allocate 50% of the container area for the big circle
+    const bigCircleDiameter = Math.sqrt(bigCircleArea);
+    const bigCircleRadius = bigCircleDiameter / 2;
 
     const bigCircleContainer = document.createElement('div');
-    bigCircleContainer.classList.add('big-circle-container');
-    bigCircleContainer.innerHTML = bigCircleContent;
-    container.appendChild(bigCircleContainer);
+    bigCircleContainer.className = 'big-circle-container';
+    bigCircleContainer.style.width = `${bigCircleDiameter}px`;
+    bigCircleContainer.style.height = `${bigCircleDiameter}px`;
 
-    const metricsContainer = document.createElement('div');
-    metricsContainer.classList.add('metrics-container');
+    const bigCircle = document.createElement('div');
+    bigCircle.className = 'big-circle';
+    bigCircle.style.width = `${bigCircleDiameter}px`;
+    bigCircle.style.height = `${bigCircleDiameter}px`;
 
-    for (let i = 1; i < metrics.length; i++) {
-      const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
-      const fontSizePercentage = sizePercentage * 0.3;
-      const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
-
-      const calloutContent = `
-        <div class="metric-block">
-          <div class="small-circle" style="width: ${sizePercentage}vw; height: ${sizePercentage}vw; font-size: ${fontSizePercentage}vw; background-color: ${config.small_circle_color};">
-            ${metrics[i].value}
-          </div>
-          <div class="metric-callout">
-            <div class="metric-name">
-              ${metrics[i].icon ? `<img class="small-circle-icon" src="${metrics[i].icon}&color=${smallCircleIconColor},1">` : ''} <span>${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%</span>
-            </div>
-          </div>
-        </div>
-      `;
-      const calloutContainer = document.createElement('div');
-      calloutContainer.classList.add('metric-block');
-      calloutContainer.innerHTML = calloutContent;
-      metricsContainer.appendChild(calloutContainer);
+    const bigCircleIcon = document.createElement('img');
+    if (data[0].icon) {
+      bigCircleIcon.src = `${data[0].icon}&color=${config.big_circle_font_color},1`;
+      bigCircleIcon.className = 'big-circle-icon';
     }
 
+    const bigCircleText = document.createElement('div');
+    bigCircleText.innerText = total.toFixed(config.decimal_places);
+
+    bigCircle.appendChild(bigCircleIcon);
+    bigCircle.appendChild(bigCircleText);
+    bigCircleContainer.appendChild(bigCircle);
+
+    // Metrics Container for Small Circles
+    const metricsContainer = document.createElement('div');
+    metricsContainer.className = 'metrics-container';
+    metricsContainer.style.width = `${containerWidth - bigCircleDiameter}px`;
+    metricsContainer.style.height = `${bigCircleDiameter}px`;
+
+    // Small Circle Calculations and Rendering
+    data.forEach((row, index) => {
+      if (index === 0) return; // Skip the first row as it's considered as the big circle.
+
+      const measure = queryResponse.fields.measure_like[0];
+      const value = row[measure.name].value;
+      const percentage = value / total;
+      const smallCircleArea = bigCircleArea * percentage;
+      const smallCircleDiameter = Math.sqrt(smallCircleArea);
+      const smallCircleRadius = smallCircleDiameter / 2;
+
+      const metricBlock = document.createElement('div');
+      metricBlock.className = 'metric-block';
+
+      const smallCircle = document.createElement('div');
+      smallCircle.className = 'small-circle';
+      smallCircle.style.width = `${smallCircleDiameter}px`;
+      smallCircle.style.height = `${smallCircleDiameter}px`;
+      smallCircle.innerText = value;
+
+      const metricCallout = document.createElement('div');
+      metricCallout.className = 'metric-callout';
+
+      const metricName = document.createElement('div');
+      metricName.className = 'metric-name';
+      metricName.innerText = `${((value / total) * 100).toFixed(config.decimal_places)}%`;
+
+      const smallCircleIcon = document.createElement('img');
+      if (row.icon) {
+        smallCircleIcon.className = 'small-circle-icon';
+        smallCircleIcon.src = `${row.icon}&color=${config.small_circle_font_color},1`;
+      }
+
+      metricCallout.appendChild(smallCircleIcon);
+      metricCallout.appendChild(metricName);
+      metricBlock.appendChild(smallCircle);
+      metricBlock.appendChild(metricCallout);
+
+      metricsContainer.appendChild(metricBlock);
+    });
+
+    container.appendChild(bigCircleContainer);
     container.appendChild(metricsContainer);
-    element.appendChild(container);
     done();
   }
 });
