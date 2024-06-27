@@ -129,16 +129,17 @@ looker.plugins.visualizations.add({
     container.innerHTML = '';
     container.className = 'meta-container';
 
+    const measureField = queryResponse.fields.measure_like[0];
+    const dimensionField = queryResponse.fields.dimension_like ? queryResponse.fields.dimension_like[0] : null;
+
+    // Calculate the total value
+    const total = data.reduce((acc, row) => acc + (measureField ? row[measureField.name].value : 1), 0);
+
     const bigCircleContainer = document.createElement('div');
     bigCircleContainer.className = 'big-circle-container';
 
     const bigCircle = document.createElement('div');
     bigCircle.className = 'big-circle';
-
-    const total = data.reduce((acc, row) => 
-      acc + row[queryResponse.fields.measure_like[0].name].value, 
-      0
-    );
 
     const bigCircleText = document.createElement('div');
     bigCircleText.innerText = total.toFixed(config.decimal_places);
@@ -157,9 +158,8 @@ looker.plugins.visualizations.add({
     metricsContainer.className = 'metrics-container';
 
     data.forEach(row => {
-      const measure = queryResponse.fields.measure_like[0];
-      const value = row[measure.name].value;
-      const label = row[queryResponse.fields.dimension_like[0].name].value;
+      const value = measureField ? row[measureField.name].value : 1;
+      const label = dimensionField ? row[dimensionField.name].value : `Item ${data.indexOf(row) + 1}`;
 
       const metricBlock = document.createElement('div');
       metricBlock.className = 'metric-block';
