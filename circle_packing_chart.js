@@ -126,9 +126,9 @@ looker.plugins.visualizations.add({
     bigCircle.style.padding = '2vw';
     
     bigCircle.innerHTML = `
-        <div style="width: 5vw; height: 5vh;">${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1">` : ''}</div>
-        <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
-        <div style="font-size: 2.5vw;">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
+        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1" style="width: 10vw; height: 10vh;">` : ''}</div>
+        <div style="color: ${config.big_circle_font_color};"><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
+        <div style="font-size: 2.5vw; color: ${config.big_circle_font_color};">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
     `;
 
     const bigCircleContainer = document.createElement('div');
