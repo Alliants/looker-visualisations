@@ -115,6 +115,15 @@ looker.plugins.visualizations.add({
     const bigCircle = document.createElement('div');
     bigCircle.classList.add('big-circle');
     bigCircle.style.backgroundColor = config.big_circle_color;
+    bigCircle.style.weight = '30vw';
+    bigCircle.style.height = '30vh';
+    bigCircle.style.borderRadius = '50%';
+    bigCircle.style.display = 'flex';
+    bigCircle.style.flexDirection = 'column';
+    bigCircle.style.justifyContent = 'space-evenly';
+    bigCircle.style.alignItems = 'center';
+    bigCircle.style.fontSize = '3vw';
+    bigCircle.style.padding = '2vw';
     bigCircle.innerHTML = `
         <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1">` : ''}</div>
         <div><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
@@ -123,6 +132,10 @@ looker.plugins.visualizations.add({
 
     const bigCircleContainer = document.createElement('div');
     bigCircleContainer.classList.add('big-circle-container');
+    bigCircleContainer.style.display = 'flex';
+    bigCircleContainer.style.flexDirection = 'column';
+    bigCircleContainer.style.justifyContent = 'center';
+    bigCircleContainer.style.alignItems = 'center';
     bigCircleContainer.appendChild(bigCircle);
     container.appendChild(bigCircleContainer);
 
