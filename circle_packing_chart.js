@@ -106,6 +106,7 @@ looker.plugins.visualizations.add({
 
     const total = metrics.reduce((sum, metric) => sum + metric.value, 0);
     const maxMetricValue = metrics[0].value;
+    const bigCircleDiameter = 30; // Fixed size of 30vw
 
     const container = document.createElement('div');
     container.classList.add('meta-container');
@@ -119,8 +120,8 @@ looker.plugins.visualizations.add({
     const bigCircle = document.createElement('div');
     bigCircle.classList.add('big-circle');
     bigCircle.style.backgroundColor = config.big_circle_color;
-    bigCircle.style.width = '30vw';
-    bigCircle.style.height = '30vh';
+    bigCircle.style.width = `${bigCircleDiameter}vw`;
+    bigCircle.style.height = `${bigCircleDiameter}vw`;
     bigCircle.style.borderRadius = '50%';
     bigCircle.style.display = 'flex';
     bigCircle.style.flexDirection = 'column';
@@ -149,11 +150,11 @@ looker.plugins.visualizations.add({
     metricsContainer.style.display = 'flex';
     metricsContainer.style.flexDirection = 'column';
     metricsContainer.style.justifyContent = 'space-evenly';
-    metricsContainer.style.height = '30vw'; // Match height with big circle
+    metricsContainer.style.height = `${bigCircleDiameter}vw`; // Match height with big circle
     metricsContainer.style.marginLeft = '20px';
 
     for (let i = 1; i < metrics.length; i++) {
-      const sizePercentage = (metrics[i].value / maxMetricValue) * 30; // Relative to 30vw of the big circle
+      const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter; // Relative to 30vw of the big circle
       const fontSizePercentage = sizePercentage * 0.3;
       const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
 
@@ -200,8 +201,13 @@ looker.plugins.visualizations.add({
 
       metricName.appendChild(label);
       metricCallout.appendChild(metricName);
-      smallCircle.appendChild(metricCallout);
-      metricsContainer.appendChild(smallCircle);
+      metricsContainer.appendChild(metricCallout);
+
+      const metricBlock = document.createElement('div');
+      metricBlock.classList.add('metric-block');
+      metricBlock.appendChild(smallCircle);
+      metricBlock.appendChild(metricCallout);
+      metricsContainer.appendChild(metricBlock);
     }
 
     container.appendChild(metricsContainer);
