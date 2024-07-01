@@ -199,7 +199,7 @@ looker.plugins.visualizations.add({
       const line = document.createElement('div');
       line.classList.add('line');
       line.style.height = '1px';
-      line.style.width = `-${lineWidth}px`;
+      line.style.width = `${lineWidth}px`;
       line.style.backgroundColor = 'rgb(71, 71, 71)';
 
       lineContainer.appendChild(line);
