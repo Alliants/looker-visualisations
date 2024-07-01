@@ -38,12 +38,6 @@ looker.plugins.visualizations.add({
     const num_guests = row[fields[5].name].value;
     const room_numbers = row[fields[6].name].value;
 
-    // Calculate dynamic line height based on container height
-    const containerHeight = element.clientHeight;
-    // const lineHeight = containerHeight / 18;
-    // const statusLineHeight = lineHeight * 0.4;
-
-    // Construct the arrival card with dynamic line height
     const arrivalCard = document.createElement('div');
     arrivalCard.className = 'arrival-card';
     arrivalCard.style.lineHeight = `14vh`;
@@ -75,7 +69,7 @@ looker.plugins.visualizations.add({
     status.style.borderRadius = '10px';
     status.style.color = 'white';
     status.style.fontWeight = 'bold';
-    status.textContent = `Due in - ${due_in_time}`;
+    status.textContent = ` Due in - ${due_in_time}`;
 
     arrivalHeader.appendChild(title);
     arrivalHeader.appendChild(status);
@@ -101,7 +95,7 @@ looker.plugins.visualizations.add({
     dateRangeImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400';
     dateRangeImg.style.width = '1em';
     dateRangeDiv.appendChild(dateRangeImg);
-    dateRangeDiv.appendChild(document.createTextNode(`${start_date} - ${end_date}`));
+    dateRangeDiv.appendChild(document.createTextNode(` ${start_date} - ${end_date}`));
 
     const nightsDiv = document.createElement('div');
     const nightsImg = document.createElement('img');
@@ -109,7 +103,7 @@ looker.plugins.visualizations.add({
     nightsImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2Y4XC80OTk5MDU4XC9hM2MzM2MyZmVmZTYyYTQ3NTBlZDkzZDI2ODc0YWNkNC0xNjA3NjIyMTkyLnN2ZyJ9:frontify:cLkhh1-xYamDkYHdQWOtmVNKFRElcvUisK6PfG7JUk0?width=2400';
     nightsImg.style.width = '1em';
     nightsDiv.appendChild(nightsImg);
-    nightsDiv.appendChild(document.createTextNode(`${num_nights}`));
+    nightsDiv.appendChild(document.createTextNode(` ${num_nights}`));
 
     arrivalDetailsNights.appendChild(dateRangeDiv);
     arrivalDetailsNights.appendChild(nightsDiv);
@@ -120,7 +114,7 @@ looker.plugins.visualizations.add({
     guestsImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiMTJmM2YwMDc3YTVjNmEyM2Q1YzIwYjZiYS0xNjA3NjIyMTkyLnN2ZyJ9:frontify:XKUzuk-yTmtyqPmtN1vMYqipmXGVfqtUtmLso-gWDxM?width=2400';
     guestsImg.style.width = '1em';
     guestsDiv.appendChild(guestsImg);
-    guestsDiv.appendChild(document.createTextNode(`${num_guests} guests`));
+    guestsDiv.appendChild(document.createTextNode(` ${num_guests} guests`));
 
     const roomsDiv = document.createElement('div');
     const roomsImg = document.createElement('img');
@@ -128,7 +122,7 @@ looker.plugins.visualizations.add({
     roomsImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2ZkXC80OTk5Mzc2XC9kMGUyN2I1Mzg0MTgxOTEzNTUwOWY4ZmU3YmY2NjkwNS0xNjA3NjIyNzI5LnN2ZyJ9:frontify:EPBkv4IFrfiYi5C_oehea7Jr30rluxP8qKl5Ab1WN3k?width=2400';
     roomsImg.style.width = '1em';
     roomsDiv.appendChild(roomsImg);
-    roomsDiv.appendChild(document.createTextNode(`Rooms ${room_numbers}`));
+    roomsDiv.appendChild(document.createTextNode(` Rooms ${room_numbers}`));
 
     arrivalDetails.appendChild(locationDiv);
     arrivalDetails.appendChild(arrivalDetailsNights);
