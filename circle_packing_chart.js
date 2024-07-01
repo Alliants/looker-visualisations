@@ -169,33 +169,24 @@ looker.plugins.visualizations.add({
       smallCircle.style.maxWidth = '25vw';
       smallCircle.style.maxHeight = '25vw';
 
-      // Append the small-circle element to ensure it exists in the DOM
-      const metricBlock = document.createElement('div');
-      metricBlock.classList.add('metric-block');
-      metricBlock.style.display = 'flex';
-      metricBlock.style.alignItems = 'center';
-      metricBlock.appendChild(smallCircle);
-      metricsContainer.appendChild(metricBlock);
+      metricsContainer.appendChild(smallCircle);
 
-      // Debug Outputs
+      // Ensure the small circle element exists in the DOM
       console.log("Small circle element:", smallCircle);
 
-      // Now that the element is appended, get the computed style and calculate pixel values
+      // Get computed styles
       const computedStyle = getComputedStyle(smallCircle);
       console.log("Computed style:", computedStyle);
 
-      // Get the width from style and convert from vw to pixels
-      const widthInVw = parseFloat(computedStyle.width);
-      console.log("Width in vw:", widthInVw);
-
-      const widthInPx = (widthInVw * window.innerWidth) / 100;
+      // Get the width in pixels directly from the computedStyle
+      const widthInPx = parseFloat(computedStyle.width);
       console.log("Width in px:", widthInPx);
 
       // Calculate radius in pixels
       const radiusInPx = widthInPx / 2;
       console.log("Radius in px:", radiusInPx);
 
-      // Use radius to determine the line width
+      // Use the radius to determine the line width
       const lineWidth = widthInPx * 1.05;
       console.log("Line width:", lineWidth);
 
@@ -245,6 +236,7 @@ looker.plugins.visualizations.add({
 
       metricBlock.appendChild(lineContainer);
       metricBlock.appendChild(metricCallout);
+      metricsContainer.appendChild(metricBlock);
     }
 
     container.appendChild(metricsContainer);
