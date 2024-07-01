@@ -160,7 +160,6 @@ looker.plugins.visualizations.add({
     for (let i = 1; i < metrics.length; i++) {
       const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter; // Relative to 30vw of the big circle
       const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
-      const lineWidth = bigCircleDiameter * 0.5 + sizePercentage * 0.5 + 10; // Calculate length dynamically
 
       // Create small circles for the rest of the metrics
       const smallCircle = document.createElement('div');
@@ -175,18 +174,32 @@ looker.plugins.visualizations.add({
       smallCircle.style.borderRadius = '50%';
       smallCircle.style.maxWidth = `25vw`;
       smallCircle.style.maxHeight = `25vw`;
+      // smallCircle.textContent = metrics[i].value;
+
+      // Get the computed styles of the element
+      const computedStyle = getComputedStyle(smallCircle);
+
+      // Get the width in vw and convert it to a number
+      const widthInVw = parseFloat(computedStyle.width);
+
+      // Calculate the width in pixels
+      const vwToPx = (vw) => (vw * window.innerWidth) / 100;
+      const widthInPx = vwToPx(widthInVw);
+
+      // Calculate the radius in pixels
+      const radiusInPx = widthInPx / 2;
+      const lineWidth = radiusInPx * 1.05;
 
       const lineContainer = document.createElement('div');
-      const lineOffset = sizePercentage * 0.5;
       lineContainer.classList.add('line-container');
       lineContainer.style.display = 'flex';
       lineContainer.style.alignItems = 'center';
-      lineContainer.style.marginLeft = `-${lineOffset}vw`;
+      lineContainer.style.marginLeft = `-${radiusInPx}px`;
 
       const line = document.createElement('div');
       line.classList.add('line');
       line.style.height = '1px';
-      line.style.width = `${lineWidth}vw`;
+      line.style.width = `-${lineWidth}px`;
       line.style.backgroundColor = 'rgb(71, 71, 71)';
 
       lineContainer.appendChild(line);
