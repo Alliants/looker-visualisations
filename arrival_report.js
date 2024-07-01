@@ -113,7 +113,7 @@ looker.plugins.visualizations.add({
     const arrivalDetails = document.createElement('div');
     arrivalDetails.className = 'arrival-details';
     arrivalDetails.style.display = 'flex';
-    arrivalDetails.flexDirection = 'column';
+    arrivalDetails.style.flexDirection = 'column';
 
     const locationDiv = document.createElement('div');
     const strongLocation = document.createElement('strong');
