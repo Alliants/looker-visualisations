@@ -139,11 +139,6 @@ looker.plugins.visualizations.add({
     bigCircleImg.style.height = '15vh';
     bigCircle.appendChild(bigCircleImg);
     bigCircle.appendChild(strongLabel);
-    
-    // bigCircle.innerHTML = `
-    //     <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1" style="width: 15vw; height: 15vh;">` : ''}</div>
-    //     <div style="color: ${config.big_circle_font_color};"><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
-    // `;
 
     const bigCircleContainer = document.createElement('div');
     bigCircleContainer.classList.add('big-circle-container');
@@ -165,6 +160,7 @@ looker.plugins.visualizations.add({
     for (let i = 1; i < metrics.length; i++) {
       const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter; // Relative to 30vw of the big circle
       const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
+      const lineWidth = bigCircleDiameter * 0.5 + sizePercentage * 0.5 + 10; // Calculate length dynamically
 
       // Create small circles for the rest of the metrics
       const smallCircle = document.createElement('div');
@@ -179,7 +175,6 @@ looker.plugins.visualizations.add({
       smallCircle.style.borderRadius = '50%';
       smallCircle.style.maxWidth = `25vw`;
       smallCircle.style.maxHeight = `25vw`;
-      // smallCircle.textContent = metrics[i].value;
 
       const lineContainer = document.createElement('div');
       const lineOffset = sizePercentage * 0.5;
@@ -189,9 +184,9 @@ looker.plugins.visualizations.add({
       lineContainer.style.marginLeft = `-${lineOffset}vw`;
 
       const line = document.createElement('div');
-      lineContainer.classList.add('line');
+      line.classList.add('line');
       line.style.height = '1px';
-      line.style.width = '10vw';
+      line.style.width = `${lineWidth}vw`;
       line.style.backgroundColor = 'rgb(71, 71, 71)';
 
       lineContainer.appendChild(line);
