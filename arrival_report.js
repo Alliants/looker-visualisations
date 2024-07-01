@@ -38,6 +38,20 @@ looker.plugins.visualizations.add({
     const num_guests = row[fields[5].name].value;
     const room_numbers = row[fields[6].name].value;
 
+    // Check if all values are null
+    if (
+      due_in_time === null &&
+      location === null &&
+      start_date === null &&
+      end_date === null &&
+      num_nights === null &&
+      num_guests === null &&
+      room_numbers === null
+    ) {
+      done();
+      return;
+    }
+
     const arrivalCard = document.createElement('div');
     arrivalCard.className = 'arrival-card';
     arrivalCard.style.lineHeight = `14vh`;
