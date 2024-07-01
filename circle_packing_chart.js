@@ -183,6 +183,21 @@ looker.plugins.visualizations.add({
       smallCircle.style.maxHeight = `25vw`;
       smallCircle.textContent = metrics[i].value;
 
+      const lineContainer = document.createElement('div');
+      const lineOffset = sizePercentage * 0.5;
+      lineContainer.classList.add('line-container');
+      lineContainer.style.display = 'flex';
+      metricCallout.style.alignItems = 'center';
+      metricCallout.style.marginLeft = `${lineOffset}vw`;
+
+      const line = document.createElement('div');
+      lineContainer.classList.add('line');
+      line.style.height = '0.5vh';
+      line.style.width = '10vw';
+      line.style.backgroundColor = 'rgb(71, 71, 71)';
+
+      lineContainer.appendChild(line);
+
       const metricCallout = document.createElement('div');
       metricCallout.classList.add('metric-callout');
       metricCallout.style.display = 'flex';
@@ -218,6 +233,7 @@ looker.plugins.visualizations.add({
       metricBlock.classList.add('metric-block');
       metricBlock.style.display = 'flex';
       metricBlock.appendChild(smallCircle);
+      metricBlock.appendChild(lineContainer);
       metricBlock.appendChild(metricCallout);
       metricsContainer.appendChild(metricBlock);
     }
