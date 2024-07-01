@@ -179,18 +179,18 @@ looker.plugins.visualizations.add({
       smallCircle.style.borderRadius = '50%';
       smallCircle.style.maxWidth = `25vw`;
       smallCircle.style.maxHeight = `25vw`;
-      smallCircle.textContent = metrics[i].value;
+      // smallCircle.textContent = metrics[i].value;
 
       const lineContainer = document.createElement('div');
       const lineOffset = sizePercentage * 0.5;
       lineContainer.classList.add('line-container');
       lineContainer.style.display = 'flex';
       lineContainer.style.alignItems = 'center';
-      lineContainer.style.marginLeft = `${lineOffset}vw`;
+      lineContainer.style.marginLeft = `-${lineOffset}vw`;
 
       const line = document.createElement('div');
       lineContainer.classList.add('line');
-      line.style.height = '0.5vh';
+      line.style.height = '1px';
       line.style.width = '10vw';
       line.style.backgroundColor = 'rgb(71, 71, 71)';
 
@@ -221,7 +221,7 @@ looker.plugins.visualizations.add({
       }
 
       const label = document.createElement('span');
-      label.textContent = `${metrics[i].label}`;
+      label.textContent = `${metrics[i].value} ${metrics[i].label}`;
 
       metricName.appendChild(label);
       metricCallout.appendChild(metricName);
