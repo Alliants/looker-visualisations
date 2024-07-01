@@ -108,14 +108,14 @@ looker.plugins.visualizations.add({
     const dateRangeDiv = document.createElement('div');
     const dateRangeImg = document.createElement('img');
     dateRangeImg.className = 'icon';
-    dateRangeImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxY183OTk5MTQ0VC03Zjk1OTQ0LTY4ODg2MzQwODU2NTRNTy1aMzgzMy04NjY1YWQyZjU3MTdrLnN2ZyImOkV5IEJlc3QvOTBxdWVzdC1pbWc';
+    dateRangeImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzJiXC80OTk5MTQ0XC83MDVmMzYzMGFhMTM1NTcxYTAzYzNmYzk3ODE4MDVmMi0xNjA3NjIyMzc4LnN2ZyJ9:frontify:DsE91qZoxdtRg4QXzR3qxmhTvGoA4k703e74VvXnx6Q?width=2400';
     dateRangeDiv.appendChild(dateRangeImg);
     dateRangeDiv.appendChild(document.createTextNode(`${start_date} - ${end_date}`));
 
     const nightsDiv = document.createElement('div');
     const nightsImg = document.createElement('img');
     nightsImg.className = 'icon';
-    nightsImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2Y4XC80OTk5MDU4XC9hM2MzM2MyZmVmZTYyYTQ3NTBlZDkzZDI5NDI2MTMwYS5zdmcifQ==?width=2400';
+    nightsImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcL2Y4XC80OTk5MDU4XC9hM2MzM2MyZmVmZTYyYTQ3NTBlZDkzZDI2ODc0YWNkNC0xNjA3NjIyMTkyLnN2ZyJ9:frontify:cLkhh1-xYamDkYHdQWOtmVNKFRElcvUisK6PfG7JUk0?width=2400';
     nightsDiv.appendChild(nightsImg);
     nightsDiv.appendChild(document.createTextNode(`${num_nights}`));
 
@@ -125,7 +125,7 @@ looker.plugins.visualizations.add({
     const guestsDiv = document.createElement('div');
     const guestsImg = document.createElement('img');
     guestsImg.className = 'icon';
-    guestsImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiLjMxM2Y4NHVuZGVucy8yMDE5NDkyLTE5YjA1OG54dS0zODcxNjRoM2ZhOS0wLmpwZ3MifQ==?width=2400';
+    guestsImg.src = 'https://cdn-assets-cloud.frontify.com/s3/frontify-cloud-files-us/eyJwYXRoIjoiZnJvbnRpZnlcL2FjY291bnRzXC8yNVwvMTcyMDUwXC9wcm9qZWN0c1wvMjc4Mjc0XC9hc3NldHNcLzMzXC80OTk5MDY5XC84NTM1MzZiMTJmM2YwMDc3YTVjNmEyM2Q1YzIwYjZiYS0xNjA3NjIyMTkyLnN2ZyJ9:frontify:XKUzuk-yTmtyqPmtN1vMYqipmXGVfqtUtmLso-gWDxM?width=2400';
     guestsDiv.appendChild(guestsImg);
     guestsDiv.appendChild(document.createTextNode(`${num_guests} guests`));
 
