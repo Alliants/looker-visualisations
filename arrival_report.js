@@ -1,4 +1,14 @@
 looker.plugins.visualizations.add({
+  options: {
+    font_color: {
+      type: "string",
+      label: "Font Color",
+      default: "#000000",
+      display: "color",
+      order: 3
+    }
+  },
+  
   create: function (element, config) {
     element.style.fontFamily = 'Lato, sans-serif';
     element.appendChild(styles); // Append styles to the document
@@ -48,13 +58,14 @@ looker.plugins.visualizations.add({
     arrivalCard.style.height = '100%';
 
     const arrivalHeader = document.createElement('div');
-    arrivalHeader.style.className = 'arrival-header';
+    arrivalHeader.className = 'arrival-header';
     arrivalHeader.style.display = 'flex';
     arrivalHeader.style.justifyContent = 'space-between';
     arrivalHeader.style.alignItems = 'center';
 
     const title = document.createElement('div');
     title.textContent = 'Arrival Report';
+    title.style.color = config.font_color;
 
     const status = document.createElement('div');
     status.className = 'status';
@@ -73,6 +84,7 @@ looker.plugins.visualizations.add({
     arrivalDetails.className = 'arrival-details';
     arrivalDetails.style.display = 'flex';
     arrivalDetails.style.flexDirection = 'column';
+    arrivalDetails.style.color = config.font_color;
 
     const locationDiv = document.createElement('div');
     const strongLocation = document.createElement('strong');
