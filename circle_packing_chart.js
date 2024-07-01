@@ -37,7 +37,7 @@ looker.plugins.visualizations.add({
   },
 
   create: function(element, config) {
-    element.style.fontFamily = `"Lato", sans-serif`;
+    element.style.fontFamily = 'Lato, sans-serif';
   },
 
   updateDynamicOptions: function(queryResponse) {
@@ -104,7 +104,6 @@ looker.plugins.visualizations.add({
       return;
     }
 
-    const total = metrics.reduce((sum, metric) => sum + metric.value, 0);
     const maxMetricValue = metrics[0].value;
     const bigCircleDiameter = 30; // Fixed size of 30vw
 
@@ -118,6 +117,8 @@ looker.plugins.visualizations.add({
     // Create the big circle for the largest metric
     const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
     const bigCircle = document.createElement('div');
+    const strongLabel = document.createElement('strong');
+    strongLabel.textContent = `${metrics[0].value} ${metrics[0].label}`;
     bigCircle.classList.add('big-circle');
     bigCircle.style.backgroundColor = config.big_circle_color;
     bigCircle.style.width = `${bigCircleDiameter}vw`;
@@ -126,15 +127,22 @@ looker.plugins.visualizations.add({
     bigCircle.style.display = 'flex';
     bigCircle.style.flexDirection = 'column';
     bigCircle.style.justifyContent = 'space-evenly';
-    bigCircle.style.alignItems = 'center';
-    bigCircle.style.fontSize = '3vw';
+    bigCircle.style.textAlign = 'center';
+    bigCircle.style.fontSize = '5vw';
     bigCircle.style.padding = '2vw';
+    bigCircle.style.color = `${config.big_circle_font_color}`;    
+    const bigCircleImg = document.createElement('img');
+    bigCircleImg.className = 'icon';
+    bigCircleImg.src = `${metrics[0].icon}&color=${bigCircleIconColor},1`;
+    bigCircleImg.style.width = '15vw';
+    bigCircleImg.style.height = '15vh';
+    bigCircle.appendChild(strongLabel);
+    bigCircle.appendChild(bigCircleImg);
     
-    bigCircle.innerHTML = `
-        <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1" style="width: 10vw; height: 10vh;">` : ''}</div>
-        <div style="color: ${config.big_circle_font_color};"><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
-        <div style="font-size: 2.5vw; color: ${config.big_circle_font_color};">${((metrics[0].value / total) * 100).toFixed(config.decimal_places)}%</div>
-    `;
+    // bigCircle.innerHTML = `
+    //     <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1" style="width: 15vw; height: 15vh;">` : ''}</div>
+    //     <div style="color: ${config.big_circle_font_color};"><strong>${metrics[0].value} ${metrics[0].label}</strong></div>
+    // `;
 
     const bigCircleContainer = document.createElement('div');
     bigCircleContainer.classList.add('big-circle-container');
@@ -199,7 +207,7 @@ looker.plugins.visualizations.add({
       }
 
       const label = document.createElement('span');
-      label.textContent = `${metrics[i].label} ${((metrics[i].value / total) * 100).toFixed(config.decimal_places)}%`;
+      label.textContent = `${metrics[i].label}`;
 
       metricName.appendChild(label);
       metricCallout.appendChild(metricName);
@@ -207,6 +215,7 @@ looker.plugins.visualizations.add({
 
       const metricBlock = document.createElement('div');
       metricBlock.classList.add('metric-block');
+      metricBlock.style.display = 'flex';
       metricBlock.appendChild(smallCircle);
       metricBlock.appendChild(metricCallout);
       metricsContainer.appendChild(metricBlock);
