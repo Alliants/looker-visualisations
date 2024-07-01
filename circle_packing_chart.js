@@ -1,72 +1,70 @@
 looker.plugins.visualizations.add({
   options: {
     decimal_places: {
-      type: "number",
-      label: "Decimal Places for Percentages",
+      type: 'number',
+      label: 'Decimal Places for Percentages',
       default: 2,
       order: 1
     },
     big_circle_color: {
-      type: "string",
-      label: "Big Circle Color",
-      default: "#4D6EBF",
-      display: "color",
+      type: 'string',
+      label: 'Big Circle Color',
+      default: '#4D6EBF',
+      display: 'color',
       order: 2
     },
     big_circle_font_color: {
-      type: "string",
-      label: "Big Circle Font Color",
-      default: "#FFFFFF",
-      display: "color",
+      type: 'string',
+      label: 'Big Circle Font Color',
+      default: '#FFFFFF',
+      display: 'color',
       order: 3
     },
     small_circle_color: {
-      type: "string",
-      label: "Small Circle Color",
-      default: "#EAEAEA",
-      display: "color",
+      type: 'string',
+      label: 'Small Circle Color',
+      default: '#EAEAEA',
+      display: 'color',
       order: 4
     },
     small_circle_font_color: {
-      type: "string",
-      label: "Small Circle Font Color",
-      default: "#000000",
-      display: "color",
+      type: 'string',
+      label: 'Small Circle Font Color',
+      default: '#000000',
+      display: 'color',
       order: 5
     }
   },
 
-  create: function(element, config) {
+  create: function (element, config) {
     element.style.fontFamily = 'Lato, sans-serif';
   },
 
-  updateDynamicOptions: function(queryResponse) {
+  updateDynamicOptions: function (queryResponse) {
     const numFields = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
-    // Clear existing dynamic options
     Object.keys(this.options).forEach((key) => {
-      if (key.startsWith("metric_label_") || key.startsWith("metric_icon_")) {
+      if (key.startsWith('metric_label_') || key.startsWith('metric_icon_')) {
         delete this.options[key];
       }
     });
-    // Add dynamic options for each metric
     for (let i = 0; i < numFields; i++) {
       this.options[`metric_label_${i}`] = {
-        type: "string",
+        type: 'string',
         label: `Label for Metric ${i + 1}`,
-        default: "",
+        default: '',
         order: 6 + i * 2
       };
       this.options[`metric_icon_${i}`] = {
-        type: "string",
+        type: 'string',
         label: `Icon URL for Metric ${i + 1}`,
-        default: "",
+        default: '',
         order: 7 + i * 2
       };
     }
     this.trigger('registerOptions', this.options);
   },
 
-  hexToRgb: function(hex) {
+  hexToRgb: function (hex) {
     hex = hex.replace('#', '');
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
@@ -75,7 +73,7 @@ looker.plugins.visualizations.add({
     return `${r},${g},${b}`;
   },
 
-  updateAsync: function(data, element, config, queryResponse, details, done) {
+  updateAsync: function (data, element, config, queryResponse, details, done) {
     // Update dynamic options
     this.updateDynamicOptions(queryResponse);
 
@@ -83,18 +81,18 @@ looker.plugins.visualizations.add({
     element.innerHTML = '';
 
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
-    const that = this; // To avoid scope issues inside map function
+    const that = this;
 
     const metrics = fields.map((field, index) => {
       const value = data[0][field.name]?.value;
       const label = config[`metric_label_${index}`] || field.label_short || field.label;
-      const icon = config[`metric_icon_${index}`] || "";
+      const icon = config[`metric_icon_${index}`] || '';
       return {
         label: label,
         value: isNaN(value) ? 0 : Number(value),
         icon: icon
       };
-    }).filter(metric => metric.value !== 0);
+    }).filter((metric) => metric.value !== 0);
 
     metrics.sort((a, b) => b.value - a.value);
 
@@ -114,7 +112,6 @@ looker.plugins.visualizations.add({
     container.style.height = '100%';
     container.style.width = '100%';
 
-    // Create the big circle for the largest metric
     const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
     const bigCircle = document.createElement('div');
     const strongLabel = document.createElement('strong');
@@ -131,7 +128,7 @@ looker.plugins.visualizations.add({
     bigCircle.style.textAlign = 'center';
     bigCircle.style.fontSize = '5vw';
     bigCircle.style.padding = '2vw';
-    bigCircle.style.color = `${config.big_circle_font_color}`;    
+    bigCircle.style.color = `${config.big_circle_font_color}`;
     const bigCircleImg = document.createElement('img');
     bigCircleImg.className = 'icon';
     bigCircleImg.src = `${metrics[0].icon}&color=${bigCircleIconColor},1`;
@@ -154,14 +151,14 @@ looker.plugins.visualizations.add({
     metricsContainer.style.display = 'flex';
     metricsContainer.style.flexDirection = 'column';
     metricsContainer.style.justifyContent = 'space-evenly';
-    metricsContainer.style.height = `${bigCircleDiameter}vw`; // Match height with big circle
+    metricsContainer.style.height = `${bigCircleDiameter}vw`;
     metricsContainer.style.marginLeft = '20px';
 
     for (let i = 1; i < metrics.length; i++) {
-      const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter; // Relative to 30vw of the big circle
+      const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter;
+
       const smallCircleIconColor = this.hexToRgb(config.small_circle_font_color);
 
-      // Create small circles for the rest of the metrics
       const smallCircle = document.createElement('div');
       smallCircle.classList.add('small-circle');
       smallCircle.style.width = `${sizePercentage}vw`;
@@ -172,23 +169,23 @@ looker.plugins.visualizations.add({
       smallCircle.style.justifyContent = 'center';
       smallCircle.style.alignItems = 'center';
       smallCircle.style.borderRadius = '50%';
-      smallCircle.style.maxWidth = `25vw`;
-      smallCircle.style.maxHeight = `25vw`;
-      // smallCircle.textContent = metrics[i].value;
+      smallCircle.style.maxWidth = '25vw';
+      smallCircle.style.maxHeight = '25vw';
 
-      // Get the computed styles of the element
+      metricsContainer.appendChild(smallCircle);
+
+      // Get computed styles
       const computedStyle = getComputedStyle(smallCircle);
 
-      // Get the width in vw and convert it to a number
+      // Get the width from style and convert from vw to pixels
       const widthInVw = parseFloat(computedStyle.width);
+      const widthInPx = (widthInVw * window.innerWidth) / 100; // Assuming width is still in vw
 
-      // Calculate the width in pixels
-      const vwToPx = (vw) => (vw * window.innerWidth) / 100;
-      const widthInPx = vwToPx(widthInVw);
-
-      // Calculate the radius in pixels
+      // Calculate radius in pixels
       const radiusInPx = widthInPx / 2;
-      const lineWidth = radiusInPx * 1.05;
+
+      // Use radius to determine the line width
+      const lineWidth = widthInPx * 1.05;
 
       const lineContainer = document.createElement('div');
       lineContainer.classList.add('line-container');
@@ -233,7 +230,6 @@ looker.plugins.visualizations.add({
 
       metricName.appendChild(label);
       metricCallout.appendChild(metricName);
-      metricsContainer.appendChild(metricCallout);
 
       const metricBlock = document.createElement('div');
       metricBlock.classList.add('metric-block');
@@ -242,6 +238,7 @@ looker.plugins.visualizations.add({
       metricBlock.appendChild(smallCircle);
       metricBlock.appendChild(lineContainer);
       metricBlock.appendChild(metricCallout);
+
       metricsContainer.appendChild(metricBlock);
     }
 
