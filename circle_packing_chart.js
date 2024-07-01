@@ -230,6 +230,7 @@ looker.plugins.visualizations.add({
       const metricBlock = document.createElement('div');
       metricBlock.classList.add('metric-block');
       metricBlock.style.display = 'flex';
+      metricBlock.style.alignItems = 'center';
       metricBlock.appendChild(smallCircle);
       metricBlock.appendChild(lineContainer);
       metricBlock.appendChild(metricCallout);
