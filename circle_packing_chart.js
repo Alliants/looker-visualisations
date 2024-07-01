@@ -185,8 +185,8 @@ looker.plugins.visualizations.add({
       const lineOffset = sizePercentage * 0.5;
       lineContainer.classList.add('line-container');
       lineContainer.style.display = 'flex';
-      metricCallout.style.alignItems = 'center';
-      metricCallout.style.marginLeft = `${lineOffset}vw`;
+      lineContainer.style.alignItems = 'center';
+      lineContainer.style.marginLeft = `${lineOffset}vw`;
 
       const line = document.createElement('div');
       lineContainer.classList.add('line');
