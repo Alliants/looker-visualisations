@@ -177,8 +177,6 @@ looker.plugins.visualizations.add({
       smallCircle.style.justifyContent = 'center';
       smallCircle.style.alignItems = 'center';
       smallCircle.style.borderRadius = '50%';
-      smallCircle.style.minWidth = `8vw`;
-      smallCircle.style.minHeight = `8vw`;
       smallCircle.style.maxWidth = `25vw`;
       smallCircle.style.maxHeight = `25vw`;
       smallCircle.textContent = metrics[i].value;
