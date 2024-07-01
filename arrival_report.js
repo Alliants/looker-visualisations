@@ -40,13 +40,13 @@ looker.plugins.visualizations.add({
 
     // Check if all values are null
     if (
-      due_in_time === null &&
-      location === null &&
-      start_date === null &&
-      end_date === null &&
-      num_nights === null &&
-      num_guests === null &&
-      room_numbers === null
+      (due_in_time === null || due_in_time === '') &&
+      (location === null || location === '') &&
+      (start_date === null || start_date === '') &&
+      (end_date === null || end_date === '') &&
+      (num_nights === null || num_nights === '') &&
+      (num_guests === null || num_guests === '') &&
+      (room_numbers === null || room_numbers === '')
     ) {
       done();
       return;
