@@ -127,6 +127,7 @@ looker.plugins.visualizations.add({
     bigCircle.style.display = 'flex';
     bigCircle.style.flexDirection = 'column';
     bigCircle.style.justifyContent = 'space-evenly';
+    bigCircle.style.alignItems = 'center';
     bigCircle.style.textAlign = 'center';
     bigCircle.style.fontSize = '5vw';
     bigCircle.style.padding = '2vw';
@@ -136,8 +137,8 @@ looker.plugins.visualizations.add({
     bigCircleImg.src = `${metrics[0].icon}&color=${bigCircleIconColor},1`;
     bigCircleImg.style.width = '15vw';
     bigCircleImg.style.height = '15vh';
-    bigCircle.appendChild(strongLabel);
     bigCircle.appendChild(bigCircleImg);
+    bigCircle.appendChild(strongLabel);
     
     // bigCircle.innerHTML = `
     //     <div>${metrics[0].icon ? `<img class="big-circle-icon" src="${metrics[0].icon}&color=${bigCircleIconColor},1" style="width: 15vw; height: 15vh;">` : ''}</div>
