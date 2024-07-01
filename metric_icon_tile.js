@@ -62,8 +62,6 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        // Ensure this value is a proper string default
-        default: String(this.options.master_color || '#000000'),
         order: 5 + index * 4,
       };
       this.options[`icon_url_${fieldName}`] = {
@@ -94,24 +92,11 @@ looker.plugins.visualizations.add({
   },
 
   hexToRgb: function(hex) {
-    if (typeof hex !== 'string') {
-      console.error('Invalid hex color:', hex);
-      return '0,0,0'; // Default to black if the input is invalid
-    }
-
-    // Expand shorthand form (e.g., "#03F") to full form (e.g., "#0033FF")
-    if (hex.length === 4) {
-      hex = `#${hex[1]}${hex[1]}${hex[2]}${hex[2]}${hex[3]}${hex[3]}`;
-    } else if (!/^#[0-9A-Fa-f]{6}$/i.test(hex)) {
-      console.error('Invalid hex color:', hex);
-      return '0,0,0'; // Default to black if the input is invalid
-    }
-
     hex = hex.replace('#', '');
     const bigint = parseInt(hex, 16);
     const r = (bigint >> 16) & 255;
     const g = (bigint >> 8) & 255;
-    const b = (bigint) & 255;
+    const b = bigint & 255;
     return `${r},${g},${b}`;
   },
 
@@ -147,13 +132,12 @@ looker.plugins.visualizations.add({
       const fieldName = field.name.replace(/\./g, '_');
       
       // Ensure metric colors default to master color if unspecified
-      const metricColor = config[`metric_color_${fieldName}`] || config.master_color || '#000000';
-      const validMetricColor = typeof metricColor === 'string' ? metricColor : '#000000';
+      const metricColor = config[`metric_color_${fieldName}`] || config.master_color;
 
       const fieldLabel = config[`metric_label_${fieldName}`] || field.label_short || field.label;
       const fieldValue = data[0][field.name].rendered || data[0][field.name].value || '∅';
       const iconURL = config[`icon_url_${fieldName}`] || '';
-      const iconColor = this.hexToRgb(validMetricColor);
+      const iconColor = this.hexToRgb(metricColor);
 
       const metricContainer = document.createElement('div');
       metricContainer.className = 'metric-container';
@@ -164,7 +148,7 @@ looker.plugins.visualizations.add({
       const valueElement = document.createElement('div');
       valueElement.className = 'metric-value';
       valueElement.innerText = fieldValue;
-      valueElement.style.color = validMetricColor;
+      valueElement.style.color = metricColor;
       valueElement.style.fontSize = `calc(${valueFontSize}rem + 1vw)`;
       valueElement.style.textAlign = 'center'; // Ensuring value element is centered
 
@@ -179,7 +163,7 @@ looker.plugins.visualizations.add({
       const labelElement = document.createElement('div');
       labelElement.className = 'metric-label';
       labelElement.innerText = fieldLabel;
-      labelElement.style.color = validMetricColor;
+      labelElement.style.color = metricColor;
       labelElement.style.fontSize = `calc(${labelFontSize}rem + 0.5vw)`;
       labelElement.style.textAlign = 'center'; // Ensuring text is centered
 
