@@ -71,13 +71,13 @@ looker.plugins.visualizations.add({
 
     // Calculate dynamic line height based on container height
     const containerHeight = element.clientHeight;
-    const lineHeight = containerHeight / 26;
+    const lineHeight = containerHeight / 18;
     const statusLineHeight = lineHeight * 0.4;
 
     // Construct the arrival card with dynamic line height
     const arrivalCard = document.createElement('div');
     arrivalCard.className = 'arrival-card';
-    arrivalCard.style.lineHeight = `${lineHeight}vw`;
+    arrivalCard.style.lineHeight = `${lineHeight}vh`;
     arrivalCard.style.borderRadius = '10px';
     arrivalCard.style.padding = '20px';
     arrivalCard.style.width = '100%';
@@ -89,10 +89,10 @@ looker.plugins.visualizations.add({
     arrivalCard.style.height = '100%';
 
     const arrivalHeader = document.createElement('div');
-    arrivalHeader.className = 'arrival-header';
-    arrivalHeader.display = 'flex';
-    arrivalHeader.justifyContent = 'space-between';
-    arrivalHeader.alignItems = 'center';
+    arrivalHeader.style.className = 'arrival-header';
+    arrivalHeader.style.display = 'flex';
+    arrivalHeader.style.justifyContent = 'space-between';
+    arrivalHeader.style.alignItems = 'center';
 
     const title = document.createElement('div');
     title.textContent = 'Arrival Report';
@@ -113,7 +113,7 @@ looker.plugins.visualizations.add({
     const arrivalDetails = document.createElement('div');
     arrivalDetails.className = 'arrival-details';
     arrivalDetails.style.display = 'flex';
-    arrivalDetails.alignItems = 'center';
+    arrivalDetails.flexDirection = 'column';
 
     const locationDiv = document.createElement('div');
     const strongLocation = document.createElement('strong');
