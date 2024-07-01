@@ -170,6 +170,14 @@ looker.plugins.visualizations.add({
       smallCircle.style.maxHeight = '25vw';
 
       metricsContainer.appendChild(smallCircle);
+      
+      // Append the small-circle element to ensure it exists in the DOM
+      const metricBlock = document.createElement('div');
+      metricBlock.classList.add('metric-block');
+      metricBlock.style.display = 'flex';
+      metricBlock.style.alignItems = 'center';
+      metricBlock.appendChild(smallCircle);
+      metricsContainer.appendChild(metricBlock);
 
       // Ensure the small circle element exists in the DOM
       console.log("Small circle element:", smallCircle);
