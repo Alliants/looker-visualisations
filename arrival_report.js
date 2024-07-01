@@ -71,13 +71,13 @@ looker.plugins.visualizations.add({
 
     // Calculate dynamic line height based on container height
     const containerHeight = element.clientHeight;
-    const lineHeight = containerHeight / 18;
-    const statusLineHeight = lineHeight * 0.4;
+    // const lineHeight = containerHeight / 18;
+    // const statusLineHeight = lineHeight * 0.4;
 
     // Construct the arrival card with dynamic line height
     const arrivalCard = document.createElement('div');
     arrivalCard.className = 'arrival-card';
-    arrivalCard.style.lineHeight = `${lineHeight}vh`;
+    arrivalCard.style.lineHeight = `14vh`;
     arrivalCard.style.borderRadius = '10px';
     arrivalCard.style.padding = '20px';
     arrivalCard.style.width = '100%';
@@ -99,9 +99,9 @@ looker.plugins.visualizations.add({
 
     const status = document.createElement('div');
     status.className = 'status';
-    status.style.lineHeight = `${statusLineHeight}vw`;
+    status.style.lineHeight = `7vw`;
     status.style.background = '#ffb921';
-    status.style.padding = '5px 10px';
+    status.style.padding = '0px 10px';
     status.style.borderRadius = '10px';
     status.style.color = 'white';
     status.style.fontWeight = 'bold';
