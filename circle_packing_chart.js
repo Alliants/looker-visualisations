@@ -102,6 +102,7 @@ looker.plugins.visualizations.add({
     }
 
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
+    const that = this; // To avoid scope issues inside map function
     const hasValidData = fields.some(field => data[0][field.name] && data[0][field.name].value !== null && data[0][field.name].value !== '');
 
     const allNullOrEmpty = fields.every(field => {
