@@ -110,9 +110,8 @@ looker.plugins.visualizations.add({
   },
 
   updateAsync: function (data, element, config, queryResponse, details, done) {
-    const container = element.querySelector('.viz-container');
-    container.innerHTML = '';
-    container.style.alignContent = 'space-evenly';
+    
+    element.innerHTML = '';
 
     // Ensure dynamic options are updated
     this.updateDynamicOptions(queryResponse);
@@ -123,7 +122,7 @@ looker.plugins.visualizations.add({
       // No rows returned
       const noDataMessage = config.no_data_message;
       if (noDataMessage) {
-        container.innerHTML = `<div>${noDataMessage}</div>`;
+        element.innerHTML = `<div>${noDataMessage}</div>`;
       }
       done();
       return;
@@ -136,7 +135,7 @@ looker.plugins.visualizations.add({
     if (allDataIsEmpty) {
       const emptyDataText = config.empty_data_text;
       if (emptyDataText) {
-        container.innerHTML = `<div>${emptyDataText}</div>`;
+        element.innerHTML = `<div>${emptyDataText}</div>`;
       }
       done();
       return;
@@ -212,7 +211,7 @@ looker.plugins.visualizations.add({
         }
       });
 
-      container.appendChild(metricContainer);
+    element.appendChild(metricContainer);
     });
 
     container.style.display = 'flex';
