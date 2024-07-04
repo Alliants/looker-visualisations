@@ -36,7 +36,7 @@ looker.plugins.visualizations.add({
     },
     no_data_message: {
       type: "string",
-      label: "No Data Message",
+      label: "Text to Display When Data is Empty",
       default: "",
       order: 6
     }
@@ -91,8 +91,27 @@ looker.plugins.visualizations.add({
     // Remove any existing content
     element.innerHTML = '';
 
+    if (data.length === 0) {
+      // No rows returned
+      done();
+      return;
+    }
+
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
-    const that = this; // To avoid scope issues inside map function
+
+    // Check if all data is null or empty
+    const allDataIsEmpty = data.every(row =>
+      fields.every(field => !row[field.name]?.value)
+    );
+
+    if (allDataIsEmpty) {
+      const text = config.no_data_message;
+      if (text) {
+        element.innerHTML = `<div>${text}</div>`;
+      }
+      done();
+      return;
+    }
 
     const metrics = fields.map((field, index) => {
       const value = data[0][field.name]?.value;
@@ -106,13 +125,6 @@ looker.plugins.visualizations.add({
     }).filter(metric => metric.value !== 0);
 
     metrics.sort((a, b) => b.value - a.value);
-
-    if (metrics.length === 0) {
-      // Display the custom no data message if provided, otherwise show nothing
-      element.innerHTML = config.no_data_message ? config.no_data_message : '';
-      done();
-      return;
-    }
 
     const maxMetricValue = metrics[0].value;
     const bigCircleDiameter = 30; // Fixed size of 30vw
@@ -141,7 +153,7 @@ looker.plugins.visualizations.add({
     bigCircle.style.textAlign = 'center';
     bigCircle.style.fontSize = '5vw';
     bigCircle.style.padding = '2vw';
-    bigCircle.style.color = `${config.big_circle_font_color}`;
+    bigCircle.style.color = `${config.big_circle_font_color}`;    
     const bigCircleImg = document.createElement('img');
     bigCircleImg.className = 'icon';
     bigCircleImg.src = `${metrics[0].icon}&color=${bigCircleIconColor},1`;
@@ -149,7 +161,7 @@ looker.plugins.visualizations.add({
     bigCircleImg.style.height = '15vh';
     bigCircle.appendChild(bigCircleImg);
     bigCircle.appendChild(strongLabel);
-
+    
     const bigCircleContainer = document.createElement('div');
     bigCircleContainer.classList.add('big-circle-container');
     bigCircleContainer.style.display = 'flex';
