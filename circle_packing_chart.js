@@ -113,8 +113,21 @@ looker.plugins.visualizations.add({
 
     metrics.sort((a, b) => b.value - a.value);
 
-    if (!hasValidData || metrics.length === 0) {
-      element.innerHTML = 'No data available';
+    if (metrics.length === 0) {
+      const noDataElement = document.createElement('div');
+      noDataElement.innerText = 'No valid data is available';
+    
+      // Center the message within the container
+      noDataElement.style.display = 'flex';
+      noDataElement.style.alignItems = 'center';
+      noDataElement.style.justifyContent = 'center';
+      noDataElement.style.height = '100%';
+      noDataElement.style.width = '100%';
+      noDataElement.style.textAlign = 'center';
+      noDataElement.style.fontSize = '1.5rem';  // Adjust font size as needed
+      
+      element.appendChild(noDataElement);
+    
       done();
       return;
     }
