@@ -36,9 +36,8 @@ looker.plugins.visualizations.add({
     },
     no_data_message: {
       type: "string",
-      label: "Message if No Rows Returned",
+      label: "No Data Message",
       default: "",
-      display: "text",
       order: 6
     }
   },
@@ -91,30 +90,8 @@ looker.plugins.visualizations.add({
     // Remove any existing content
     element.innerHTML = '';
 
-    if (metrics.length === 0) {
-      if (config.no_data_message) {
-        element.innerHTML = `<div>${config.no_data_message}</div>`;
-      }
-      done();
-      return;
-    }
-
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
     const that = this; // To avoid scope issues inside map function
-    const hasValidData = fields.some(field => data[0][field.name] && data[0][field.name].value !== null && data[0][field.name].value !== '');
-
-    const allNullOrEmpty = fields.every(field => {
-      const value = data[0][field.name].value;
-      return value === null || value === '';
-    });
-
-    if (allNullOrEmpty && !hasValidData) {
-      const noDataElement = document.createElement('div');
-      noDataElement.innerText = 'No valid data is available';
-      container.appendChild(noDataElement);
-      done();
-      return;
-    }
 
     const metrics = fields.map((field, index) => {
       const value = data[0][field.name]?.value;
@@ -128,6 +105,13 @@ looker.plugins.visualizations.add({
     }).filter(metric => metric.value !== 0);
 
     metrics.sort((a, b) => b.value - a.value);
+
+    if (metrics.length === 0) {
+      // Display the custom no data message if provided, otherwise show nothing
+      element.innerHTML = config.no_data_message ? config.no_data_message : '';
+      done();
+      return;
+    }
 
     const maxMetricValue = metrics[0].value;
     const bigCircleDiameter = 30; // Fixed size of 30vw
@@ -156,7 +140,7 @@ looker.plugins.visualizations.add({
     bigCircle.style.textAlign = 'center';
     bigCircle.style.fontSize = '5vw';
     bigCircle.style.padding = '2vw';
-    bigCircle.style.color = `${config.big_circle_font_color}`;    
+    bigCircle.style.color = `${config.big_circle_font_color}`;
     const bigCircleImg = document.createElement('img');
     bigCircleImg.className = 'icon';
     bigCircleImg.src = `${metrics[0].icon}&color=${bigCircleIconColor},1`;
