@@ -45,29 +45,36 @@ looker.plugins.visualizations.add({
 
   create: function(element, config) {
     element.style.fontFamily = 'Lato, sans-serif';
+    element.style.display = 'flex';
+    element.style.justifyContent = 'center';
   },
 
   updateDynamicOptions: function(queryResponse) {
-    const numFields = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
+    
+    const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
+    
+    // const numFields = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
     // Clear existing dynamic options
     Object.keys(this.options).forEach((key) => {
       if (key.startsWith("metric_label_") || key.startsWith("metric_icon_")) {
         delete this.options[key];
       }
     });
+    
     // Add dynamic options for each metric
-    for (let i = 0; i < numFields; i++) {
+    fields.forEach(field, index) => {
+      const fieldName = field.name.replace(/\./g, '_');
       this.options[`metric_label_${i}`] = {
         type: "string",
         label: `Label for Metric ${i + 1}`,
         default: "",
-        order: 7 + i * 2
+        order: 7 + index * 2
       };
       this.options[`metric_icon_${i}`] = {
         type: "string",
         label: `Icon URL for Metric ${i + 1}`,
         default: "",
-        order: 8 + i * 2
+        order: 8 + index * 2
       };
     }
     this.trigger('registerOptions', this.options);
@@ -100,6 +107,19 @@ looker.plugins.visualizations.add({
     const fields = [...queryResponse.fields.dimension_like, ...queryResponse.fields.measure_like];
     const hasValidData = fields.some(field => data[0][field.name] && data[0][field.name].value !== null && data[0][field.name].value !== '');
 
+    const allNullOrEmpty = fields.every(field => {
+      const value = data[0][field.name].value;
+      return value === null || value === '';
+    });
+
+    if (allNullOrEmpty && !hasValidData) {
+      const noDataElement = document.createElement('div');
+      noDataElement.innerText = 'No valid data is available';
+      container.appendChild(noDataElement);
+      done();
+      return;
+    }
+
     const metrics = fields.map((field, index) => {
       const value = data[0][field.name]?.value;
       const label = config[`metric_label_${index}`] || field.label_short || field.label;
@@ -112,25 +132,6 @@ looker.plugins.visualizations.add({
     }).filter(metric => metric.value !== 0);
 
     metrics.sort((a, b) => b.value - a.value);
-
-    if (metrics.length === 0) {
-      const noDataElement = document.createElement('div');
-      noDataElement.innerText = 'No valid data is available';
-    
-      // Center the message within the container
-      noDataElement.style.display = 'flex';
-      noDataElement.style.alignItems = 'center';
-      noDataElement.style.justifyContent = 'center';
-      noDataElement.style.height = '100%';
-      noDataElement.style.width = '100%';
-      noDataElement.style.textAlign = 'center';
-      noDataElement.style.fontSize = '1.5rem';  // Adjust font size as needed
-      
-      element.appendChild(noDataElement);
-    
-      done();
-      return;
-    }
 
     const maxMetricValue = metrics[0].value;
     const bigCircleDiameter = 30; // Fixed size of 30vw
