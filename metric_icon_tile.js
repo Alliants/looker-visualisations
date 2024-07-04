@@ -38,25 +38,20 @@ looker.plugins.visualizations.add({
       default: 100,
       order: 4,
     },
-    no_data_message: {
-      type: "string",
-      label: "Message if No Rows Returned",
-      default: "",
-      display: "text",
-      order: 5,
-    },
     empty_data_text: {
       type: "string",
       label: "Message to Display When Data is Empty",
       default: "",
       display: "text",
-      order: 6,
+      order: 5,
     }
   },
 
   create: function (element, config) {
-    element.innerHTML = '<div class="viz-container"></div>';
     element.style.fontFamily = 'Lato, sans-serif';
+    element.style.display = 'flex';
+    element.style.justifyContent = 'center';
+    element.style.alignItems = 'center';
   },
 
   updateDynamicOptions: function (queryResponse) {
@@ -76,28 +71,28 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        order: 7 + index * 4,
+        order: 6 + index * 4,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 8 + index * 4,
+        order: 7 + index * 4,
       };
       this.options[`metric_show_label_${fieldName}`] = {
         type: 'boolean',
         label: `Show Label for Metric ${index + 1}?`,
         display: 'text',
         default: true,
-        order: 9 + index * 4,
+        order: 8 + index * 4,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 10 + index * 4,
+        order: 9 + index * 4,
       };
     });
 
