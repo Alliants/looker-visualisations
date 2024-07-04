@@ -38,6 +38,13 @@ looker.plugins.visualizations.add({
       default: 100,
       order: 4,
     },
+    no_data_message: {
+      type: "string",
+      label: "Message if No Rows Returned",
+      default: "",
+      display: "text",
+      order: 5,
+    }
   },
 
   create: function (element, config) {
@@ -62,28 +69,28 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        order: 5 + index * 4,
+        order: 6 + index * 4,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 6 + index * 4,
+        order: 7 + index * 4,
       };
       this.options[`metric_show_label_${fieldName}`] = {
         type: 'boolean',
         label: `Show Label for Metric ${index + 1}?`,
         display: 'text',
         default: true,
-        order: 7 + index * 4,
+        order: 8 + index * 4,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 8 + index * 4,
+        order: 9 + index * 4,
       };
     });
 
@@ -108,19 +115,42 @@ looker.plugins.visualizations.add({
     // Ensure dynamic options are updated
     this.updateDynamicOptions(queryResponse);
 
-    const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
+    if (data.length === 0) {
+      if (config.no_data_message) {
+        const noRowsMessageElement = document.createElement('div');
+        noRowsMessageElement.innerText = config.no_data_message;
+        container.appendChild(noRowsMessageElement);
+      }
+      done();
+      return;
+    }
 
-    // Check if all field values are either null or empty
+    const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
+    const hasValidData = fields.some(field => data[0][field.name] && data[0][field.name].value !== null && data[0][field.name].value !== '');
+
     const allNullOrEmpty = fields.every(field => {
       const value = data[0][field.name].value;
       return value === null || value === '';
     });
-  
-    if (allNullOrEmpty) {
+
+    if (allNullOrEmpty && !hasValidData) {
+      const noDataElement = document.createElement('div');
+      noDataElement.innerText = 'No valid data is available';
+    
+      // Center the message within the container
+      noDataElement.style.display = 'flex';
+      noDataElement.style.alignItems = 'center';
+      noDataElement.style.justifyContent = 'center';
+      noDataElement.style.height = '100%';
+      noDataElement.style.width = '100%';
+      noDataElement.style.textAlign = 'center';
+      noDataElement.style.fontSize = '1.5rem';  // Adjust font size as needed
+      
+      element.appendChild(noDataElement);
       done();
       return;
     }
-    
+
     const containerWidth = element.clientWidth;
     const containerHeight = element.clientHeight;
     const containerArea = containerHeight * containerWidth;
