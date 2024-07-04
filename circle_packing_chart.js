@@ -46,6 +46,7 @@ looker.plugins.visualizations.add({
     element.style.fontFamily = 'Lato, sans-serif';
     element.style.display = 'flex';
     element.style.justifyContent = 'center';
+    element.style.alignItems = 'center';
   },
 
   updateDynamicOptions: function(queryResponse) {
