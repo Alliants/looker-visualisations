@@ -51,10 +51,8 @@ looker.plugins.visualizations.add({
 
   updateDynamicOptions: function(queryResponse) {
     
-    const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
+    const numFields = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
     
-    // const numFields = queryResponse.fields.dimension_like.length + queryResponse.fields.measure_like.length;
-    // Clear existing dynamic options
     Object.keys(this.options).forEach((key) => {
       if (key.startsWith("metric_label_") || key.startsWith("metric_icon_")) {
         delete this.options[key];
@@ -62,19 +60,18 @@ looker.plugins.visualizations.add({
     });
     
     // Add dynamic options for each metric
-    fields.forEach(field, index) => {
-      const fieldName = field.name.replace(/\./g, '_');
+    for (let i = 0; i < numFields; i++) {
       this.options[`metric_label_${i}`] = {
         type: "string",
         label: `Label for Metric ${i + 1}`,
         default: "",
-        order: 7 + index * 2
+        order: 7 + i * 2
       };
       this.options[`metric_icon_${i}`] = {
         type: "string",
         label: `Icon URL for Metric ${i + 1}`,
         default: "",
-        order: 8 + index * 2
+        order: 8 + i * 2
       };
     }
     this.trigger('registerOptions', this.options);
