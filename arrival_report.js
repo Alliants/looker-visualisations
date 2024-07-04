@@ -6,39 +6,46 @@ looker.plugins.visualizations.add({
       default: "#000000",
       display: "color",
       order: 3
+    },
+    empty_data_text: {
+      type: "string",
+      label: "Message to Display When Data is Empty",
+      default: "",
+      display: "text",
+      order: 4
     }
   },
   
   create: function (element, config) {
     element.style.fontFamily = 'Lato, sans-serif';
-    element.appendChild(styles); // Append styles to the document
+    element.style.display = 'flex';
+    element.style.justifyContent = 'center';
+    element.style.alignItems = 'center';
   },
+  
   updateAsync: function (data, element, config, queryResponse, details, done) {
     element.innerHTML = ''; // Clear any existing content
 
     // Extracting fields in the specific order
     const fields = queryResponse.fields.dimension_like;
 
-    // Check if there are at least 7 fields available
-    if (fields.length < 7) {
-      const errorMessage = document.createElement('div');
-      errorMessage.textContent = 'Insufficient data fields';
-      element.appendChild(errorMessage);
+    if (data.length === 0) {
+      // No rows returned
       done();
       return;
     }
 
     // Extract data from the first row in the order specified
     const row = data[0];
-    const due_in_time = row[fields[0].name].value;
-    const location = row[fields[1].name].value;
-    const start_date = row[fields[2].name].value;
-    const end_date = row[fields[3].name].value;
-    const num_nights = row[fields[4].name].value;
-    const num_guests = row[fields[5].name].value;
-    const room_numbers = row[fields[6].name].value;
+    const due_in_time = row[fields[0].name]?.value;
+    const location = row[fields[1].name]?.value;
+    const start_date = row[fields[2].name]?.value;
+    const end_date = row[fields[3].name]?.value;
+    const num_nights = row[fields[4].name]?.value;
+    const num_guests = row[fields[5].name]?.value;
+    const room_numbers = row[fields[6].name]?.value;
 
-    // Check if all values are null
+    // Check if all values are null or empty
     if (
       (due_in_time === null || due_in_time === '') &&
       (location === null || location === '') &&
@@ -48,6 +55,12 @@ looker.plugins.visualizations.add({
       (num_guests === null || num_guests === '') &&
       (room_numbers === null || room_numbers === '')
     ) {
+      const emptyDataText = config.empty_data_text;
+      if (emptyDataText) {
+        const emptyMessage = document.createElement('div');
+        emptyMessage.textContent = emptyDataText;
+        element.appendChild(emptyMessage);
+      }
       done();
       return;
     }
