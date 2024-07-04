@@ -119,6 +119,16 @@ looker.plugins.visualizations.add({
       if (config.no_data_message) {
         const noRowsMessageElement = document.createElement('div');
         noRowsMessageElement.innerText = config.no_data_message;
+        
+        // Center the message within the container
+        noRowsMessageElement.style.display = 'flex';
+        noRowsMessageElement.style.alignItems = 'center';
+        noRowsMessageElement.style.justifyContent = 'center';
+        noRowsMessageElement.style.height = '100%';
+        noRowsMessageElement.style.width = '100%';
+        noRowsMessageElement.style.textAlign = 'center';
+        noRowsMessageElement.style.fontSize = '1.5rem';  // Adjust font size as needed
+        
         container.appendChild(noRowsMessageElement);
       }
       done();
@@ -136,7 +146,7 @@ looker.plugins.visualizations.add({
     if (allNullOrEmpty && !hasValidData) {
       const noDataElement = document.createElement('div');
       noDataElement.innerText = 'No valid data is available';
-    
+
       // Center the message within the container
       noDataElement.style.display = 'flex';
       noDataElement.style.alignItems = 'center';
@@ -146,7 +156,7 @@ looker.plugins.visualizations.add({
       noDataElement.style.textAlign = 'center';
       noDataElement.style.fontSize = '1.5rem';  // Adjust font size as needed
       
-      element.appendChild(noDataElement);
+      container.appendChild(noDataElement);
       done();
       return;
     }
