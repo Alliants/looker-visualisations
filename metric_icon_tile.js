@@ -44,6 +44,13 @@ looker.plugins.visualizations.add({
       default: "",
       display: "text",
       order: 5,
+    },
+    empty_data_text: {
+      type: "string",
+      label: "Message to Display When Data is Empty",
+      default: "",
+      display: "text",
+      order: 6,
     }
   },
 
@@ -69,28 +76,28 @@ looker.plugins.visualizations.add({
         type: 'string',
         label: `Metric ${index + 1} Color`,
         display: 'color',
-        order: 6 + index * 4,
+        order: 7 + index * 4,
       };
       this.options[`icon_url_${fieldName}`] = {
         type: 'string',
         label: `Icon URL for Metric ${index + 1}`,
         display: 'text',
         default: '',
-        order: 7 + index * 4,
+        order: 8 + index * 4,
       };
       this.options[`metric_show_label_${fieldName}`] = {
         type: 'boolean',
         label: `Show Label for Metric ${index + 1}?`,
         display: 'text',
         default: true,
-        order: 8 + index * 4,
+        order: 9 + index * 4,
       };
       this.options[`metric_label_${fieldName}`] = {
         type: 'string',
         label: `Label for Metric ${index + 1}`,
         display: 'text',
         default: field.label_short || field.label,
-        order: 9 + index * 4,
+        order: 10 + index * 4,
       };
     });
 
@@ -115,48 +122,27 @@ looker.plugins.visualizations.add({
     // Ensure dynamic options are updated
     this.updateDynamicOptions(queryResponse);
 
+    const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
+
     if (data.length === 0) {
-      if (config.no_data_message) {
-        const noRowsMessageElement = document.createElement('div');
-        noRowsMessageElement.innerText = config.no_data_message;
-        
-        // Center the message within the container
-        noRowsMessageElement.style.display = 'flex';
-        noRowsMessageElement.style.alignItems = 'center';
-        noRowsMessageElement.style.justifyContent = 'center';
-        noRowsMessageElement.style.height = '100%';
-        noRowsMessageElement.style.width = '100%';
-        noRowsMessageElement.style.textAlign = 'center';
-        noRowsMessageElement.style.fontSize = '1.5rem';  // Adjust font size as needed
-        
-        container.appendChild(noRowsMessageElement);
+      // No rows returned
+      const noDataMessage = config.no_data_message;
+      if (noDataMessage) {
+        container.innerHTML = `<div>${noDataMessage}</div>`;
       }
       done();
       return;
     }
 
-    const fields = queryResponse.fields.dimension_like.concat(queryResponse.fields.measure_like);
-    const hasValidData = fields.some(field => data[0][field.name] && data[0][field.name].value !== null && data[0][field.name].value !== '');
+    const allDataIsEmpty = data.every(row =>
+      fields.every(field => !row[field.name]?.value)
+    );
 
-    const allNullOrEmpty = fields.every(field => {
-      const value = data[0][field.name].value;
-      return value === null || value === '';
-    });
-
-    if (allNullOrEmpty && !hasValidData) {
-      const noDataElement = document.createElement('div');
-      noDataElement.innerText = 'No valid data is available';
-
-      // Center the message within the container
-      noDataElement.style.display = 'flex';
-      noDataElement.style.alignItems = 'center';
-      noDataElement.style.justifyContent = 'center';
-      noDataElement.style.height = '100%';
-      noDataElement.style.width = '100%';
-      noDataElement.style.textAlign = 'center';
-      noDataElement.style.fontSize = '1.5rem';  // Adjust font size as needed
-      
-      container.appendChild(noDataElement);
+    if (allDataIsEmpty) {
+      const emptyDataText = config.empty_data_text;
+      if (emptyDataText) {
+        container.innerHTML = `<div>${emptyDataText}</div>`;
+      }
       done();
       return;
     }
@@ -182,7 +168,7 @@ looker.plugins.visualizations.add({
 
     fields.forEach((field, metricIndex) => {
       const fieldName = field.name.replace(/\./g, '_');
-      
+
       // Ensure metric colors default to master color if unspecified
       const metricColor = config[`metric_color_${fieldName}`] || config.master_color;
 
