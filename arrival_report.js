@@ -30,7 +30,9 @@ looker.plugins.visualizations.add({
     const fields = queryResponse.fields.dimension_like;
 
     if (data.length === 0) {
-      // No rows returned
+        const emptyMessage = document.createElement('div');
+        emptyMessage.textContent = emptyDataText;
+        element.appendChild(emptyMessage);
       done();
       return;
     }
@@ -58,7 +60,7 @@ looker.plugins.visualizations.add({
       const emptyDataText = config.empty_data_text;
       if (emptyDataText) {
         const emptyMessage = document.createElement('div');
-        emptyMessage.textContent = emptyDataText;
+        emptyMessage.textContent = "No Results";
         element.appendChild(emptyMessage);
       }
       done();
