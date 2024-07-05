@@ -7,7 +7,7 @@ looker.plugins.visualizations.add({
       display: "color",
       order: 3
     },
-    empty_data_text: {
+    no_data_text: {
       type: "string",
       label: "Message to Display When Data is Empty",
       default: "",
@@ -30,9 +30,10 @@ looker.plugins.visualizations.add({
     const fields = queryResponse.fields.dimension_like;
 
     if (data.length === 0) {
-        const emptyMessage = document.createElement('div');
-        emptyMessage.textContent = emptyDataText;
-        element.appendChild(emptyMessage);
+      const text = config.no_data_text;
+      if (text) {
+        element.innerHTML = `<div>${text}</div>`;
+      }
       done();
       return;
     }
@@ -57,12 +58,7 @@ looker.plugins.visualizations.add({
       (num_guests === null || num_guests === '') &&
       (room_numbers === null || room_numbers === '')
     ) {
-      const emptyDataText = config.empty_data_text;
-      if (emptyDataText) {
-        const emptyMessage = document.createElement('div');
-        emptyMessage.textContent = "No Results";
-        element.appendChild(emptyMessage);
-      }
+        element.innerHTML = `<div>No results</div>`;
       done();
       return;
     }
