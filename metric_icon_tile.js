@@ -120,10 +120,7 @@ looker.plugins.visualizations.add({
 
     if (data.length === 0) {
       // No rows returned
-      const noDataMessage = config.no_data_message;
-      if (noDataMessage) {
         element.innerHTML = `<div>${noDataMessage}</div>`;
-      }
       done();
       return;
     }
@@ -135,7 +132,7 @@ looker.plugins.visualizations.add({
     if (allDataIsEmpty) {
       const emptyDataText = config.empty_data_text;
       if (emptyDataText) {
-        element.innerHTML = `<div>${emptyDataText}</div>`;
+        element.innerHTML = `<div>No Results</div>`;
       }
       done();
       return;
