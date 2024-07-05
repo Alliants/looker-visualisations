@@ -135,6 +135,7 @@ looker.plugins.visualizations.add({
     container.style.alignItems = 'center';
     container.style.height = '100%';
     container.style.width = '100%';
+    container.style.gap = '10px';
 
     // Create the big circle for the largest metric
     const bigCircleIconColor = this.hexToRgb(config.big_circle_font_color);
@@ -176,8 +177,8 @@ looker.plugins.visualizations.add({
     metricsContainer.style.display = 'flex';
     metricsContainer.style.flexDirection = 'column';
     metricsContainer.style.justifyContent = 'space-evenly';
-    metricsContainer.style.height = `${bigCircleDiameter}vw`; // Match height with big circle
-    metricsContainer.style.marginLeft = '20px';
+    metricsContainer.style.transform = 'scale(0.8)';
+    metricsContainer.style.gap = '10px';
 
     for (let i = 1; i < metrics.length; i++) {
       const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter; // Relative to 30vw of the big circle
@@ -247,6 +248,8 @@ looker.plugins.visualizations.add({
       metricBlock.classList.add('metric-block');
       metricBlock.style.display = 'flex';
       metricBlock.style.alignItems = 'center';
+      metricBlock.style.flexGrow = '0';
+      metricBlock.style.flexShrink = '0';
       metricBlock.appendChild(smallCircle);
       metricBlock.appendChild(lineContainer);
       metricBlock.appendChild(metricCallout);
