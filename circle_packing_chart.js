@@ -170,15 +170,14 @@ looker.plugins.visualizations.add({
     bigCircleContainer.style.justifyContent = 'center';
     bigCircleContainer.style.alignItems = 'center';
     bigCircleContainer.appendChild(bigCircle);
-    container.appendChild(bigCircleContainer);
 
     const metricsContainer = document.createElement('div');
     metricsContainer.classList.add('metrics-container');
     metricsContainer.style.display = 'flex';
     metricsContainer.style.flexDirection = 'column';
     metricsContainer.style.justifyContent = 'space-evenly';
-    metricsContainer.style.transform = 'scale(0.8)';
     metricsContainer.style.gap = '10px';
+    metricsContainer.style.visibility = 'hidden'; // Initially hidden
 
     for (let i = 1; i < metrics.length; i++) {
       const sizePercentage = (metrics[i].value / maxMetricValue) * bigCircleDiameter; // Relative to 30vw of the big circle
@@ -256,8 +255,21 @@ looker.plugins.visualizations.add({
       metricsContainer.appendChild(metricBlock);
     }
 
+    container.appendChild(bigCircleContainer);
     container.appendChild(metricsContainer);
     element.appendChild(container);
-    done();
+
+    // Measure and scale
+    setTimeout(() => {
+      const containerHeight = container.offsetHeight;
+      const metricsHeight = metricsContainer.offsetHeight;
+      const scale = Math.min(1, containerHeight / metricsHeight);
+
+      metricsContainer.style.transform = `scale(${scale})`;
+      metricsContainer.style.transformOrigin = 'top left';
+      metricsContainer.style.visibility = 'visible';
+
+      done();
+    }, 0);
   }
 });
