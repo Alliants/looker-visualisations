@@ -266,7 +266,6 @@ looker.plugins.visualizations.add({
       const scale = Math.min(1, containerHeight / metricsHeight);
 
       metricsContainer.style.transform = `scale(${scale})`;
-      metricsContainer.style.transformOrigin = 'top left';
       metricsContainer.style.visibility = 'visible';
 
       done();
