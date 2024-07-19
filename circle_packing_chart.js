@@ -200,14 +200,14 @@ looker.plugins.visualizations.add({
       smallCircle.style.flexShrink = '0';
 
       const lineContainer = document.createElement('div');
-      const lineOffset = Math.min(25, sizePercentage * 0.5);
+      const lineOffset = Math.min(12.5, sizePercentage * 0.5);
       lineContainer.classList.add('line-container');
       lineContainer.style.display = 'flex';
       lineContainer.style.alignItems = 'center';
       lineContainer.style.marginLeft = `-${lineOffset}vw`;
 
       const line = document.createElement('div');
-      const lineWidth = Math.min(25, sizePercentage * 0.75)
+      const lineWidth = Math.min(25, sizePercentage * 0.6)
       lineContainer.classList.add('line');
       line.style.height = '1px';
       line.style.width = `${lineWidth}vw`;
