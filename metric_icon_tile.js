@@ -213,7 +213,7 @@ looker.plugins.visualizations.add({
 
     element.style.display = 'flex';
     element.style.flexWrap = 'wrap';
-    element.style.justifyContent = 'center'; // Ensures even spacing
+    element.style.justifyContent = 'space-evenly'; // Ensures even spacing
     element.style.alignItems = 'center';
     element.style.height = '100%';
 
